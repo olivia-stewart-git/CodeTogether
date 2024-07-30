@@ -1,7 +1,6 @@
-﻿namespace CodeTogether.Service
-{
-    public class Class1
-    {
+﻿namespace CodeTogether.Service;
 
-    }
+public class Class1
+{
+
 }

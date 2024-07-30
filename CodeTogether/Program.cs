@@ -1,17 +1,33 @@
 using CodeTogether;
 using CodeTogether.Components;
 using CodeTogether.Data;
+using NLog;
+using NLog.Web;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+
+LogManager.Setup().LoadConfiguration(builder =>
+{
+	builder.ForLogger().FilterMinLevel(NLog.LogLevel.Info).WriteToColoredConsole();
+});
+
+var logger = NLog.LogManager.GetCurrentClassLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(LogLevel.Trace);
+builder.Host.UseNLog();
+
 // Add services to the container.
+builder.Services.ConfigureLogging();
 builder.Services
 	.AddRazorComponents()
 	.AddInteractiveServerComponents();
-builder.Services.AddControllers();
 builder.Services
 	.RegisterServices()
 	.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 app.MapControllers();
