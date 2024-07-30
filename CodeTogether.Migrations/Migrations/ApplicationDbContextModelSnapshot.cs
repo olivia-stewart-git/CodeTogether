@@ -22,18 +22,18 @@ namespace CodeTogether.Migrations.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CodeTogether.Data.Models.StmDataModel", b =>
+            modelBuilder.Entity("CodeTogether.STM_Value.Models.StmDataModel", b =>
                 {
                     b.Property<Guid>("STM_PK")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Data")
+                    b.Property<string>("STM_Value")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Key")
+                    b.Property<string>("STM_Key")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");

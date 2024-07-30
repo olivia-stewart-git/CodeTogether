@@ -1,0 +1,9 @@
+﻿using System;
+
+public class HelloWorldScaffold
+{
+	public string HelloWorld()
+	{
+		return string.Empty;
+	}
+}

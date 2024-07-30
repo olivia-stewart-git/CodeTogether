@@ -1,6 +1,7 @@
 using CodeTogether;
 using CodeTogether.Components;
 using CodeTogether.Data;
+using CodeTogether.Data.Seeding;
 using NLog;
 using NLog.Web;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -47,5 +48,10 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
+
+using (var context = new ApplicationDbContext())
+{
+	new Seeder(context).Seed();
+}
 
 app.Run();

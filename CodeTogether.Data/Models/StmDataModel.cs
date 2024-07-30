@@ -1,27 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CodeTogether.Data.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CodeTogether.Data.DataAccess;
 
 namespace CodeTogether.Data.Models;
 
+[PrimaryKey(nameof(STM_PK))]
 public class StmDataModel : IDbModel
 {
-	public StmDataModel(string key, string data)
+	public class Constants
 	{
-		Key = key;
-		Data = data;
+		public const string HasSeeded = "HasSeeded";
 	}
 
-    [Key]
+    public StmDataModel(string stmKey, string stmValue)
+	{
+		STM_Key = stmKey;
+		STM_Value = stmValue;
+	}
+
     public Guid STM_PK { get; set; } = Guid.NewGuid();
 
     [MaxLength(20)]
-    public string Key { get; set; }
+    public string STM_Key { get; set; }
 
     [MaxLength(100)]
-    public string Data { get; set; }
+    public string STM_Value { get; set; }
 }
