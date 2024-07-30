@@ -1,20 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(TST_PK))]
-public class TestCaseModel
+public class TestCaseModel : IDbModel
 {
-	public TestCaseModel(string title, string[] arguments, string expectedResponse, bool isHidden)
-	{
-		TST_Title = title;
-		TST_Arguments = arguments;
-		TST_ExpectedResponse = expectedResponse;
-		TST_IsHidden = isHidden;
-	}
-
 	public Guid TST_PK { get; set; } = Guid.NewGuid();
 
 	public bool TST_IsHidden { get; set; }

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
+    <ProjectReference Include="..\CodeTogether.Migrations\CodeTogether.Migrations.csproj" />
     <ProjectReference Include="..\CodeTogether.Runner\CodeTogether.Runner.csproj" />
     <ProjectReference Include="..\CodeTogether.Service\CodeTogether.Service.csproj" />
   </ItemGroup>

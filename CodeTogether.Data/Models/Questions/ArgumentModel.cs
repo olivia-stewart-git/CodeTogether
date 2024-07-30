@@ -1,32 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CodeTogether.Data.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace CodeTogether.Data.Models.Questions;
 
-public class TypeCollectionModel
-{
-	public Guid
-}
-
 [PrimaryKey(nameof(OT_PK))]
-public class TypeModel
+public class ArgumentModel : IDbModel
 {
-	public static TypeModel Null() => new (null, null);
+	public static ArgumentModel Void() => new ();
 
-	public static TypeModel FromType(Type type)
-	{
-		return new TypeModel(type.Assembly.FullName, type.FullName);
-	}
+    public static ArgumentModel FromType(Type type)
+    {
+	    return new ArgumentModel()
+	    {
+		    OT_AssemblyName = type.Assembly.FullName, 
+		    OT_TypeName = type.FullName
+	    };
 
-	public TypeModel(string? assemblyName, string? typeName)
-	{
-		OT_AssemblyName = assemblyName;
-		OT_TypeName = typeName;
-	}
+    }
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
+
+	[ForeignKey(nameof(OT_TC_PK))]
+	[DeleteBehavior(DeleteBehavior.NoAction)]
+	public ArgumentCollectionModel? OT_Parent { get; set; }
+	public Guid? OT_TC_PK { get; set; }
 
 	[MaxLength(100)]
 	public string? OT_AssemblyName { get; set; }
@@ -57,12 +57,8 @@ public class TypeModel
 			{
 				return assembly.GetType(OT_TypeName);
 			}
-			else
-			{
-				return Type.GetType(OT_TypeName);
-			}
 
-			return null;
+			return Type.GetType(OT_TypeName);
 		}
 		set
 		{

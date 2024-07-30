@@ -12,12 +12,6 @@ public class StmDataModel : IDbModel
 		public const string HasSeeded = "HasSeeded";
 	}
 
-    public StmDataModel(string stmKey, string stmValue)
-	{
-		STM_Key = stmKey;
-		STM_Value = stmValue;
-	}
-
     public Guid STM_PK { get; set; } = Guid.NewGuid();
 
     [MaxLength(20)]

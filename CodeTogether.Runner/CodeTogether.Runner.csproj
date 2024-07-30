@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <None Remove="Scaffolds\HelloWorldScaffold.txt" />
+    <None Remove="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scaffolds\HelloWorldScaffold.txt" />
+    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\HelloWorldScaffold.txt" />
+    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
   </ItemGroup>
 
 </Project>

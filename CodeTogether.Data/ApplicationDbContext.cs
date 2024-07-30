@@ -29,8 +29,8 @@ public class ApplicationDbContext : DbContext
 	internal DbSet<QuestionModel> Questions { get; set; }
 	internal DbSet<TestCaseModel> TestCases { get; set; }
 	internal DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	internal DbSet<TypeModel> Types { get; set; }
-	internal DbSet<ExecutionModel> Executions { get; set; }
-		 
-	#endregion
+	internal DbSet<ArgumentModel> Arguments { get; set; }
+	internal DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
+    internal DbSet<ExecutionModel> Executions { get; set; }
+    #endregion
 }

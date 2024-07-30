@@ -36,7 +36,11 @@ public class Seeder
 
 	void FillHasSeeded()
 	{
-		dbContext.StmData.Add(new StmDataModel(StmDataModel.Constants.HasSeeded, "Y"));
+		dbContext.StmData.Add(new StmDataModel()
+		{
+			STM_Key = StmDataModel.Constants.HasSeeded,
+			STM_Value = "Y",
+		});
 		dbContext.SaveChanges();
 	}
 }

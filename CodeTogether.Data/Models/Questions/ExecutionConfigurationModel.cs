@@ -1,18 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(EXE_PK))]
-public class ExecutionConfigurationModel
+public class ExecutionConfigurationModel : IDbModel
 {
-	public ExecutionConfigurationModel(string scaffoldName, string functionName)
-	{
-		EXE_ScaffoldName = scaffoldName;
-		EXE_FunctionName = functionName;
-	}
-
 	public Guid EXE_PK { get; set; } = Guid.NewGuid();
 
 	[MaxLength(50)]
@@ -20,4 +15,14 @@ public class ExecutionConfigurationModel
 
 	[MaxLength(50)]
 	public string EXE_FunctionName { get; set; }
+
+	[ForeignKey(nameof(EXE_TC_FK))]
+	[DeleteBehavior(DeleteBehavior.NoAction)]
+	public ArgumentCollectionModel? EXE_InputArguments { get; set; }
+	public Guid? EXE_TC_FK { get; set; }
+
+    [ForeignKey(nameof(EXE_TO_FK))]
+	[DeleteBehavior(DeleteBehavior.NoAction)]
+	public ArgumentModel? EXE_ReturnArgument { get; set; }
+    public Guid? EXE_TO_FK { get; set; }
 }

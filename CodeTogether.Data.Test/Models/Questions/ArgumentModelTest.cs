@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace CodeTogether.Data.Models.Questions.Test;
 
-internal class TypeModelTest
+internal class ArgumentModelTest
 {
 	[Test]
 	public void TestNullTypeWhenInvalidName()
 	{
-		var typeModel = new TypeModel("something", "something");
+		var typeModel = new ArgumentModel()
+		{
+			OT_TypeName = "something",
+			OT_AssemblyName = "something",
+		};
 		Assert.Null(typeModel.OT_Type);
     }
 
@@ -20,7 +24,11 @@ internal class TypeModelTest
 	{
 		var type = typeof(int);
 		Assert.IsNotNull(type);
-		var typeModel = new TypeModel(type.Assembly.FullName!, type.FullName!);
+		var typeModel = new ArgumentModel
+		{
+			OT_TypeName = type.Assembly.FullName!,
+			OT_AssemblyName = type.FullName!,
+		};
 
 		Assert.IsNotNull(typeModel.OT_Type);
 		Assert.That(typeModel.OT_Type, Is.EqualTo(type));
@@ -30,7 +38,7 @@ internal class TypeModelTest
 	public void TestCreatesFromFactoryMethod()
 	{
 		var type = GetType();
-		var typeModel = TypeModel.FromType(type);
+		var typeModel = ArgumentModel.FromType(type);
 		Assert.IsNotNull(typeModel.OT_Type);
 		Assert.That(typeModel.OT_Type, Is.EqualTo(type));
 	}

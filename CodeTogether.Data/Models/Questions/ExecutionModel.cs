@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using CodeTogether.Data.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(EX_PK))]
-public class ExecutionModel
+public class ExecutionModel : IDbModel
 {
 	public Guid EX_PK { get; set; } = Guid.NewGuid();
 
