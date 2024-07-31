@@ -14,7 +14,10 @@ public class ExecutionConfigurationModel : IDbModel
 	public required string EXE_ScaffoldName { get; set; }
 
 	[MaxLength(50)]
-	public required string EXE_FunctionName { get; set; }
+	public required string EXE_AdapterName { get; set; }
+
+	[MaxLength(50)]
+	public required string EXE_AdapterArgument { get; set; }
 
 	[ForeignKey(nameof(EXE_TC_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]

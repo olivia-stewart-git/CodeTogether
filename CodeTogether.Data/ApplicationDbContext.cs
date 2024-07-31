@@ -23,17 +23,19 @@ public class ApplicationDbContext : DbContext
 				);
 	}
 
-	#region Models
+    #region Models
 
-	internal DbSet<StmDataModel> StmData { get; set; }
+    public DbSet<StmDataModel> StmData { get; set; }
 
-	internal DbSet<QuestionModel> Questions { get; set; }
-	internal DbSet<TestCaseModel> TestCases { get; set; }
-	internal DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	internal DbSet<ArgumentModel> Arguments { get; set; }
-	internal DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
-    internal DbSet<ExecutionModel> Executions { get; set; }
+	public DbSet<QuestionModel> Questions { get; set; }
+	public DbSet<TestCaseModel> TestCases { get; set; }
+	public DbSet<TestRunModel> TestRuns { get; set; }
+	public DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
+    public DbSet<ArgumentModel> Arguments { get; set; }
+	public DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
+	public DbSet<ExecutionModel> Executions { get; set; }
 
-	internal DbSet<SubmissionModel> Submissions { get; set; }
+
+	public DbSet<SubmissionModel> Submissions { get; set; }
     #endregion
 }

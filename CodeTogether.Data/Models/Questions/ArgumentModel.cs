@@ -16,7 +16,6 @@ public class ArgumentModel : IDbModel
 		    OT_AssemblyName = type.Assembly.FullName, 
 		    OT_TypeName = type.FullName
 	    };
-
     }
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
