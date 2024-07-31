@@ -11,10 +11,10 @@ public class ExecutionConfigurationModel : IDbModel
 	public Guid EXE_PK { get; set; } = Guid.NewGuid();
 
 	[MaxLength(50)]
-	public string EXE_ScaffoldName { get; set; }
+	public required string EXE_ScaffoldName { get; set; }
 
 	[MaxLength(50)]
-	public string EXE_FunctionName { get; set; }
+	public required string EXE_FunctionName { get; set; }
 
 	[ForeignKey(nameof(EXE_TC_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]

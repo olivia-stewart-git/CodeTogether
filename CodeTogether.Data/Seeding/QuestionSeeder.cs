@@ -2,7 +2,7 @@
 
 namespace CodeTogether.Data.Seeding;
 
-internal class QuestionSeeder
+internal class QuestionSeeder : ISeedStep
 {
 	readonly ApplicationDbContext dbContext;
 
@@ -63,7 +63,7 @@ internal class QuestionSeeder
 
 		var simpleAddQuestion = new QuestionModel()
 		{
-			QST_Name = "Simple Add",
+			QST_Name = QuestionModel.Constants.SimpleAdd,
 			QST_Description = "Return the result of adding both arguments together",
 			QST_ExecutionConfigurationModel = executionConfiguration,
 			QST_TestCases = testCases,
@@ -97,7 +97,7 @@ internal class QuestionSeeder
 
 		var helloWorldQuestion = new QuestionModel()
 		{
-			QST_Name = "Hello World!",
+			QST_Name = QuestionModel.Constants.HelloWorld,
 			QST_Description = "Return the string \"Hello World!\", you can do that can't you?",
 			QST_ExecutionConfigurationModel = executionConfiguration,
 			QST_TestCases = testCases

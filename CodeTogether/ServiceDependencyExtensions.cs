@@ -1,7 +1,7 @@
-﻿using CodeTogether.Data;
+﻿using CodeTogether.Common.Logging;
 using CodeTogether.Data.DataAccess;
+using CodeTogether.Runner.Engine;
 using CodeTogether.Runner.Scaffolds;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace CodeTogether;
 
@@ -11,7 +11,8 @@ public static class ServiceDependencyExtensions
 	{
 		serviceCollection.AddSingleton<IScaffoldLoader, ScaffoldLoader>();
 
-		serviceCollection.AddTransient<IUnitOfWorkFactory, UnitOfWorkFactory>();
+		serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
+		serviceCollection.AddTransient<ICompilationEngine, CompilationEngine>();
 
         return serviceCollection;
 	}

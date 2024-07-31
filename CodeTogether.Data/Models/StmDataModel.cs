@@ -15,8 +15,8 @@ public class StmDataModel : IDbModel
     public Guid STM_PK { get; set; } = Guid.NewGuid();
 
     [MaxLength(20)]
-    public string STM_Key { get; set; }
+    public required string STM_Key { get; set; }
 
     [MaxLength(100)]
-    public string STM_Value { get; set; }
+    public required string STM_Value { get; set; }
 }

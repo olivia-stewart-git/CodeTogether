@@ -51,6 +51,7 @@ app.MapRazorComponents<App>()
 
 using (var context = new ApplicationDbContext())
 {
+	context.Database.EnsureCreated();
 	new Seeder(context).Seed();
 }
 
