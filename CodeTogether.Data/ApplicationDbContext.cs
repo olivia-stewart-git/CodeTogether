@@ -2,7 +2,6 @@
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace CodeTogether.Data;
 
@@ -11,7 +10,7 @@ public class ApplicationDbContext : DbContext
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=CodeTogether;Integrated Security=SSPI;TrustServerCertificate=True", x => x.MigrationsAssembly("CodeTogether.Migrations"));
-    }
+	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -32,8 +31,8 @@ public class ApplicationDbContext : DbContext
 	internal DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
 	internal DbSet<ArgumentModel> Arguments { get; set; }
 	internal DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
-    internal DbSet<ExecutionModel> Executions { get; set; }
+	internal DbSet<ExecutionModel> Executions { get; set; }
 
 	internal DbSet<SubmissionModel> Submissions { get; set; }
-    #endregion
+	#endregion
 }

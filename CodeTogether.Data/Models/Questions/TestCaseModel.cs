@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using CodeTogether.Data.DataAccess;
+﻿using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeTogether.Data.Models.Questions;
 
@@ -24,5 +24,5 @@ public class TestCaseModel : IDbModel
 	[ForeignKey(nameof(TST_QST_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public QuestionModel? TST_Question { get; set; } = null!;
-	public Guid? TST_QST_FK{ get; set; }
+	public Guid? TST_QST_FK { get; set; }
 }

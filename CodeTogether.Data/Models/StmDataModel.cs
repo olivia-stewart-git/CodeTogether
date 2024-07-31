@@ -12,11 +12,11 @@ public class StmDataModel : IDbModel
 		public const string HasSeeded = "HasSeeded";
 	}
 
-    public Guid STM_PK { get; set; } = Guid.NewGuid();
+	public Guid STM_PK { get; set; } = Guid.NewGuid();
 
-    [MaxLength(20)]
-    public required string STM_Key { get; set; }
+	[MaxLength(20)]
+	public required string STM_Key { get; set; }
 
-    [MaxLength(100)]
-    public required string STM_Value { get; set; }
+	[MaxLength(100)]
+	public required string STM_Value { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using CodeTogether.Common.Logging;
-using CodeTogether.Data.DataAccess;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Runner.Scaffolds;
 
@@ -14,7 +13,7 @@ public static class ServiceDependencyExtensions
 		serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
 		serviceCollection.AddTransient<ICompilationEngine, CompilationEngine>();
 
-        return serviceCollection;
+		return serviceCollection;
 	}
 
 	public static IServiceCollection ConfigureLogging(this IServiceCollection serviceCollection)

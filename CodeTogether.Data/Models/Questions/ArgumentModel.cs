@@ -9,15 +9,15 @@ namespace CodeTogether.Data.Models.Questions;
 [PrimaryKey(nameof(OT_PK))]
 public class ArgumentModel : IDbModel
 {
-    public static ArgumentModel FromType(Type type)
-    {
-	    return new ArgumentModel()
-	    {
-		    OT_AssemblyName = type.Assembly.FullName, 
-		    OT_TypeName = type.FullName
-	    };
+	public static ArgumentModel FromType(Type type)
+	{
+		return new ArgumentModel()
+		{
+			OT_AssemblyName = type.Assembly.FullName,
+			OT_TypeName = type.FullName
+		};
 
-    }
+	}
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
 
