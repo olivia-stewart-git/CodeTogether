@@ -24,7 +24,6 @@ public class Seeder
 			new SubmissionSeeder(dbContext)
 		];
 
-
 		foreach (var seedStep in steps)
 		{
 			seedStep.Seed();

@@ -34,7 +34,7 @@ internal class SubmissionSeeder : ISeedStep
 			SBM_Code = @"
 using System;
 
-public class HelloWorld
+public class HelloWorldProblem
 {
 	public string HelloWorld()
 	{
