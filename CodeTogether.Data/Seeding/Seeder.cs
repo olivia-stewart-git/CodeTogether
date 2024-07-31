@@ -18,7 +18,17 @@ public class Seeder
 			return; 
 		}
 
-		new QuestionSeeder(dbContext).Seed();
+		List<ISeedStep> steps =
+		[
+			new QuestionSeeder(dbContext),
+			new SubmissionSeeder(dbContext)
+		];
+
+
+		foreach (var seedStep in steps)
+		{
+			seedStep.Seed();
+		}
 
 		FillHasSeeded();
 	}

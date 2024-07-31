@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace CodeTogether;
+namespace CodeTogether.Common.Logging;
 
 public class LoggerManager : ILoggerManager
 {

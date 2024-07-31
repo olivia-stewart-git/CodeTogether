@@ -1,4 +1,4 @@
-﻿namespace CodeTogether;
+﻿namespace CodeTogether.Common.Logging;
 
 public interface ILoggerManager
 {

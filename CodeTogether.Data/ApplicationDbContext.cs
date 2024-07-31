@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Data.Models;
 using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
@@ -32,5 +33,7 @@ public class ApplicationDbContext : DbContext
 	internal DbSet<ArgumentModel> Arguments { get; set; }
 	internal DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
     internal DbSet<ExecutionModel> Executions { get; set; }
+
+	internal DbSet<SubmissionModel> Submissions { get; set; }
     #endregion
 }

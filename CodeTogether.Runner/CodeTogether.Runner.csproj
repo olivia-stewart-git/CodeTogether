@@ -16,4 +16,12 @@
     <EmbeddedResource Include="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Basic.Reference.Assemblies.Net80" Version="1.7.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
+  </ItemGroup>
+
 </Project>

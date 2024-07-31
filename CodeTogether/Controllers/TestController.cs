@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CodeTogether.Common.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CodeTogether.Controllers;
 

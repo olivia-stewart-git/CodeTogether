@@ -9,8 +9,6 @@ namespace CodeTogether.Data.Models.Questions;
 [PrimaryKey(nameof(OT_PK))]
 public class ArgumentModel : IDbModel
 {
-	public static ArgumentModel Void() => new ();
-
     public static ArgumentModel FromType(Type type)
     {
 	    return new ArgumentModel()
@@ -23,10 +21,10 @@ public class ArgumentModel : IDbModel
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
 
-	[ForeignKey(nameof(OT_TC_PK))]
+	[ForeignKey(nameof(OT_TC_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public ArgumentCollectionModel? OT_Parent { get; set; }
-	public Guid? OT_TC_PK { get; set; }
+	public Guid? OT_TC_FK { get; set; }
 
 	[MaxLength(100)]
 	public string? OT_AssemblyName { get; set; }
