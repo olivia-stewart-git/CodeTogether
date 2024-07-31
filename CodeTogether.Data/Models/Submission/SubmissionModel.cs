@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CodeTogether.Data.DataAccess;
 
 namespace CodeTogether.Data.Models.Submission;
 
 [PrimaryKey(nameof(SBM_PK))]
-public class SubmissionModel
+public class SubmissionModel : IDbModel
 {
 	public Guid SBM_PK { get; set; } = Guid.NewGuid();
 

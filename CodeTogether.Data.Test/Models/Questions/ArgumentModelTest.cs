@@ -26,8 +26,8 @@ internal class ArgumentModelTest
 		Assert.IsNotNull(type);
 		var typeModel = new ArgumentModel
 		{
-			OT_TypeName = type.Assembly.FullName!,
-			OT_AssemblyName = type.FullName!,
+			OT_TypeName = type.FullName!,
+			OT_AssemblyName = type.Assembly.FullName!,
 		};
 
 		Assert.IsNotNull(typeModel.OT_Type);

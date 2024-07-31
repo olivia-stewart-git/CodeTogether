@@ -10,7 +10,7 @@ public class CompilationEngine : ICompilationEngine
 {
 	public Assembly CreateCompilation(string assemblyName, string sourceCode, params Type[] referenceTypes)
 	{
-		var references = new HashSet<MetadataReference>();
+		var references = ((IEnumerable<MetadataReference>)Net80.References.All).ToHashSet();
 		foreach (var referenceType in referenceTypes)
 		{
 			references.AddAssembly(referenceType);
@@ -22,7 +22,6 @@ public class CompilationEngine : ICompilationEngine
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
 					optimizationLevel: OptimizationLevel.Release))
 			.WithReferences(references)
-			.WithReferenceAssemblies(ReferenceAssemblyKind.Net80)
 			.AddSyntaxTrees(tree);
 
 		using var codeStream = new MemoryStream();

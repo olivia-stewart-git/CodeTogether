@@ -22,6 +22,11 @@ public class ScaffoldLoader : IScaffoldLoader
 		}
     }
 
+	public List<string> LoadAllScaffolds()
+	{
+		return resourceCache.Keys.Select(LoadScaffold).ToList();
+	}
+
 	public string LoadScaffold(string scaffoldName)
 	{
 		var assembly = Assembly.GetExecutingAssembly();

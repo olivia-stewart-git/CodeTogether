@@ -31,7 +31,8 @@ internal class QuestionSeeder : ISeedStep
 		var executionConfiguration = new ExecutionConfigurationModel
 		{
 			EXE_ScaffoldName = "SimpleAddScaffold",
-			EXE_FunctionName = "Add",
+			EXE_AdapterName = "ClassInstanceAdaptor",
+			EXE_AdapterArgument = "SimpleAdd::Add",
 			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = ArgumentModel.FromType(typeof(int)),
 		};
@@ -79,7 +80,8 @@ internal class QuestionSeeder : ISeedStep
 		var executionConfiguration = new ExecutionConfigurationModel()
 		{
 			EXE_ScaffoldName = "HelloWorldScaffold",
-			EXE_FunctionName = "HelloWorld",
+			EXE_AdapterName = "ClassInstanceAdaptor",
+			EXE_AdapterArgument = "HelloWorldProblem::HelloWorld",
 			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = ArgumentModel.FromType(typeof(string))
 		};

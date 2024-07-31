@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Common.Logging;
 using CodeTogether.Data.DataAccess;
+using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Runner.Scaffolds;
 
@@ -13,6 +14,8 @@ public static class ServiceDependencyExtensions
 
 		serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
 		serviceCollection.AddTransient<ICompilationEngine, CompilationEngine>();
+
+		serviceCollection.AddTransient<IAdaptorFactory, AdaptorFactory>();
 
         return serviceCollection;
 	}

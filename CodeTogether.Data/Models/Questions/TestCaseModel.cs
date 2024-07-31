@@ -13,13 +13,13 @@ public class TestCaseModel : IDbModel
 	public bool TST_IsHidden { get; set; }
 
 	[MaxLength(30)]
-	public string TST_Title { get; set; }
+	public required string TST_Title { get; set; }
 
 	[MaxLength(100)]
-	public string[] TST_Arguments { get; set; }
+	public required string[] TST_Arguments { get; set; }
 
 	[MaxLength(100)]
-	public string TST_ExpectedResponse { get; set; }
+	public required string TST_ExpectedResponse { get; set; }
 
 	[ForeignKey(nameof(TST_QST_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
