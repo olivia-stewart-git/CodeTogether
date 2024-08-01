@@ -1,8 +1,8 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.DataAccess;
+using CodeTogether.Data.Models.Questions;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CodeTogether.Data.DataAccess;
 
 namespace CodeTogether.Data.Models.Submission;
 

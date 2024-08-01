@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using CodeTogether.Data.DataAccess;
+﻿using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeTogether.Data.Models.Questions;
 
@@ -24,8 +24,8 @@ public class ExecutionConfigurationModel : IDbModel
 	public ArgumentCollectionModel? EXE_InputArguments { get; set; }
 	public Guid? EXE_TC_FK { get; set; }
 
-    [ForeignKey(nameof(EXE_TO_FK))]
+	[ForeignKey(nameof(EXE_TO_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public ArgumentModel? EXE_ReturnArgument { get; set; }
-    public Guid? EXE_TO_FK { get; set; }
+	public Guid? EXE_TO_FK { get; set; }
 }

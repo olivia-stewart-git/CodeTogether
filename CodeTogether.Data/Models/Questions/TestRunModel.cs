@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using CodeTogether.Data.DataAccess;
+﻿using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeTogether.Data.Models.Questions;
 
@@ -15,7 +15,7 @@ public class TestRunModel : IDbModel
 	[MaxLength(50)]
 	public required string TCR_ActualResult { get; set; }
 
-	[MaxLength(400)] 
+	[MaxLength(400)]
 	public string? TCR_Exception { get; set; } = null;
 
 	[ForeignKey(nameof(TCR_TST_FK))]

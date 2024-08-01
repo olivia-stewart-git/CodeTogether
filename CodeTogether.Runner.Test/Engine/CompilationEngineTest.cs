@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using CodeTogether.Runner.Scaffolds;
+﻿using CodeTogether.Runner.Scaffolds;
+using System.Reflection;
 
 namespace CodeTogether.Runner.Engine.Test;
 
@@ -81,7 +81,7 @@ public class TestClass
 		var classInstance = Activator.CreateInstance(classType, inputObject);
 		Assert.IsNotNull(classInstance);
 
-        var method = classType.GetMethod("GetValue");
+		var method = classType.GetMethod("GetValue");
 		Assert.IsNotNull(method);
 
 		var result = (string)method.Invoke(classInstance, [])!;
