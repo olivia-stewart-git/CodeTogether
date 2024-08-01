@@ -38,7 +38,7 @@ public class ApplicationDbContext : DbContext
 
 	public DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
     public DbSet<TypeModel> Arguments { get; set; }
-	public DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
+	public DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
 
 	public DbSet<SubmissionModel> Submissions { get; set; }
 	public DbSet<ExecutionResultModel> ExecutionResults { get; set; }

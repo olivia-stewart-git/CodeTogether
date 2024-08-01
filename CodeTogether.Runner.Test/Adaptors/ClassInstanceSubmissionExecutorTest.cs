@@ -9,18 +9,17 @@ using CodeTogether.Runner.Engine;
 
 namespace CodeTogether.Runner.Adaptors.Test;
 
-internal class ClassInstanceAdaptorTest
+internal class ClassInstanceSubmissionExecutorTest
 {
-
 	ExecutionConfigurationModel CreateExecutionConfiguration()
 	{
 		return new ExecutionConfigurationModel()
 		{
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
 			EXE_ScaffoldName = string.Empty,
 			EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
-			EXE_InputArguments = new ArgumentCollectionModel()
+			EXE_InputArguments = new QuestionSignatureModel()
 			{
 				TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 			}
@@ -52,9 +51,9 @@ internal class ClassInstanceAdaptorTest
 			},
         ];
 
-		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
+		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
-		var result = adaptor.Execute();
+		var result = adaptor.Execute(assembly);
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
 		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(2));
     }
@@ -76,9 +75,9 @@ internal class ClassInstanceAdaptorTest
 			}
 		];
 
-		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
+		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
-		var result = adaptor.Execute();
+		var result = adaptor.Execute(assembly);
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
 		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(1));
 	}

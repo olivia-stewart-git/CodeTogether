@@ -18,8 +18,8 @@ public class SubmissionModel : IDbModel
 	public required string SBM_Code { get; set; } = string.Empty;
 
 	[ForeignKey(nameof(SBM_EXR_FK))]
-	public required TestRunExecutionModel SBM_Execution { get; set; }
-	public Guid SBM_EXR_FK { get; set; }
+	public ExecutionResultModel? SBM_Execution { get; set; }
+	public Guid? SBM_EXR_FK { get; set; }
 
     [ForeignKey(nameof(SBM_QST_FK))]
 	public required QuestionModel SBM_Question { get; set; }

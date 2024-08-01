@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
+using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,6 @@ public class TestRunModel : IDbModel
 	public Guid TCR_TST_FK { get; set; }
 
 	[ForeignKey(nameof(TCR_TST_FK))]
-    public required TestRunExecutionModel TCT_Execution { get; set; }
+    public required SubmissionModel TCT_Execution { get; set; }
 	public Guid TCR_TRX_FK { get; set; }
 }

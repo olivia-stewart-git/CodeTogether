@@ -5,15 +5,13 @@ using TestCaseStatus = CodeTogether.Data.Models.Questions.TestCaseStatus;
 
 namespace CodeTogether.Runner.Adaptors;
 
-public abstract class TestRunnerAdaptor : IAdaptor
+public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 {
-	protected readonly Assembly targetAssembly;
 	protected readonly ExecutionConfigurationModel executionConfiguration;
 	readonly IEnumerable<TestCaseModel> testCases;
 
-	protected TestRunnerAdaptor(Assembly targetAssembly, ExecutionConfigurationModel executionConfiguration, IEnumerable<TestCaseModel> testCases)
+	protected TestRunnerSubmissionExecutor(ExecutionConfigurationModel executionConfiguration, IEnumerable<TestCaseModel> testCases)
 	{
-		this.targetAssembly = targetAssembly;
 		this.executionConfiguration = executionConfiguration;
 		this.testCases = testCases;
 	}
@@ -21,9 +19,9 @@ public abstract class TestRunnerAdaptor : IAdaptor
 	public IEnumerable<Type> GetAddTypes() => InputTypes;
     public abstract IEnumerable<Type> InputTypes { get; }
 
-	public abstract object? GetExecutionResult(object[] testCaseArguments);
+	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
-	public ExecutionResultModel Execute()
+	public ExecutionResultModel Execute(Assembly targetAssembly)
 	{
 		TestRunExecutionModel fullExecution = new TestRunExecutionModel();
 		List<TestRunModel> testRuns = [];
@@ -32,11 +30,11 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
-				var result = GetExecutionResult(arguments);
+				var result = GetExecutionResult(targetAssembly, arguments);
 				var testRun = AssertTestCase(testCaseModel, result, fullExecution);
 				testRuns.Add(testRun);
 			}
-			catch (Exception ex)
+			catch (ExecutionRuntimeException ex)
 			{
 				testRuns.Add(new TestRunModel()
 				{

@@ -1,5 +1,6 @@
 ﻿namespace CodeTogether.Runner.Engine;
 
+[Serializable()]
 public class CompilationException : Exception
 {
 	public CompilationException()

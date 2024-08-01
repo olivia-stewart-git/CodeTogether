@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore;
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(TC_PK))]
-public class ArgumentCollectionModel : IDbModel
+public class QuestionSignatureModel : IDbModel
 {
 	public Guid TC_PK { get; set; } = Guid.NewGuid();
 
-	[InverseProperty(nameof(TypeModel.OT_Parent))]
+	[ForeignKey(nameof(TC_TO_FK))]
 	public IList<TypeModel> TC_Types { get; set; } = [];
+	public Guid TC_TO_FK { get; set; }
 }

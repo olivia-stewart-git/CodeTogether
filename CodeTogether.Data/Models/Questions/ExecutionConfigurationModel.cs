@@ -14,14 +14,14 @@ public class ExecutionConfigurationModel : IDbModel
 	public required string EXE_ScaffoldName { get; set; }
 
 	[MaxLength(50)]
-	public required string EXE_AdapterName { get; set; }
+	public required string EXE_ExecutionRunnerName { get; set; }
 
 	[MaxLength(50)]
-	public required string EXE_AdapterArgument { get; set; }
+	public required string EXE_ExecutionArgument { get; set; }
 
 	[ForeignKey(nameof(EXE_TC_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
-	public ArgumentCollectionModel? EXE_InputArguments { get; set; }
+	public QuestionSignatureModel? EXE_InputArguments { get; set; }
 	public Guid? EXE_TC_FK { get; set; }
 
     [ForeignKey(nameof(EXE_TO_FK))]

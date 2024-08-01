@@ -12,6 +12,8 @@ public class ExecutionResultModel : IDbModel
 	public required ExecutionStatus EXR_Status { get; set; } = ExecutionStatus.None;
 
 	[ForeignKey(nameof(EXR_TRX_FK))]
-	public required TestRunExecutionModel EXR_TestRun { get; set; }
-	public Guid EXR_TRX_FK { get; set; }
+	public TestRunExecutionModel? EXR_TestRun { get; set; }
+	public Guid? EXR_TRX_FK { get; set; }
+
+	public Exception? EXR_Exception { get; set; }
 }

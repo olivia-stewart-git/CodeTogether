@@ -22,7 +22,7 @@ internal class QuestionSeeder : ISeeder
 
 	void SeedSimpleAdd()
 	{
-		var inputArguments = new ArgumentCollectionModel()
+		var inputArguments = new QuestionSignatureModel()
 		{
 			TC_Types =
 			[
@@ -34,8 +34,8 @@ internal class QuestionSeeder : ISeeder
 		var executionConfiguration = new ExecutionConfigurationModel
 		{
 			EXE_ScaffoldName = "SimpleAddScaffold",
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "SimpleAdd::Add",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "SimpleAdd::Add",
 			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = typeModelFactory.Get(typeof(int)),
 		};
@@ -79,12 +79,12 @@ internal class QuestionSeeder : ISeeder
 
 	void SeedHelloWorld()
 	{
-		var inputArguments = new ArgumentCollectionModel();
+		var inputArguments = new QuestionSignatureModel();
 		var executionConfiguration = new ExecutionConfigurationModel()
 		{
 			EXE_ScaffoldName = "HelloWorldScaffold",
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "HelloWorldProblem::HelloWorld",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "HelloWorldProblem::HelloWorld",
 			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = typeModelFactory.Get(typeof(string))
 		};

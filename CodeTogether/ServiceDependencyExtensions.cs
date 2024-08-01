@@ -18,7 +18,7 @@ public static class ServiceDependencyExtensions
         serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
 		serviceCollection.AddTransient<ICompilationEngine, CompilationEngine>();
 
-		serviceCollection.AddTransient<IAdaptorFactory, AdaptorFactory>();
+		serviceCollection.AddTransient<IExecutorFactory, ExecutorFactory>();
 
         return serviceCollection;
 	}
