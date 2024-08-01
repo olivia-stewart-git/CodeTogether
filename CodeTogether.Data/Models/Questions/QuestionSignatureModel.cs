@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using CodeTogether.Data.DataAccess;
+﻿using CodeTogether.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeTogether.Data.Models.Questions;
 

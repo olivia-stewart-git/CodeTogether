@@ -20,7 +20,7 @@ public static class ServiceDependencyExtensions
 
 		serviceCollection.AddTransient<IExecutorFactory, ExecutorFactory>();
 
-        return serviceCollection;
+		return serviceCollection;
 	}
 
 	public static IServiceCollection ConfigureLogging(this IServiceCollection serviceCollection)

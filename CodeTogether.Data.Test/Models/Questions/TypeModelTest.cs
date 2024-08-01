@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CodeTogether.Data.Models.Questions.Test;
+﻿namespace CodeTogether.Data.Models.Questions.Test;
 
 internal class TypeModelTest
 {
@@ -17,7 +11,7 @@ internal class TypeModelTest
 			OT_AssemblyName = "something",
 		};
 		Assert.Null(typeModel.OT_Type);
-    }
+	}
 
 	[Test]
 	public void TestLoadsCorrectType()

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
+using System.Reflection;
 
 namespace CodeTogether.Runner.Adaptors.Test;
 
@@ -24,7 +19,7 @@ internal class ClassInstanceSubmissionExecutorTest
 				TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 			}
 		};
-    }
+	}
 
 	[Test]
 	public void TestRunsWithPassingTest()
@@ -33,7 +28,7 @@ internal class ClassInstanceSubmissionExecutorTest
 
 		var executionConfiguration = CreateExecutionConfiguration();
 
-        List<TestCaseModel> testCases =
+		List<TestCaseModel> testCases =
 		[
 			new TestCaseModel()
 			{
@@ -49,7 +44,7 @@ internal class ClassInstanceSubmissionExecutorTest
 				TST_ExpectedResponse = "7",
 				TST_Question = null,
 			},
-        ];
+		];
 
 		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
@@ -64,7 +59,7 @@ internal class ClassInstanceSubmissionExecutorTest
 		var assembly = Assembly.GetExecutingAssembly();
 		var executionConfiguration = CreateExecutionConfiguration();
 
-        List<TestCaseModel> testCases =
+		List<TestCaseModel> testCases =
 		[
 			new TestCaseModel()
 			{

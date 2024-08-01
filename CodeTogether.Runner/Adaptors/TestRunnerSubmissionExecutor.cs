@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
+using System.Reflection;
 using TestCaseStatus = CodeTogether.Data.Models.Questions.TestCaseStatus;
 
 namespace CodeTogether.Runner.Adaptors;
@@ -17,7 +17,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 	}
 
 	public IEnumerable<Type> GetAddTypes() => InputTypes;
-    public abstract IEnumerable<Type> InputTypes { get; }
+	public abstract IEnumerable<Type> InputTypes { get; }
 
 	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
@@ -47,8 +47,8 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			}
 		}
 
-		var status = testRuns.Any(x => x.TCR_Status != TestCaseStatus.Success) 
-			? ExecutionStatus.Failure 
+		var status = testRuns.Any(x => x.TCR_Status != TestCaseStatus.Success)
+			? ExecutionStatus.Failure
 			: ExecutionStatus.Success;
 
 		fullExecution.TRX_TestRuns = testRuns;
@@ -111,7 +111,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
         }
 		var convertExpected = TypeConverter.Convert(expectedResult, expectedType);
 
-		var equal = inputResult?.Equals(convertExpected) 
+		var equal = inputResult?.Equals(convertExpected)
 			?? throw new InvalidOperationException("Returned null result");
 		var status = equal ? TestCaseStatus.Success : TestCaseStatus.Failure;
 
