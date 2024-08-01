@@ -29,7 +29,7 @@ public class ClassInstanceSubmissionExecutor : TestRunnerSubmissionExecutor
 		if (method == null)
 		{
 			throw new InvalidOperationException($"Could not resolve method {methodName}");
-        }
+		}
 
 		var instance = Activator.CreateInstance(type);
 
