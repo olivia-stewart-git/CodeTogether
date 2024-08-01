@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
+using CodeTogether.Runner.Engine;
 
 namespace CodeTogether.Data.Models.Submission;
 
@@ -16,7 +17,11 @@ public class SubmissionModel : IDbModel
 	[MaxLength(int.MaxValue)]
 	public required string SBM_Code { get; set; } = string.Empty;
 
-	[ForeignKey(nameof(SBM_QST_FK))]
+	[ForeignKey(nameof(SBM_EXR_FK))]
+	public required TestRunExecutionModel SBM_Execution { get; set; }
+	public Guid SBM_EXR_FK { get; set; }
+
+    [ForeignKey(nameof(SBM_QST_FK))]
 	public required QuestionModel SBM_Question { get; set; }
 	public Guid SBM_QST_FK { get; set; }
 }

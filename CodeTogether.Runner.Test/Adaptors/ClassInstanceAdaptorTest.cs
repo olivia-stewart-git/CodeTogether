@@ -19,10 +19,10 @@ internal class ClassInstanceAdaptorTest
 			EXE_AdapterName = "ClassInstanceAdaptor",
 			EXE_AdapterArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
 			EXE_ScaffoldName = string.Empty,
-			EXE_ReturnArgument = ArgumentModel.FromType(typeof(int)),
+			EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
 			EXE_InputArguments = new ArgumentCollectionModel()
 			{
-				TC_Types = [ArgumentModel.FromType(typeof(int)), ArgumentModel.FromType(typeof(int))]
+				TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 			}
 		};
     }
@@ -55,8 +55,8 @@ internal class ClassInstanceAdaptorTest
 		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
 
 		var result = adaptor.Execute();
-		Assert.That(result.Status, Is.EqualTo(ExecutionStatus.Success));
-		Assert.That(result.TestRuns.ToList(), Has.Count.EqualTo(2));
+		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
+		Assert.That(result.EXR_TestRun.ToList(), Has.Count.EqualTo(2));
     }
 
 	[Test]
@@ -79,8 +79,8 @@ internal class ClassInstanceAdaptorTest
 		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
 
 		var result = adaptor.Execute();
-		Assert.That(result.Status, Is.EqualTo(ExecutionStatus.Failure));
-		Assert.That(result.TestRuns.ToList(), Has.Count.EqualTo(1));
+		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
+		Assert.That(result.EXR_TestRun.ToList(), Has.Count.EqualTo(1));
 	}
 }
 

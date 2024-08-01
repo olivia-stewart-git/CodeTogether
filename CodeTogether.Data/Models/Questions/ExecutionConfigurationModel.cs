@@ -26,6 +26,6 @@ public class ExecutionConfigurationModel : IDbModel
 
     [ForeignKey(nameof(EXE_TO_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
-	public ArgumentModel? EXE_ReturnArgument { get; set; }
+	public TypeModel? EXE_ReturnArgument { get; set; }
     public Guid? EXE_TO_FK { get; set; }
 }

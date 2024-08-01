@@ -23,7 +23,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 
 	public abstract object? GetExecutionResult(object[] testCaseArguments);
 
-	public ExecutionResult Execute()
+	public ExecutionResultModel Execute()
 	{
 		List<TestRunModel> testRuns = [];
 		foreach (var testCaseModel in testCases)
@@ -51,7 +51,11 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			? ExecutionStatus.Failure 
 			: ExecutionStatus.Success;
 
-		return new ExecutionResult(status, testRuns);
+		return new ExecutionResultModel
+		{
+			EXR_Status = status,
+			EXR_TestRun = testRuns,
+		};
 	}
 
 	object[] GetTestCaseArguments(TestCaseModel testCase)

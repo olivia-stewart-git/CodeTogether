@@ -12,7 +12,7 @@ public class ExecutionEngine : IExecutionEngine
 		this.compilationEngine = compilationEngine;
 	}
 
-	public ExecutionResult ExecuteAgainstQuestion(QuestionModel question, string code)
+	public SubmissionModel ExecuteAgainstQuestion(QuestionModel question, string code)
 	{
 		var configuration = question.QST_ExecutionConfigurationModel;
 

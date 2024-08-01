@@ -7,11 +7,11 @@ using System.Reflection;
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(OT_PK))]
-public class ArgumentModel : IDbModel
+public class TypeModel : IDbModel
 {
-    public static ArgumentModel FromType(Type type)
+    public static TypeModel FromType(Type type)
     {
-	    return new ArgumentModel()
+	    return new TypeModel()
 	    {
 		    OT_AssemblyName = type.Assembly.FullName, 
 		    OT_TypeName = type.FullName

@@ -1,6 +1,7 @@
 ﻿using CodeTogether.Data.Models;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Data.Models.Submission;
+using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
@@ -28,14 +29,16 @@ public class ApplicationDbContext : DbContext
     public DbSet<StmDataModel> StmData { get; set; }
 
 	public DbSet<QuestionModel> Questions { get; set; }
+
 	public DbSet<TestCaseModel> TestCases { get; set; }
 	public DbSet<TestRunModel> TestRuns { get; set; }
-	public DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-    public DbSet<ArgumentModel> Arguments { get; set; }
-	public DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
-	public DbSet<ExecutionModel> Executions { get; set; }
+	public DbSet<TestRunExecutionModel> TestExecutions { get; set; }
 
+	public DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
+    public DbSet<TypeModel> Arguments { get; set; }
+	public DbSet<ArgumentCollectionModel> ArgumentCollections { get; set; }
 
 	public DbSet<SubmissionModel> Submissions { get; set; }
+	public DbSet<ExecutionResultModel> ExecutionResults { get; set; }
     #endregion
 }

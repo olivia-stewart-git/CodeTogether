@@ -9,6 +9,6 @@ public class ArgumentCollectionModel : IDbModel
 {
 	public Guid TC_PK { get; set; } = Guid.NewGuid();
 
-	[InverseProperty(nameof(ArgumentModel.OT_Parent))]
-	public IList<ArgumentModel> TC_Types { get; set; } = [];
+	[InverseProperty(nameof(TypeModel.OT_Parent))]
+	public IList<TypeModel> TC_Types { get; set; } = [];
 }

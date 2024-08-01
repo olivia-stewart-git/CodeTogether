@@ -4,6 +4,6 @@ namespace CodeTogether.Runner.Adaptors;
 
 public interface IAdaptor
 {
-	ExecutionResult Execute();
+	ExecutionResultModel Execute();
 	IEnumerable<Type> GetAddTypes();
 }
