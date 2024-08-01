@@ -4,20 +4,19 @@ using System.Reflection;
 
 namespace CodeTogether.Runner.Adaptors.Test;
 
-internal class ClassInstanceAdaptorTest
+internal class ClassInstanceSubmissionExecutorTest
 {
-
 	ExecutionConfigurationModel CreateExecutionConfiguration()
 	{
 		return new ExecutionConfigurationModel()
 		{
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
 			EXE_ScaffoldName = string.Empty,
-			EXE_ReturnArgument = ArgumentModel.FromType(typeof(int)),
-			EXE_InputArguments = new ArgumentCollectionModel()
+			EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
+			EXE_InputArguments = new QuestionSignatureModel()
 			{
-				TC_Types = [ArgumentModel.FromType(typeof(int)), ArgumentModel.FromType(typeof(int))]
+				TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 			}
 		};
 	}
@@ -47,12 +46,12 @@ internal class ClassInstanceAdaptorTest
 			},
 		];
 
-		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
+		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
-		var result = adaptor.Execute();
-		Assert.That(result.Status, Is.EqualTo(ExecutionStatus.Success));
-		Assert.That(result.TestRuns.ToList(), Has.Count.EqualTo(2));
-	}
+		var result = adaptor.Execute(assembly);
+		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
+		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(2));
+    }
 
 	[Test]
 	public void TestRunsWithFailingTest()
@@ -71,11 +70,11 @@ internal class ClassInstanceAdaptorTest
 			}
 		];
 
-		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
+		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
-		var result = adaptor.Execute();
-		Assert.That(result.Status, Is.EqualTo(ExecutionStatus.Failure));
-		Assert.That(result.TestRuns.ToList(), Has.Count.EqualTo(1));
+		var result = adaptor.Execute(assembly);
+		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
+		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(1));
 	}
 }
 

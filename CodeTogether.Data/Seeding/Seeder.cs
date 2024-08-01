@@ -1,14 +1,20 @@
-﻿using CodeTogether.Data.Models;
+﻿using CodeTogether.Common.Logging;
+using CodeTogether.Data.Models;
+using CodeTogether.Data.Models.Factories;
 
 namespace CodeTogether.Data.Seeding;
 
-public class Seeder
+public class Seeder : ISeeder
 {
 	readonly ApplicationDbContext dbContext;
+	readonly ICachedTypeModelFactory typeModelFactory;
+	readonly ILoggerManager logManager;
 
-	public Seeder(ApplicationDbContext dbContext)
+	public Seeder(ApplicationDbContext dbContext, ICachedTypeModelFactory typeModelFactory, ILoggerManager logManager)
 	{
 		this.dbContext = dbContext;
+		this.typeModelFactory = typeModelFactory;
+		this.logManager = logManager;
 	}
 
 	public void Seed()
@@ -18,14 +24,14 @@ public class Seeder
 			return;
 		}
 
-		List<ISeedStep> steps =
+		List<ISeeder> steps =
 		[
-			new QuestionSeeder(dbContext),
-			new SubmissionSeeder(dbContext)
+			new QuestionSeeder(dbContext, typeModelFactory),
 		];
 
 		foreach (var seedStep in steps)
 		{
+			logManager.LogInfo($"starting seed step: {seedStep.GetType().FullName}");
 			seedStep.Seed();
 		}
 

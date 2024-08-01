@@ -1,6 +1,6 @@
 ﻿namespace CodeTogether.Data.Seeding;
 
-public interface ISeedStep
+public interface ISeeder
 {
 	public void Seed();
 }

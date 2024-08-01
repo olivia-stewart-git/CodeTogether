@@ -5,15 +5,13 @@ using TestCaseStatus = CodeTogether.Data.Models.Questions.TestCaseStatus;
 
 namespace CodeTogether.Runner.Adaptors;
 
-public abstract class TestRunnerAdaptor : IAdaptor
+public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 {
-	protected readonly Assembly targetAssembly;
 	protected readonly ExecutionConfigurationModel executionConfiguration;
 	readonly IEnumerable<TestCaseModel> testCases;
 
-	protected TestRunnerAdaptor(Assembly targetAssembly, ExecutionConfigurationModel executionConfiguration, IEnumerable<TestCaseModel> testCases)
+	protected TestRunnerSubmissionExecutor(ExecutionConfigurationModel executionConfiguration, IEnumerable<TestCaseModel> testCases)
 	{
-		this.targetAssembly = targetAssembly;
 		this.executionConfiguration = executionConfiguration;
 		this.testCases = testCases;
 	}
@@ -21,21 +19,22 @@ public abstract class TestRunnerAdaptor : IAdaptor
 	public IEnumerable<Type> GetAddTypes() => InputTypes;
 	public abstract IEnumerable<Type> InputTypes { get; }
 
-	public abstract object? GetExecutionResult(object[] testCaseArguments);
+	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
-	public ExecutionResult Execute()
+	public ExecutionResultModel Execute(Assembly targetAssembly)
 	{
+		TestRunExecutionModel fullExecution = new TestRunExecutionModel();
 		List<TestRunModel> testRuns = [];
 		foreach (var testCaseModel in testCases)
 		{
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
-				var result = GetExecutionResult(arguments);
-				var testRun = AssertTestCase(testCaseModel, result);
+				var result = GetExecutionResult(targetAssembly, arguments);
+				var testRun = AssertTestCase(testCaseModel, result, fullExecution);
 				testRuns.Add(testRun);
 			}
-			catch (Exception ex)
+			catch (ExecutionRuntimeException ex)
 			{
 				testRuns.Add(new TestRunModel()
 				{
@@ -43,7 +42,8 @@ public abstract class TestRunnerAdaptor : IAdaptor
 					TCR_Exception = ex.ToString(),
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
-				});
+					TCT_Execution = fullExecution,
+                });
 			}
 		}
 
@@ -51,7 +51,12 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			? ExecutionStatus.Failure
 			: ExecutionStatus.Success;
 
-		return new ExecutionResult(status, testRuns);
+		fullExecution.TRX_TestRuns = testRuns;
+		return new ExecutionResultModel
+		{
+			EXR_Status = status,
+			EXR_TestRun = fullExecution,
+        };
 	}
 
 	object[] GetTestCaseArguments(TestCaseModel testCase)
@@ -79,7 +84,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 		return objects.ToArray();
 	}
 
-	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult)
+	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult, TestRunExecutionModel testRun)
 	{
 		var expectedType = executionConfiguration.EXE_ReturnArgument?.OT_Type;
 		if (expectedType == null)
@@ -89,7 +94,8 @@ public abstract class TestRunnerAdaptor : IAdaptor
 				TCR_ActualResult = string.Empty,
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
-			};
+				TCT_Execution = testRun,
+            };
 		}
 
 		var expectedResult = testCase.TST_ExpectedResponse;
@@ -100,8 +106,9 @@ public abstract class TestRunnerAdaptor : IAdaptor
 				TCR_ActualResult = "null",
 				TCR_Status = TestCaseStatus.Success,
 				TCR_Parent = testCase,
-			};
-		}
+				TCT_Execution = testRun,
+            };
+        }
 		var convertExpected = TypeConverter.Convert(expectedResult, expectedType);
 
 		var equal = inputResult?.Equals(convertExpected)
@@ -113,6 +120,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			TCR_ActualResult = inputResult.ToString() ?? string.Empty,
 			TCR_Status = status,
 			TCR_Parent = testCase,
-		};
-	}
+			TCT_Execution = testRun,
+        };
+    }
 }

@@ -1,14 +1,17 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Factories;
+using CodeTogether.Data.Models.Questions;
 
 namespace CodeTogether.Data.Seeding;
 
-internal class QuestionSeeder : ISeedStep
+internal class QuestionSeeder : ISeeder
 {
 	readonly ApplicationDbContext dbContext;
+	readonly ICachedTypeModelFactory typeModelFactory;
 
-	internal QuestionSeeder(ApplicationDbContext dbContext)
+	internal QuestionSeeder(ApplicationDbContext dbContext, ICachedTypeModelFactory typeModelFactory)
 	{
 		this.dbContext = dbContext;
+		this.typeModelFactory = typeModelFactory;
 	}
 
 	public void Seed()
@@ -19,22 +22,22 @@ internal class QuestionSeeder : ISeedStep
 
 	void SeedSimpleAdd()
 	{
-		var inputArguments = new ArgumentCollectionModel()
+		var inputArguments = new QuestionSignatureModel()
 		{
 			TC_Types =
 			[
-				ArgumentModel.FromType(typeof(int)),
-				ArgumentModel.FromType(typeof(int)),
+				typeModelFactory.Get(typeof(int)),
+				typeModelFactory.Get(typeof(int)),
 			]
 		};
 
 		var executionConfiguration = new ExecutionConfigurationModel
 		{
 			EXE_ScaffoldName = "SimpleAddScaffold",
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "SimpleAdd::Add",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "SimpleAdd::Add",
 			EXE_InputArguments = inputArguments,
-			EXE_ReturnArgument = ArgumentModel.FromType(typeof(int)),
+			EXE_ReturnArgument = typeModelFactory.Get(typeof(int)),
 		};
 
 		var testCases = new TestCaseModel[]
@@ -76,14 +79,14 @@ internal class QuestionSeeder : ISeedStep
 
 	void SeedHelloWorld()
 	{
-		var inputArguments = new ArgumentCollectionModel();
+		var inputArguments = new QuestionSignatureModel();
 		var executionConfiguration = new ExecutionConfigurationModel()
 		{
 			EXE_ScaffoldName = "HelloWorldScaffold",
-			EXE_AdapterName = "ClassInstanceAdaptor",
-			EXE_AdapterArgument = "HelloWorldProblem::HelloWorld",
+			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
+			EXE_ExecutionArgument = "HelloWorldProblem::HelloWorld",
 			EXE_InputArguments = inputArguments,
-			EXE_ReturnArgument = ArgumentModel.FromType(typeof(string))
+			EXE_ReturnArgument = typeModelFactory.Get(typeof(string))
 		};
 
 		var testCases = new TestCaseModel[]
