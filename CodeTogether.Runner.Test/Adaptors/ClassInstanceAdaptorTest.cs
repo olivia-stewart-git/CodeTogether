@@ -56,7 +56,7 @@ internal class ClassInstanceAdaptorTest
 
 		var result = adaptor.Execute();
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
-		Assert.That(result.EXR_TestRun.ToList(), Has.Count.EqualTo(2));
+		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(2));
     }
 
 	[Test]
@@ -80,7 +80,7 @@ internal class ClassInstanceAdaptorTest
 
 		var result = adaptor.Execute();
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
-		Assert.That(result.EXR_TestRun.ToList(), Has.Count.EqualTo(1));
+		Assert.That(result.EXR_TestRun.TRX_TestRuns, Has.Count.EqualTo(1));
 	}
 }
 

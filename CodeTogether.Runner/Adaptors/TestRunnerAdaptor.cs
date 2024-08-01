@@ -25,6 +25,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 
 	public ExecutionResultModel Execute()
 	{
+		TestRunExecutionModel fullExecution = new TestRunExecutionModel();
 		List<TestRunModel> testRuns = [];
 		foreach (var testCaseModel in testCases)
 		{
@@ -32,7 +33,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
 				var result = GetExecutionResult(arguments);
-				var testRun = AssertTestCase(testCaseModel, result);
+				var testRun = AssertTestCase(testCaseModel, result, fullExecution);
 				testRuns.Add(testRun);
 			}
 			catch (Exception ex)
@@ -43,7 +44,8 @@ public abstract class TestRunnerAdaptor : IAdaptor
 					TCR_Exception = ex.ToString(),
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
-				});
+					TCT_Execution = fullExecution,
+                });
 			}
 		}
 
@@ -51,11 +53,12 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			? ExecutionStatus.Failure 
 			: ExecutionStatus.Success;
 
+		fullExecution.TRX_TestRuns = testRuns;
 		return new ExecutionResultModel
 		{
 			EXR_Status = status,
-			EXR_TestRun = testRuns,
-		};
+			EXR_TestRun = fullExecution,
+        };
 	}
 
 	object[] GetTestCaseArguments(TestCaseModel testCase)
@@ -83,7 +86,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 		return objects.ToArray();
 	}
 
-	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult)
+	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult, TestRunExecutionModel testRun)
 	{
 		var expectedType = executionConfiguration.EXE_ReturnArgument?.OT_Type;
 		if (expectedType == null)
@@ -93,7 +96,8 @@ public abstract class TestRunnerAdaptor : IAdaptor
 				TCR_ActualResult = string.Empty,
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
-			};
+				TCT_Execution = testRun,
+            };
 		}
 
 		var expectedResult = testCase.TST_ExpectedResponse;
@@ -104,7 +108,8 @@ public abstract class TestRunnerAdaptor : IAdaptor
 				TCR_ActualResult = "null",
 				TCR_Status = TestCaseStatus.Success,
 				TCR_Parent = testCase,
-			};
+				TCT_Execution = testRun,
+            };
         }
 		var convertExpected = TypeConverter.Convert(expectedResult, expectedType);
 
@@ -117,6 +122,7 @@ public abstract class TestRunnerAdaptor : IAdaptor
 			TCR_ActualResult = inputResult.ToString() ?? string.Empty,
 			TCR_Status = status,
 			TCR_Parent = testCase,
-		};
+			TCT_Execution = testRun,
+        };
     }
 }

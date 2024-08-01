@@ -7,15 +7,29 @@ namespace CodeTogether.Data.Models.Test;
 
 internal partial class AllModelTest
 {
+	List<Type> AllDbModelTypes => typeof(IDbModel).Assembly.GetTypes()
+		.Where(t => typeof(IDbModel).IsAssignableFrom(t) && t is { IsClass: true, IsAbstract: false })
+		.ToList();
+
+
 	[Test]
+	public void TestAllModelsNamedCorrectly()
+	{
+		Assert.Multiple(() =>
+		{
+			foreach (var modelType in AllDbModelTypes)
+			{
+				Assert.True(modelType.Name.EndsWith("Model", StringComparison.Ordinal), $"Model: {modelType} should have name ending in 'Model'");
+			}
+		});
+	}
+
+    [Test]
 	public void TestAllDbModelsHaveUniquePrefix()
 	{
-        var modelTypes = typeof(IDbModel).Assembly.GetTypes()
-			.Where(t => typeof(IDbModel).IsAssignableFrom(t) && t is { IsClass: true, IsAbstract: false });
-
 		var prefixCollection = new HashSet<string>();
 
-		foreach (var modelType in modelTypes)
+		foreach (var modelType in AllDbModelTypes)
 		{
 			var primaryKeyAttr = modelType.GetCustomAttribute<PrimaryKeyAttribute>();
 

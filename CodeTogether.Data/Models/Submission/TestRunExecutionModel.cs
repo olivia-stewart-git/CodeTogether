@@ -11,5 +11,5 @@ public class TestRunExecutionModel : IDbModel
 	public Guid TRX_PK { get; set; } = Guid.NewGuid();
 
 	[InverseProperty(nameof(TestRunModel.TCT_Execution))]
-	public required IEnumerable<TestRunModel> TRX_TestRuns { get; set; }
+	public IList<TestRunModel> TRX_TestRuns { get; set; } = [];
 }
