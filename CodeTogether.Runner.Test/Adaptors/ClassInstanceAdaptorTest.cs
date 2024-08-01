@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
+using System.Reflection;
 
 namespace CodeTogether.Runner.Adaptors.Test;
 
@@ -25,7 +20,7 @@ internal class ClassInstanceAdaptorTest
 				TC_Types = [ArgumentModel.FromType(typeof(int)), ArgumentModel.FromType(typeof(int))]
 			}
 		};
-    }
+	}
 
 	[Test]
 	public void TestRunsWithPassingTest()
@@ -34,7 +29,7 @@ internal class ClassInstanceAdaptorTest
 
 		var executionConfiguration = CreateExecutionConfiguration();
 
-        List<TestCaseModel> testCases =
+		List<TestCaseModel> testCases =
 		[
 			new TestCaseModel()
 			{
@@ -50,14 +45,14 @@ internal class ClassInstanceAdaptorTest
 				TST_ExpectedResponse = "7",
 				TST_Question = null,
 			},
-        ];
+		];
 
 		var adaptor = new ClassInstanceAdaptor(assembly, executionConfiguration, testCases);
 
 		var result = adaptor.Execute();
 		Assert.That(result.Status, Is.EqualTo(ExecutionStatus.Success));
 		Assert.That(result.TestRuns.ToList(), Has.Count.EqualTo(2));
-    }
+	}
 
 	[Test]
 	public void TestRunsWithFailingTest()
@@ -65,7 +60,7 @@ internal class ClassInstanceAdaptorTest
 		var assembly = Assembly.GetExecutingAssembly();
 		var executionConfiguration = CreateExecutionConfiguration();
 
-        List<TestCaseModel> testCases =
+		List<TestCaseModel> testCases =
 		[
 			new TestCaseModel()
 			{

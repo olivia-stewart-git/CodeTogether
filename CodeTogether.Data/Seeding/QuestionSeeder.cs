@@ -60,7 +60,7 @@ internal class QuestionSeeder : ISeedStep
 				TST_ExpectedResponse = "2",
 				TST_IsHidden = false,
 			},
-        };
+		};
 
 		var simpleAddQuestion = new QuestionModel()
 		{
@@ -72,7 +72,7 @@ internal class QuestionSeeder : ISeedStep
 
 		dbContext.Questions.Add(simpleAddQuestion);
 		dbContext.SaveChanges();
-    }
+	}
 
 	void SeedHelloWorld()
 	{
@@ -95,7 +95,7 @@ internal class QuestionSeeder : ISeedStep
 				TST_ExpectedResponse = "Hello World!",
 				TST_IsHidden = false,
 			},
-        };
+		};
 
 		var helloWorldQuestion = new QuestionModel()
 		{

@@ -1,5 +1,4 @@
 ﻿using CodeTogether.Data.Models.Questions;
-using CodeTogether.Data.Models.Submission;
 
 namespace CodeTogether.Runner.Engine;
 

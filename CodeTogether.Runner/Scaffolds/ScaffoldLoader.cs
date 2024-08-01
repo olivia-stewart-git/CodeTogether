@@ -9,7 +9,7 @@ public class ScaffoldLoader : IScaffoldLoader
 		CreateCache();
 	}
 
-	readonly Dictionary<string, string> resourceCache = new ();
+	readonly Dictionary<string, string> resourceCache = new();
 
 	void CreateCache()
 	{
@@ -20,7 +20,7 @@ public class ScaffoldLoader : IScaffoldLoader
 			var withoutExtension = Path.GetFileNameWithoutExtension(resourceName);
 			resourceCache.Add(withoutExtension.Split('.', StringSplitOptions.RemoveEmptyEntries).Last(), resourceName);
 		}
-    }
+	}
 
 	public List<string> LoadAllScaffolds()
 	{
@@ -45,5 +45,5 @@ public class ScaffoldLoader : IScaffoldLoader
 		{
 			throw new InvalidOperationException($"Cannot find scaffold with key {scaffoldName}");
 		}
-    }
+	}
 }
