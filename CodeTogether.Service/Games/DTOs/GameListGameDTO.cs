@@ -1,7 +1,7 @@
 ﻿namespace CodeTogether.Service.Games.DTOs
 {
 	// A game to be displayed in the game list
-	internal class GameListGameDTO
+	public class GameListGameDTO
 	{
 		public Guid Id { get; set; }
 		public required string Name { get; set; }

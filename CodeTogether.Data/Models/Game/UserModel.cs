@@ -15,6 +15,6 @@ namespace CodeTogether.Data.Models.Game
 
 		public DateTime UR_LastHeardFromAt { get; set; }
 
-		public required GameModel UR_Game { get; set; }
+		public GameModel? UR_Game { get; set; }
 	}
 }
