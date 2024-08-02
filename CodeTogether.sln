@@ -18,8 +18,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Common", "CodeTogether.Common\CodeTogether.Common.csproj", "{FD8D2011-A76A-49E2-89A5-40A2966E6A82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBD429AA-9EBE-4E15-8EB3-E8E048DDC69F}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether.Deployment", "CodeTogether.Deployment\CodeTogether.Deployment.csproj", "{1F665661-980E-41C9-ACBF-98432919C5F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Deployment", "CodeTogether.Deployment\CodeTogether.Deployment.csproj", "{1F665661-980E-41C9-ACBF-98432919C5F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether.Service.Test", "CodeTogether.Service.Test\CodeTogether.Service.Test.csproj", "{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +64,10 @@ Global
 		{1F665661-980E-41C9-ACBF-98432919C5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F665661-980E-41C9-ACBF-98432919C5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F665661-980E-41C9-ACBF-98432919C5F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

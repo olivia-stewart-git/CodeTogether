@@ -10,7 +10,7 @@ public static class ServiceDependencyExtensions
 	public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
 	{
 		serviceCollection.AddSingleton<IScaffoldLoader, ScaffoldLoader>();
-        serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
+		serviceCollection.AddTransient<IExecutionEngine, ExecutionEngine>();
 		serviceCollection.AddTransient<ICompilationEngine, CompilationEngine>();
 
 		serviceCollection.AddTransient<IExecutorFactory, ExecutorFactory>();

@@ -1,7 +1,6 @@
 using CodeTogether;
 using CodeTogether.Components;
 using CodeTogether.Data;
-using CodeTogether.Data.Seeding;
 using NLog;
 using NLog.Web;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
