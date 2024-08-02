@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -9,25 +10,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scaffolds\HelloWorldScaffold.txt" />
-    <None Remove="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
+    <None Remove="Deployment.ps1" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\HelloWorldScaffold.txt" />
-    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
+    <EmbeddedResource Include="Deployment.ps1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Basic.Reference.Assemblies" Version="1.7.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.10.0" />
+    <PackageReference Include="Cake.Powershell" Version="4.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.10.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+	  	  
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
+    <ProjectReference Include="..\CodeTogether\CodeTogether.csproj" />
   </ItemGroup>
 
 </Project>
