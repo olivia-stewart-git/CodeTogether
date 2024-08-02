@@ -1,8 +1,8 @@
 ﻿using CodeTogether.Data.Models.Game;
 
-namespace CodeTogether.Service
+namespace CodeTogether.Service.Games
 {
-	internal interface IUserService
+	public interface IUserService
 	{
 		UserModel CreateUser(string name);
 	}

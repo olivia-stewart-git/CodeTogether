@@ -11,7 +11,9 @@ public class GameModel : IDbModel
 	public Guid GM_PK { get; set; } = Guid.NewGuid();
 
 	[MaxLength(100)]
-	public string? GM_Name { get; set; }
+	public required string GM_Name { get; set; }
 
-	IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
+	public DateTime GM_CreateTime { get; set; }
+
+	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }
