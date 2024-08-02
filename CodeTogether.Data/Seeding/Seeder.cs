@@ -1,5 +1,4 @@
-﻿using CodeTogether.Common.Logging;
-using CodeTogether.Data.Models;
+﻿using CodeTogether.Data.Models;
 using CodeTogether.Data.Models.Factories;
 
 namespace CodeTogether.Data.Seeding;
@@ -7,14 +6,14 @@ namespace CodeTogether.Data.Seeding;
 public class Seeder : ISeeder
 {
 	readonly ApplicationDbContext dbContext;
-	readonly ICachedTypeModelFactory typeModelFactory;
-	readonly ILoggerManager logManager;
+	readonly Action<string> logging;
+	readonly CachedCachedTypeModelFactory typeModelFactory;
 
-	public Seeder(ApplicationDbContext dbContext, ICachedTypeModelFactory typeModelFactory, ILoggerManager logManager)
+	public Seeder(ApplicationDbContext dbContext, Action<string> logging)
 	{
 		this.dbContext = dbContext;
-		this.typeModelFactory = typeModelFactory;
-		this.logManager = logManager;
+		this.logging = logging;
+		this.typeModelFactory = new CachedCachedTypeModelFactory();
 	}
 
 	public void Seed()
@@ -31,11 +30,12 @@ public class Seeder : ISeeder
 
 		foreach (var seedStep in steps)
 		{
-			logManager.LogInfo($"starting seed step: {seedStep.GetType().FullName}");
+			logging($"starting seed step: {seedStep.GetType().FullName}");
 			seedStep.Seed();
 		}
 
 		FillHasSeeded();
+		logging("Seeding complete");
 	}
 
 	bool HasSeeded()

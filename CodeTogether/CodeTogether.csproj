@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <OutputPath>..\Bin</OutputPath>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Common\CodeTogether.Common.csproj" />
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
-    <ProjectReference Include="..\CodeTogether.Migrations\CodeTogether.Migrations.csproj" />
     <ProjectReference Include="..\CodeTogether.Runner\CodeTogether.Runner.csproj" />
     <ProjectReference Include="..\CodeTogether.Service\CodeTogether.Service.csproj" />
   </ItemGroup>

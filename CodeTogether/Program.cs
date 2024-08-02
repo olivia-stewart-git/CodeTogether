@@ -25,8 +25,8 @@ builder.Services
 	.AddRazorComponents()
 	.AddInteractiveServerComponents();
 builder.Services
-	.RegisterServices()
-	.AddDbContext<ApplicationDbContext>();
+	.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped)
+	.RegisterServices();
 
 builder.Services.AddControllers();
 
@@ -48,12 +48,5 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
-
-using (var context = new ApplicationDbContext())
-{
-	context.Database.EnsureCreated();
-	var seeder = app.Services.GetService<ISeeder>();
-	seeder?.Seed();
-}
 
 app.Run();
