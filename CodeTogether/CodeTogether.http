@@ -1,6 +1,0 @@
-@CodeTogether_HostAddress = http://localhost:5279
-
-GET {{CodeTogether_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
