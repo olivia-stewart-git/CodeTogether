@@ -18,13 +18,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBD429AA-9EBE-4E15-8EB3-E8E048DDC69F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Deployment", "CodeTogether.Deployment\CodeTogether.Deployment.csproj", "{1F665661-980E-41C9-ACBF-98432919C5F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Test", "CodeTogether.Service.Test\CodeTogether.Test.csproj", "{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether.Client", "CodeTogether.Client\CodeTogether.Client.csproj", "{96AA3A6A-DB9D-4DB4-A400-9C9827C82FAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether", "CodeTogether\CodeTogether.csproj", "{BCFF53BE-BC94-41BF-9C59-2177547303BF}"
 EndProject
@@ -66,10 +65,6 @@ Global
 		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93B8D73E-DCD8-4A10-8015-C479EF26D2D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{96AA3A6A-DB9D-4DB4-A400-9C9827C82FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96AA3A6A-DB9D-4DB4-A400-9C9827C82FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96AA3A6A-DB9D-4DB4-A400-9C9827C82FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96AA3A6A-DB9D-4DB4-A400-9C9827C82FAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCFF53BE-BC94-41BF-9C59-2177547303BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCFF53BE-BC94-41BF-9C59-2177547303BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFF53BE-BC94-41BF-9C59-2177547303BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
