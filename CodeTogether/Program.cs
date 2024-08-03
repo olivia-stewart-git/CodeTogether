@@ -1,51 +1,43 @@
-using CodeTogether;
-using CodeTogether.Components;
-using CodeTogether.Data;
-using NLog;
-using NLog.Web;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Abstractions;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.Resource;
 
-LogManager.Setup().LoadConfiguration(builder =>
+namespace CodeTogether
 {
-	builder.ForLogger().FilterMinLevel(NLog.LogLevel.Info).WriteToColoredConsole();
-});
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-var logger = NLog.LogManager.GetCurrentClassLogger();
+			// Add services to the container.
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-var builder = WebApplication.CreateBuilder(args);
+			builder.Services.AddControllers();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
 
-builder.Logging.ClearProviders();
-builder.Logging.SetMinimumLevel(LogLevel.Trace);
-builder.Host.UseNLog();
+			var app = builder.Build();
 
-// Add services to the container.
-builder.Services.ConfigureLogging();
-builder.Services
-	.AddRazorComponents()
-	.AddInteractiveServerComponents();
-builder.Services
-	.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped)
-	.RegisterServices();
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
 
-builder.Services.AddControllers();
+			app.UseHttpsRedirection();
 
-var app = builder.Build();
-app.MapControllers();
+			app.UseAuthorization();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-	app.UseExceptionHandler("/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+
+			app.MapControllers();
+
+			app.Run();
+		}
+	}
 }
-
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-	.AddInteractiveServerRenderMode();
-
-app.Run();
