@@ -11,6 +11,8 @@ namespace CodeTogether
 
 			builder.Services.RegisterServices();
 			builder.Services.RegisterRunnerServices();
+			builder.Services.AddScoped(sp => new HttpClient { });
+
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -14,4 +14,11 @@ Main project structure:
 - CodeTogether.Deployment - Scripts for enviroment and database setup
 - CodeTogether.Common - General utilities and helpers
 
-In production, instances of the backend will be hosted in 1 or more azure windows VM's (sticky-ly routed to by an api gateway), the frontend is built to static files and will be hosted with azure static file hosting.
+In production, instances of the backend will be hosted in 1 or more azure windows VM's (sticky-ly routed to by an api gateway).
+To start, the frontend will be served by the backend but because it is a seperate project it can be statically hosted in a CDN later.
+
+
+# Setup
+Set startup project to CodeTogether.Deployment and run to setup the database, the run CodeTogether to get the main app
+
+If your intellisense is not working while editing .razor files, follow this https://stackoverflow.com/a/77626381

@@ -31,7 +31,7 @@ namespace CodeTogether.Controllers
 		[Route("test")]
 		public IActionResult Test()
 		{
-			return Content("yup, all good!");
+			return Content($"yup, all good! {Guid.NewGuid()}");
 		}
 	}
 }
