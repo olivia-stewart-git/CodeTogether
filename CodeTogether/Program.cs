@@ -11,7 +11,10 @@ namespace CodeTogether
 
 			builder.Services.RegisterServices();
 			builder.Services.RegisterRunnerServices();
-			builder.Services.AddScoped(sp => new HttpClient { });
+
+			//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+			var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException();
+			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
 
 
 			builder.Services.AddControllers();

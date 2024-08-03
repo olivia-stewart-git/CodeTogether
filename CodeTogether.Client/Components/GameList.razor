@@ -1,14 +1,29 @@
 ﻿@inject HttpClient Http
 
 
-<h3>GameList</h3>
-<button @onclick="Request">Button</button>
+<h3>Game List</h3>
+<button @onclick="Request">Refresh</button>
 <p>text: @msg</p>
 
 @code {
     private string msg = "ab";
 
-    async Task Request() {
+    async Task Request()
+    {
+        Console.WriteLine("buttoned");
+        await UpdateGameList();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateGameList();
+        // Task.
+        // await Task.Delay(1000);
+    }
+
+    async Task UpdateGameList()
+    {
+        Console.WriteLine("requesting");
         msg = await Http.GetStringAsync("api/game/test");
     }
 }

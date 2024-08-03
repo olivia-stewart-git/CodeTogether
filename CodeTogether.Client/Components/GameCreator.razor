@@ -1,0 +1,23 @@
+﻿@inject NavigationManager Navigation
+@inject HttpClient http
+
+<h3>Create Game</h3>
+<label for="optionCheckbox">Options or something</label>
+<input id="optionCheckbox" type="checkbox" />
+
+<label for="gameNameText">Game Name:</label>
+<input type="text" @bind="GameName"/>
+
+<button @onclick="Create">Create</button>
+<p>@status</p>
+
+@code {
+    string GameName = "";
+    string status = "";
+    async Task Create()
+    {
+        status = "Creating...";
+        var gameId = Guid.Parse(await http.GetStringAsync($"/api/game/create?lobbyName={GameName}"));
+        await GameJoiner.JoinAndNavigateToGame(http, Navigation, gameId, "username1");
+    }
+}
