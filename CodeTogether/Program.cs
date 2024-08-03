@@ -1,10 +1,5 @@
 using CodeTogether.Client;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.Resource;
 
 namespace CodeTogether
 {
@@ -13,6 +8,9 @@ namespace CodeTogether
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+
+			builder.Services.RegisterServices();
+			builder.Services.RegisterRunnerServices();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,25 +27,26 @@ namespace CodeTogether
 
 			var app = builder.Build();
 
+			app.UseResponseCompression();
+
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
 
-				// https://github.com/dotnet/blazor-samples/blob/main/8.0/BlazorSignalRApp/BlazorSignalRApp/Program.cs
-				var razorBuilder = app.MapRazorComponents<App>();
-				//razorBuilder.AddInteractiveWebAssemblyRenderMode();
-				//var assembly = typeof(CodeTogether.Client._Imports).Assembly;
-				//razorBuilder.AddAdditionalAssemblies(assembly);
-				// app.UseWebAssemblyDebugging();
+				app.UseWebAssemblyDebugging();
 			}
+
+			app.MapRazorComponents<App>()
+				.AddInteractiveWebAssemblyRenderMode();
+				//.AddAdditionalAssemblies(typeof(CodeTogether.Client._Imports).Assembly);
 
 			app.UseHttpsRedirection();
 			//app.UseAuthorization();
 
-			app.UseStaticFiles();
 			app.UseAntiforgery();
+			app.UseStaticFiles();
 
 			app.MapControllers();
 			// app.MapHub<GameHub>("/gamehub");

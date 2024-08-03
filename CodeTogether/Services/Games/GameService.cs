@@ -1,31 +1,7 @@
-﻿using CodeTogether.Data;
-using CodeTogether.Data.Models.Questions;
-using CodeTogether.Service.Games.DTOs;
-
-namespace CodeTogether.Service.Games
+﻿namespace CodeTogether.Services.Games
 {
-	public class GameService(ApplicationDbContext dbContext) : IGameService
+	// To hold the state of all ongoing games on this server in memory
+	public class GameService : IGameService
 	{
-		public Guid CreateGame(string lobbyName)
-		{
-			var game = new GameModel() { GM_Name = lobbyName };
-			dbContext.Games.Add(game);
-			dbContext.SaveChanges();
-			return game.GM_PK;
-		}
-
-		public IEnumerable<GameListGameDTO> GetGames()
-		{
-			dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTime, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
-			return new List<GameListGameDTO>();
-		}
-
-		public void JoinGame(Guid gameId, Guid userId)
-		{
-			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
-			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
-			user.UR_Game = game;
-			dbContext.SaveChanges();
-		}
 	}
 }

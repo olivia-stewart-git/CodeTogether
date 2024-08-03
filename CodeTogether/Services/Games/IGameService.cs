@@ -1,13 +1,6 @@
-﻿using CodeTogether.Service.Games.DTOs;
-
-namespace CodeTogether.Service.Games
+﻿namespace CodeTogether.Services.Games
 {
 	public interface IGameService
 	{
-		Guid CreateGame(string lobbyName);
-
-		IEnumerable<GameListGameDTO> GetGames();
-
-		void JoinGame(Guid gameId, Guid userId);
 	}
 }

@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
     <ProjectReference Include="..\CodeTogether.Client\CodeTogether.Client.csproj" />
+    <ProjectReference Include="..\CodeTogether.Runner\CodeTogether.Runner.csproj" />
   </ItemGroup>
 
 </Project>
