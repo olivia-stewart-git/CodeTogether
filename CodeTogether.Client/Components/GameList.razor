@@ -1,0 +1,14 @@
+﻿@inject HttpClient Http
+
+
+<h3>GameList</h3>
+<button @onclick="Request">Button</button>
+<p>text: @msg</p>
+
+@code {
+    private string msg = "ab";
+
+    async Task Request() {
+        msg = await Http.GetStringAsync("api/game/test");
+    }
+}

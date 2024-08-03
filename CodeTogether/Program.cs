@@ -1,51 +1,59 @@
-using CodeTogether;
-using CodeTogether.Components;
-using CodeTogether.Data;
-using NLog;
-using NLog.Web;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using CodeTogether.Client;
+using Microsoft.AspNetCore.ResponseCompression;
 
-LogManager.Setup().LoadConfiguration(builder =>
+namespace CodeTogether
 {
-	builder.ForLogger().FilterMinLevel(NLog.LogLevel.Info).WriteToColoredConsole();
-});
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-var logger = NLog.LogManager.GetCurrentClassLogger();
+			builder.Services.RegisterServices();
+			builder.Services.RegisterRunnerServices();
+			builder.Services.AddScoped(sp => new HttpClient { });
 
-var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
-builder.Logging.SetMinimumLevel(LogLevel.Trace);
-builder.Host.UseNLog();
+			builder.Services.AddControllers();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
 
-// Add services to the container.
-builder.Services.ConfigureLogging();
-builder.Services
-	.AddRazorComponents()
-	.AddInteractiveServerComponents();
-builder.Services
-	.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped)
-	.RegisterServices();
+			builder.Services.AddSignalR();
+			builder.Services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
+			builder.Services.AddResponseCompression(opts =>
+			{
+				opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+					["application/octet-stream"]);
+			});
 
-builder.Services.AddControllers();
+			var app = builder.Build();
 
-var app = builder.Build();
-app.MapControllers();
+			app.UseResponseCompression();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-	app.UseExceptionHandler("/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+
+				app.UseWebAssemblyDebugging();
+			}
+
+			app.MapRazorComponents<App>()
+				.AddInteractiveWebAssemblyRenderMode();
+				//.AddAdditionalAssemblies(typeof(CodeTogether.Client._Imports).Assembly);
+
+			app.UseHttpsRedirection();
+			//app.UseAuthorization();
+
+			app.UseAntiforgery();
+			app.UseStaticFiles();
+
+			app.MapControllers();
+			// app.MapHub<GameHub>("/gamehub");
+
+			app.Run();
+		}
+	}
 }
-
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-	.AddInteractiveServerRenderMode();
-
-app.Run();

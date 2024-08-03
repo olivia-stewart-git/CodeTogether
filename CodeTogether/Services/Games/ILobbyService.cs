@@ -2,7 +2,7 @@
 
 namespace CodeTogether.Service.Games
 {
-	public interface IGameService
+	public interface ILobbyService
 	{
 		Guid CreateGame(string lobbyName);
 

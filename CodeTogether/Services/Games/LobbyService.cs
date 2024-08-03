@@ -4,7 +4,7 @@ using CodeTogether.Service.Games.DTOs;
 
 namespace CodeTogether.Service.Games
 {
-	public class GameService(ApplicationDbContext dbContext) : IGameService
+	public class LobbyService(ApplicationDbContext dbContext) : ILobbyService
 	{
 		public Guid CreateGame(string lobbyName)
 		{
