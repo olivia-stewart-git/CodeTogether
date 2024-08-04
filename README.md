@@ -22,3 +22,5 @@ To start, the frontend will be served by the backend but because it is a seperat
 Set startup project to CodeTogether.Deployment and run to setup the database, the run CodeTogether to get the main app
 
 If your intellisense is not working while editing .razor files, follow this https://stackoverflow.com/a/77626381
+
+When adding new blazor or css files make sure to set their build action property as Content rather than the default of None

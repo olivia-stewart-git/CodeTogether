@@ -16,5 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj" />
   </ItemGroup>
-
 </Project>

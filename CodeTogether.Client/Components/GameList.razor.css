@@ -1,0 +1,12 @@
+﻿body {
+}
+
+
+tbody > tr:hover {
+    cursor: pointer;
+    background-color: #aaa;
+}
+
+tobdy > tr:active {
+    background-color: #999;
+}

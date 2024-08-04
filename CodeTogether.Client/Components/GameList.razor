@@ -1,38 +1,77 @@
-﻿@inject HttpClient Http
+﻿@inject HttpClient http
+@inject NavigationManager navigation 
+@using CodeTogether.Client.Integration
+@using System.Text.Json
 
 
 <h3>Game List</h3>
-<button @onclick="Request">Refresh</button>
-<p>text: @msg</p>
+<button @onclick="UpdateGameList">Refresh Now</button>
+<TimedProgressBar StartedAt="@lastPoll" CompletesAt="@nextPoll"/>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Players #</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    @if (games == null)
+    {
+        <tbody>Loading...</tbody>
+    }
+    else
+    {
+        <tbody>
+            @foreach (GameListGameDTO game in games)
+            {
+                <tr @onclick="() => JoinGame(game)">
+                    <td>@game.Name</td>
+                    <td>@game.NumPlayers</td>
+                    <td>@game.CreatedAt</td>
+                </tr>
+            }
+        </tbody>
+    }
+</table>
+
 
 @code {
-    private string msg = "ab";
+    readonly TimeSpan pollInterval = TimeSpan.FromSeconds(10);
 
-    async Task Request()
-    {
-        Console.WriteLine("buttoned");
-        await UpdateGameList();
-    }
+    List<GameListGameDTO>? games = null;
+    DateTime lastPoll;
+    DateTime nextPoll;
 
     protected override void OnInitialized()
     {
-        Console.WriteLine("init");
         Task.Run(PollGameList);
     }
 
     async Task PollGameList()
     {
-        Console.WriteLine("in poll");
-        await Task.Delay(5000);
-        Console.WriteLine("finished wait");
-        await UpdateGameList();
-        Console.WriteLine("finished request");
+        while (true) // TODO: does this need a cancellation token to stop when the component is unloaded/disposed?
+        {
+            Console.WriteLine($"polling {pollInterval}");
+            StateHasChanged();
+            await UpdateGameList();
+            await Task.Delay(pollInterval);
+        }
     }
 
     async Task UpdateGameList()
     {
-        Console.WriteLine("requesting");
-        msg = await Http.GetStringAsync("api/game/list");
+        lastPoll = DateTime.Now;
+        nextPoll = lastPoll + pollInterval;
+        // Clear list, I think this is not nessesary but I think gives more feedback that the game list has updated
+        games = null;
+        var responseString = await http.GetStringAsync("api/game/list");
+        Console.WriteLine($"got: {responseString}");
+        games = JsonSerializer.Deserialize<List<GameListGameDTO>>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         StateHasChanged();
+    }
+
+    async Task JoinGame(GameListGameDTO game)
+    {
+        await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id, "username2");
     }
 }

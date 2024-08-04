@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Client", "Code
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.App.Test", "CodeTogether.Test\CodeTogether.App.Test.csproj", "{F5E3216B-7224-40D0-8493-5749DD38DF23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether.Client.Integration", "CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj", "{629ABD1E-B656-4818-BAE8-D4814F0E85A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Client.Integration", "CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj", "{629ABD1E-B656-4818-BAE8-D4814F0E85A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

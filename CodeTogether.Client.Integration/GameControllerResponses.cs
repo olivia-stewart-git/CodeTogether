@@ -8,7 +8,7 @@ namespace CodeTogether.Client.Integration
 {
 	public class JoinGameResponse
 	{
-		public required int serverId { get; set; }
-		public required Guid playerId { get; set; }
+		public required int ServerId { get; set; }
+		public required Guid PlayerId { get; set; }
 	}
 }

@@ -1,0 +1,28 @@
+﻿<progress value="@progress" max="1.0"></progress>
+
+@code {
+    [Parameter]
+    public required DateTime StartedAt { get; set; }
+    [Parameter]
+    public required DateTime CompletesAt { get; set; }
+
+    double progress = 0.0;
+
+    protected override void OnInitialized()
+    {
+        Task.Run(UpdateProgress);
+    }
+
+    async Task UpdateProgress()
+    {
+        var now = DateTime.Now;
+        while (true)
+        {
+            now = DateTime.Now;
+            progress = (now - StartedAt) / (CompletesAt - StartedAt);
+            StateHasChanged();
+            await Task.Delay(100);
+        }
+
+    }
+}
