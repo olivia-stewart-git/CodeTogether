@@ -16,8 +16,8 @@ namespace CodeTogether.Service.Games
 
 		public IEnumerable<GameListGameDTO> GetLobbies()
 		{
-			dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
-			return new List<GameListGameDTO>();
+			var lobbies = dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
+			return lobbies;
 		}
 
 		public void JoinLobby(Guid gameId, Guid userId)
