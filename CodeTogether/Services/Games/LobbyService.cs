@@ -1,12 +1,12 @@
-﻿using CodeTogether.Data;
+﻿using CodeTogether.Client.Integration;
+using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
-using CodeTogether.Service.Games.DTOs;
 
 namespace CodeTogether.Service.Games
 {
 	public class LobbyService(ApplicationDbContext dbContext) : ILobbyService
 	{
-		public Guid CreateGame(string lobbyName)
+		public Guid CreateLobby(string lobbyName)
 		{
 			var game = new GameModel() { GM_Name = lobbyName };
 			dbContext.Games.Add(game);
@@ -14,13 +14,13 @@ namespace CodeTogether.Service.Games
 			return game.GM_PK;
 		}
 
-		public IEnumerable<GameListGameDTO> GetGames()
+		public IEnumerable<GameListGameDTO> GetLobbies()
 		{
-			dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTime, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
-			return new List<GameListGameDTO>();
+			var lobbies = dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
+			return lobbies;
 		}
 
-		public void JoinGame(Guid gameId, Guid userId)
+		public void JoinLobby(Guid gameId, Guid userId)
 		{
 			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
 			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");

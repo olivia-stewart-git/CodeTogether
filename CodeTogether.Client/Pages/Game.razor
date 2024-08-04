@@ -1,0 +1,12 @@
+﻿@page "/game/{serverId:int}/{userId:guid}"
+
+<h3>Game</h3>
+<p>Using server @serverId.ToString() for user @userId.ToString()</p>
+
+@code {
+    [Parameter]
+    public required Guid userId { get; set; }
+
+    [Parameter]
+    public required int serverId { get; set; }
+}

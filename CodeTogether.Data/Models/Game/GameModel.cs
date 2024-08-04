@@ -13,7 +13,14 @@ public class GameModel : IDbModel
 	[MaxLength(100)]
 	public required string GM_Name { get; set; }
 
-	public DateTime GM_CreateTime { get; set; }
+	public GameState GameState { get; set; } = GameState.Lobby;
+
+	public DateTime GM_CreateTimeUtc { get; set; } = DateTime.UtcNow;
 
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
+}
+
+public enum GameState
+{
+	Lobby, Playing
 }

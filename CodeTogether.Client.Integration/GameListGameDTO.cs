@@ -1,4 +1,4 @@
-﻿namespace CodeTogether.Service.Games.DTOs
+﻿namespace CodeTogether.Client.Integration
 {
 	// A game to be displayed in the game list
 	public class GameListGameDTO
