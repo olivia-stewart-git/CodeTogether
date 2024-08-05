@@ -44,6 +44,6 @@ public class CompilationEngine : ICompilationEngine
 			}
 		}
 
-		return Assembly.Load(codeStream.ToArray()); ;
+		return Assembly.Load(codeStream.ToArray());
 	}
 }

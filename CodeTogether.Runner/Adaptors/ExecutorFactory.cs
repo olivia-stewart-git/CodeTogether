@@ -1,5 +1,4 @@
 ﻿using CodeTogether.Data.Models.Questions;
-using System.Reflection;
 
 namespace CodeTogether.Runner.Adaptors;
 

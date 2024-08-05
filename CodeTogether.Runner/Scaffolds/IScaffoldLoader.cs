@@ -2,6 +2,6 @@
 
 public interface IScaffoldLoader
 {
-	string LoadScaffold(string scaffoldName);
-	List<string> LoadAllScaffolds();
+	Scaffold LoadScaffold(string scaffoldName);
+	List<Scaffold> LoadAllScaffolds();
 }

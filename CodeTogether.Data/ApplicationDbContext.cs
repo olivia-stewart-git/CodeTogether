@@ -31,15 +31,9 @@ public class ApplicationDbContext : DbContext
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
 
-		modelBuilder.Entity<ExecutionResultModel>()
-			.Property(x => x.EXR_Exception)
-			.HasConversion(
-				v => ConvertJson(v),        // Converts Exception to JSON string
-				v => DeserializeJson<Exception>(v)); // Converts JSON string back to Exception
+		modelBuilder.HasJsonConversion<ExecutionResultModel, Exception>(x => x.EXR_Exception)
+					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
-
-	static string ConvertJson(object? value) => JsonSerializer.Serialize(value);
-	static T? DeserializeJson<T>(string value) => JsonSerializer.Deserialize<T>(value);
 
 	#region Models
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace CodeTogether.Runner.Scaffolds;
 
@@ -9,41 +10,39 @@ public class ScaffoldLoader : IScaffoldLoader
 		CreateCache();
 	}
 
-	readonly Dictionary<string, string> resourceCache = new();
+	readonly Dictionary<string, Scaffold> resourceCache = [];
 
 	void CreateCache()
 	{
-		var assembly = Assembly.GetExecutingAssembly();
-		var resourceNames = assembly.GetManifestResourceNames();
-		foreach (var resourceName in resourceNames.Where(x => x.Split('.', StringSplitOptions.RemoveEmptyEntries).Contains("Scaffolds")))
-		{
-			var withoutExtension = Path.GetFileNameWithoutExtension(resourceName);
-			resourceCache.Add(withoutExtension.Split('.', StringSplitOptions.RemoveEmptyEntries).Last(), resourceName);
-		}
+		resourceCache.Add("HelloWorldScaffold", new Scaffold(LoadScaffoldCode("CodeTogether.Runner.Scaffolds.ScaffoldFiles.HelloWorldScaffold.txt"), []));
+		resourceCache.Add("SimpleAddScaffold", new Scaffold(LoadScaffoldCode("CodeTogether.Runner.Scaffolds.ScaffoldFiles.SimpleAddScaffold.txt"), []));
 	}
 
-	public List<string> LoadAllScaffolds()
+	string LoadScaffoldCode(string name)
+	{
+		var assembly = Assembly.GetExecutingAssembly();
+		using var stream = assembly.GetManifestResourceStream(name);
+		if (stream == null)
+		{
+			throw new FileNotFoundException("Resource not found.", name);
+		}
+
+		using StreamReader reader = new StreamReader(stream);
+		return reader.ReadToEnd();
+	}
+
+	public List<Scaffold> LoadAllScaffolds()
 	{
 		return resourceCache.Keys.Select(LoadScaffold).ToList();
 	}
 
-	public string LoadScaffold(string scaffoldName)
+	public Scaffold LoadScaffold(string scaffoldName)
 	{
-		var assembly = Assembly.GetExecutingAssembly();
 		if (resourceCache.TryGetValue(scaffoldName, out var value))
 		{
-			using var stream = assembly.GetManifestResourceStream(value);
-			if (stream == null)
-			{
-				throw new FileNotFoundException("Resource not found.", value);
-			}
+			return value;
+		}
 
-			using StreamReader reader = new StreamReader(stream);
-			return reader.ReadToEnd();
-		}
-		else
-		{
-			throw new InvalidOperationException($"Cannot find scaffold with key {scaffoldName}");
-		}
+		throw new InvalidOperationException($"Cannot find scaffold with key {scaffoldName}");
 	}
 }

@@ -24,7 +24,7 @@ public static vod Main(string[] args) {
 		{
 			foreach (var scaffoldCode in scaffoldLoader.LoadAllScaffolds())
 			{
-				Assert.DoesNotThrow(() => compilationEngine.CreateCompilation("Compilation", scaffoldCode));
+				Assert.DoesNotThrow(() => compilationEngine.CreateCompilation("Compilation", scaffoldCode.ScaffoldCode));
 			}
 		});
 	}
