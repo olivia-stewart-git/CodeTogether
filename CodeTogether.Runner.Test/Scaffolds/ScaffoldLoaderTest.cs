@@ -11,7 +11,7 @@ public class ScaffoldLoaderTest
 		var loadedScaffold = loader.LoadScaffold("HelloWorldScaffold");
 
 		Assert.IsNotNull(loadedScaffold);
-		Assert.That(loadedScaffold.Contains("public string HelloWorld()"));
+		Assert.That(loadedScaffold.ScaffoldCode.Contains("public string HelloWorld()"));
 	}
 
 	[Test]

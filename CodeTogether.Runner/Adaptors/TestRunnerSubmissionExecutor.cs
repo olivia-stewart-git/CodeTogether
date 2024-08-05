@@ -39,7 +39,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				testRuns.Add(new TestRunModel()
 				{
 					TCR_ActualResult = string.Empty,
-					TCR_Exception = ex.ToString(),
+					TCR_Exception = ex,
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
 					TCT_Execution = fullExecution,
@@ -48,7 +48,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 		}
 
 		var status = testRuns.Any(x => x.TCR_Status != TestCaseStatus.Success)
-			? ExecutionStatus.Failure
+			? testRuns.Any(x => x.TCR_Status == TestCaseStatus.Error) ? ExecutionStatus.Error : ExecutionStatus.Failure
 			: ExecutionStatus.Success;
 
 		fullExecution.TRX_TestRuns = testRuns;
@@ -95,6 +95,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
 				TCT_Execution = testRun,
+				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}"),
             };
 		}
 

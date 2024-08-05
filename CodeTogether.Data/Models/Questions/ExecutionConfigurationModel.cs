@@ -10,8 +10,8 @@ public class ExecutionConfigurationModel : IDbModel
 {
 	public Guid EXE_PK { get; set; } = Guid.NewGuid();
 
-	[MaxLength(50)]
-	public required string EXE_ScaffoldName { get; set; }
+	[MaxLength(50)] 
+	public string EXE_ScaffoldName { get; set; } = string.Empty;
 
 	[MaxLength(50)]
 	public required string EXE_ExecutionRunnerName { get; set; }
