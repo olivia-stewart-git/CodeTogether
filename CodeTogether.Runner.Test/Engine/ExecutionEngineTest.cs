@@ -1,9 +1,8 @@
-﻿using System.Text.Json;
-using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Scaffolds;
-using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Moq;
+using System.Text.Json;
 using TestNameSpace;
 
 namespace CodeTogether.Runner.Engine.Test

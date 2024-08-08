@@ -3,16 +3,18 @@ using CodeTogether.Data.Models.Questions;
 
 namespace CodeTogether.Data.Seeding;
 
-internal class QuestionSeeder : ISeeder
+public class QuestionSeeder : ISeedStep
 {
 	readonly ApplicationDbContext dbContext;
 	readonly ICachedTypeModelFactory typeModelFactory;
 
-	internal QuestionSeeder(ApplicationDbContext dbContext, ICachedTypeModelFactory typeModelFactory)
+	public QuestionSeeder(ApplicationDbContext dbContext)
 	{
 		this.dbContext = dbContext;
-		this.typeModelFactory = typeModelFactory;
+		this.typeModelFactory = new CachedCachedTypeModelFactory();
 	}
+
+	public int Order { get; } = 1;
 
 	public void Seed()
 	{

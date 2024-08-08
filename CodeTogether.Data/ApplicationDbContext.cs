@@ -31,29 +31,36 @@ public class ApplicationDbContext : DbContext
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
 
+		modelBuilder.Entity<UserModel>()
+			.Property(x => x.USR_CheckPoints)
+			.HasConversion(
+				v => string.Join(',', v),
+				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
+				stringValueComparer);
+
 		modelBuilder.HasJsonConversion<ExecutionResultModel, Exception>(x => x.EXR_Exception)
 					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
 
 	#region Models
 
-	public DbSet<StmDataModel> StmData { get; set; }
+	public virtual DbSet<StmDataModel> StmData { get; set; }
 
-	public DbSet<QuestionModel> Questions { get; set; }
+	public virtual DbSet<QuestionModel> Questions { get; set; }
 
-	public DbSet<TestCaseModel> TestCases { get; set; }
-	public DbSet<TestRunModel> TestRuns { get; set; }
-	public DbSet<TestRunExecutionModel> TestExecutions { get; set; }
+	public virtual DbSet<TestCaseModel> TestCases { get; set; }
+	public virtual DbSet<TestRunModel> TestRuns { get; set; }
+	public virtual DbSet<TestRunExecutionModel> TestExecutions { get; set; }
 
-	public DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	public DbSet<TypeModel> Arguments { get; set; }
-	public DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
+	public virtual DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
+	public virtual DbSet<TypeModel> Arguments { get; set; }
+	public virtual DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
 
-	public DbSet<SubmissionModel> Submissions { get; set; }
-	public DbSet<ExecutionResultModel> ExecutionResults { get; set; }
+	public virtual DbSet<SubmissionModel> Submissions { get; set; }
+	public virtual DbSet<ExecutionResultModel> ExecutionResults { get; set; }
 
-	public DbSet<GameModel> Games { get; set; }
-	public DbSet<UserModel> Users { get; set; }
+	public virtual DbSet<GameModel> Games { get; set; }
+	public virtual DbSet<UserModel> Users { get; set; }
 
 	#endregion
 }

@@ -22,12 +22,18 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.10.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
 	  	  
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj" />
+    <ProjectReference Include="..\CodeTogether.Client\CodeTogether.Client.csproj" />
+    <ProjectReference Include="..\CodeTogether.Common\CodeTogether.Common.csproj" />
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
+    <ProjectReference Include="..\CodeTogether.Runner\CodeTogether.Runner.csproj" />
+    <ProjectReference Include="..\CodeTogether\CodeTogether.csproj" />
   </ItemGroup>
 
 </Project>

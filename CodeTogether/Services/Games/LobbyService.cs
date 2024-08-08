@@ -24,7 +24,7 @@ namespace CodeTogether.Service.Games
 		{
 			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
 			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
-			user.UR_Game = game;
+			user.USR_Game = game;
 			dbContext.SaveChanges();
 		}
 	}

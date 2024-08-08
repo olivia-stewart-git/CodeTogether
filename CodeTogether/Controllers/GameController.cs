@@ -25,8 +25,8 @@ namespace CodeTogether.Controllers
 		{
 			// For proper user accounts this should be split into two api calls, one to create a user, one to join a game
 			var user = userService.CreateUser(username);
-			lobbyService.JoinLobby(gameId, user.UR_PK);
-			return Json(new JoinGameResponse() { PlayerId = user.UR_PK, ServerId = 1});
+			lobbyService.JoinLobby(gameId, user.USR_PK);
+			return Json(new JoinGameResponse() { PlayerId = user.USR_PK, ServerId = 1});
 		}
 
 		[Route("list")]

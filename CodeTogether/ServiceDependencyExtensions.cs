@@ -4,6 +4,7 @@ using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Runner.Scaffolds;
 using CodeTogether.Service.Games;
+using CodeTogether.Services.Authentication;
 using CodeTogether.Services.Games;
 
 namespace CodeTogether;
@@ -26,6 +27,11 @@ public static class ServiceDependencyExtensions
 		services.AddTransient<ILobbyService, LobbyService>();
 		services.AddTransient<IUserService, UserService>();
 		services.AddSingleton<IGameService, GameService>();
+
+		services.AddTransient<ICryptographyService, CryptographyService>();
+		services.AddTransient<IRegistrationService, RegistrationService>();
+		services.AddTransient<IRegisterVerificationService, RegisterVerificationService>();
+		services.AddTransient<ILoginAuthenticationService, LoginAuthenticationService>();
 
 		return services;
 	}

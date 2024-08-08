@@ -7,7 +7,7 @@ namespace CodeTogether.Service.Games
 	{
 		public UserModel CreateUser(string name)
 		{
-			var user = new UserModel { UR_LastHeardFromAt = DateTime.Now, UR_Name = name };
+			var user = new UserModel { USR_LastHeardFromAt = DateTime.Now, USR_UserName = name };
 			dbContext.Users.Add(user);
 			return user;
 		}
