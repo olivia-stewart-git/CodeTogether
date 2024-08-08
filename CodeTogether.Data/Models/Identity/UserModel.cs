@@ -23,6 +23,8 @@ public class UserModel : IDbModel
 	[MaxLength(150)]
 	public string USR_PasswordSalt { get; set; } = string.Empty;
 
+	public string[] USR_CheckPoints { get; set; } = [];
+
 	public DateTime USR_LastHeardFromAt { get; set; }
 
 	[ForeignKey(nameof(USR_GM_FK))]

@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using CodeTogether.Data;
 using CodeTogether.Data.Seeding;
+using CodeTogether.Services.Seeding;
 
 namespace CodeTogether.Deployment;
 
@@ -12,9 +13,7 @@ class Program
 	static void Main(string[] args)
 	{
 		Console.WriteLine("Executing auto deployment");
-
 		var assembly = Assembly.GetExecutingAssembly();
-		var resources = assembly.GetManifestResourceNames();
 
 		using var stream = assembly.GetManifestResourceStream("CodeTogether.Deployment.Deployment.ps1");
 
@@ -104,6 +103,6 @@ class Program
 		dbContext.Database.EnsureCreated();
 
 		var seeder = new Seeder(dbContext, Console.WriteLine);
-		seeder.Seed();
+		seeder.ExplicitSeed(typeof(UserSeeder), typeof(QuestionSeeder));
 	}
 }

@@ -30,8 +30,12 @@ public class LoginController : Controller
 		{
 			new (ClaimTypes.Name, user.USR_Email),
 			new ("UserName", user.USR_UserName),
-			new (ClaimTypes.Role, "Administrator"),
 		};
+
+		foreach (var userUserCheckPoint in user.USR_CheckPoints)
+		{
+			claims.Add(new Claim(ClaimTypes.Role, userUserCheckPoint));
+		}
 
 		var claimsIdentity = new ClaimsIdentity(
 			claims, CookieAuthenticationDefaults.AuthenticationScheme);

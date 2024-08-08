@@ -33,7 +33,7 @@
 
     private async Task HandleLogin()
     {
-        var response = await Http.PostAsJsonAsync("api/login", loginModel);
+        var response = await Http.PostAsJsonAsync("api/account/login", loginModel);
         loginFailed = !response.IsSuccessStatusCode;
         message = response.ReasonPhrase ?? "login failed";
         var dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();

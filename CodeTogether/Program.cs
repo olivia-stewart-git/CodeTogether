@@ -1,11 +1,6 @@
-using System.Text;
 using CodeTogether.Client;
-using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CodeTogether;
 

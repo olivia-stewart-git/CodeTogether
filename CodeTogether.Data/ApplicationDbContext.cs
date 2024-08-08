@@ -31,6 +31,13 @@ public class ApplicationDbContext : DbContext
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
 
+		modelBuilder.Entity<UserModel>()
+			.Property(x => x.USR_CheckPoints)
+			.HasConversion(
+				v => string.Join(',', v),
+				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
+				stringValueComparer);
+
 		modelBuilder.HasJsonConversion<ExecutionResultModel, Exception>(x => x.EXR_Exception)
 					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
