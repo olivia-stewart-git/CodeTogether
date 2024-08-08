@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/account/login"
 @using CodeTogether.Client.Integration.Authentication
 @inject HttpClient Http
 
@@ -33,9 +33,9 @@
 
     private async Task HandleLogin()
     {
-        var response = await Http.PostAsJsonAsync("api/account/login", loginModel);
+        var response = await Http.PostAsJsonAsync("/api/account/login", loginModel);
         loginFailed = !response.IsSuccessStatusCode;
-        message = response.ReasonPhrase ?? "login failed";
+        message = response.ReasonPhrase + await response.Content.ReadAsStringAsync();
         var dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
         if (dtoResponse != null)
         {

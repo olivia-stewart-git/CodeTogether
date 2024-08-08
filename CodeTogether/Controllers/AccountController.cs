@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Client.Integration;
 using CodeTogether.Client.Integration.Authentication;
+using CodeTogether.Data;
 using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,26 +13,26 @@ public class AccountController : Controller
 {
 	readonly IRegistrationService registrationService;
 	readonly IRegisterVerificationService verificationService;
+	readonly ApplicationDbContext dbContext;
 
-	public AccountController(IRegistrationService registrationService, IRegisterVerificationService verificationService)
+	public AccountController(IRegistrationService registrationService, IRegisterVerificationService verificationService, ApplicationDbContext dbContext)
 	{
 		this.registrationService = registrationService;
 		this.verificationService = verificationService;
+		this.dbContext = dbContext;
 	}
 
 	[HttpPost]
-	[AllowAnonymous]
-	[ValidateAntiForgeryToken]
 	[Route("register")]
 	public async Task<IActionResult> Register([FromBody]RegisterAccountDTO registrationRequest)
 	{
-		RegistrationRequestResponse response;
-		if ((response = verificationService.ValidateRequest(registrationRequest)).State == RegistrationState.Success)
+		RegistrationRequestResponseDTO responseDto;
+		if ((responseDto = verificationService.ValidateRequest(registrationRequest)).State == RegistrationState.Success)
 		{
 			var result = await registrationService.RegisterUser(registrationRequest);
-			response = new RegistrationRequestResponse(result, "Successfully created account");
+			responseDto = new RegistrationRequestResponseDTO(result, "Successfully created account");
 		}
 
-		return Json(response);
+		return Json(responseDto);
 	}
 }

@@ -4,6 +4,7 @@ using System.Security.Claims;
 using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeTogether.Controllers;
 
@@ -17,7 +18,15 @@ public class LoginController : Controller
 		this.loginAuthenticationService = loginAuthenticationService;
 	}
 
-	[HttpPost("login")]
+	[HttpGet]
+	[Route("user")]
+	public IActionResult GetUser()
+	{
+		return Json(User.Identity?.Name ?? string.Empty);
+	}
+
+	[HttpPost]
+	[Route("login")]
 	public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequest)
 	{
 		var user = loginAuthenticationService.GetAuthenticatedUser(loginRequest);
@@ -52,6 +61,6 @@ public class LoginController : Controller
 			new ClaimsPrincipal(claimsIdentity),
 			authProperties);
 
-		return Json(LoginResponseDTO.Failed);
+		return Json(LoginResponseDTO.Success);
 	}
 }

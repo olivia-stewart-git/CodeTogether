@@ -18,7 +18,7 @@ public class Program
 		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
 
 
-		builder.Services.AddControllers();
+		builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
