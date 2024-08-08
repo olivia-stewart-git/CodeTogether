@@ -1,14 +1,20 @@
 ﻿@inherits LayoutComponentBase
-@using CodeTogether.Client
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
+        <NavMenu/>
     </div>
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
+            <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
+            @if (!string.IsNullOrEmpty(userName))
+            {
+                <span class="text-light">Hello, @userName</span>
+            }
         </div>
 
         <article class="content px-4">
@@ -16,3 +22,29 @@
         </article>
     </main>
 </div>
+
+@code {
+    string? userName;
+
+    protected override void OnInitialized()
+    {
+        var userRequest = Http.GetStringAsync("api/account/user");
+        userRequest.ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                userName = task.Result;
+            }
+        });
+    }
+
+    private void Login()
+    {
+        NavigationManager.NavigateTo("account/login");
+    }
+
+    private void Register()
+    {
+        NavigationManager.NavigateTo("account/register");
+    }
+}

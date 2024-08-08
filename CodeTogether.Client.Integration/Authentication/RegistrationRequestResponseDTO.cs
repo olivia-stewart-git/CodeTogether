@@ -3,18 +3,18 @@
 namespace CodeTogether.Client.Integration.Authentication;
 
 [Serializable]
-public struct RegistrationRequestResponse
+public struct RegistrationRequestResponseDTO
 {
-	public static RegistrationRequestResponse Invalid(string message) => new (RegistrationState.Failure, message);
-	public static RegistrationRequestResponse Valid(string message) => new(RegistrationState.Success, message);
+	public static RegistrationRequestResponseDTO Invalid(string message) => new (RegistrationState.Failure, message);
+	public static RegistrationRequestResponseDTO Valid(string message) => new(RegistrationState.Success, message);
 
-	public RegistrationRequestResponse(RegistrationState state, string message)
+	public RegistrationRequestResponseDTO(RegistrationState state, string message)
 	{
 		State = state;
 		Message = message;
 	}
 
-	public static RegistrationRequestResponse Combined(params RegistrationRequestResponse[] responses)
+	public static RegistrationRequestResponseDTO Combined(params RegistrationRequestResponseDTO[] responses)
 	{
 		var state = responses.Any(x => x.State == RegistrationState.Failure)
 			? RegistrationState.Failure 
