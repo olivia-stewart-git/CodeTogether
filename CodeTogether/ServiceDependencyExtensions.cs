@@ -31,6 +31,7 @@ public static class ServiceDependencyExtensions
 		services.AddTransient<ICryptographyService, CryptographyService>();
 		services.AddTransient<IRegistrationService, RegistrationService>();
 		services.AddTransient<IRegisterVerificationService, RegisterVerificationService>();
+		services.AddTransient<ILoginAuthenticationService, LoginAuthenticationService>();
 
 		return services;
 	}

@@ -1,5 +1,7 @@
-﻿using CodeTogether.Client.Integration;
+﻿using System.Security.Claims;
+using CodeTogether.Client.Integration;
 using CodeTogether.Client.Integration.Authentication;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CodeTogether.Services.Authentication;
 

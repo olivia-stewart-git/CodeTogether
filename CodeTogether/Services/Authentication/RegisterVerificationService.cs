@@ -15,7 +15,7 @@ public class RegisterVerificationService : IRegisterVerificationService
 	readonly ApplicationDbContext dbContext;
 	const string AllowedPasswordAndUsernameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 	const int MinimumPasswordLength = 8;
-	const int MinimumUserNameLength = 8;
+	const int MinimumUserNameLength = 5;
 
 	public RegisterVerificationService(ApplicationDbContext dbContext)
 	{

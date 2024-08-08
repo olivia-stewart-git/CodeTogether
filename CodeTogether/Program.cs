@@ -1,5 +1,11 @@
+using System.Text;
 using CodeTogether.Client;
+using CodeTogether.Services.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CodeTogether;
 
@@ -22,6 +28,7 @@ public class Program
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
 
+
 		builder.Services.AddSignalR();
 		builder.Services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
 		builder.Services.AddResponseCompression(opts =>
@@ -30,7 +37,22 @@ public class Program
 				["application/octet-stream"]);
 		});
 
+		builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+			.AddCookie(options =>
+			{
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+				options.SlidingExpiration = true;
+				options.AccessDeniedPath = "/Forbidden/";
+			});
+
+
 		var app = builder.Build();
+
+		var cookiePolicyOptions = new CookiePolicyOptions
+		{
+			MinimumSameSitePolicy = SameSiteMode.Strict,
+		};
+		app.UseCookiePolicy(cookiePolicyOptions);
 
 		app.UseResponseCompression();
 
@@ -48,7 +70,9 @@ public class Program
 		//.AddAdditionalAssemblies(typeof(CodeTogether.Client._Imports).Assembly);
 
 		app.UseHttpsRedirection();
-		//app.UseAuthorization();
+
+		app.UseAuthorization();
+		app.UseAuthentication();
 
 		app.UseAntiforgery();
 		app.UseStaticFiles();

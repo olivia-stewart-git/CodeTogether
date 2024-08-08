@@ -3,6 +3,23 @@ using CodeTogether.Data.Models.Factories;
 
 namespace CodeTogether.Data.Seeding;
 
+internal class UserSeeder : ISeeder
+{
+	public UserSeeder(ApplicationDbContext dbContext)
+	{
+
+	}
+
+	public void Seed()
+	{
+
+	}
+
+	void CreateAdminUser()
+	{
+
+	}
+}
 public class Seeder : ISeeder
 {
 	readonly ApplicationDbContext dbContext;

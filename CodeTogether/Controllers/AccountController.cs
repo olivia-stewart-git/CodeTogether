@@ -22,7 +22,7 @@ public class AccountController : Controller
 	[HttpPost]
 	[AllowAnonymous]
 	[ValidateAntiForgeryToken]
-	[Route("/register")]
+	[Route("register")]
 	public async Task<IActionResult> Register([FromBody]RegisterAccountDTO registrationRequest)
 	{
 		RegistrationRequestResponse response;

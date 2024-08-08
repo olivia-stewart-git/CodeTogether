@@ -6,12 +6,20 @@ namespace CodeTogether.Services.Authentication;
 public interface ICryptographyService
 {
 	string HashString(string inputValue, out string salt);
+	bool VerifyHash(string salt, string hash, string inputValue);
 }
 
 public class CryptographyService : ICryptographyService
 {
 	const int keySize = 64;
 	const int hashIterations = 1000;
+
+	public bool VerifyHash(string salt, string hash, string inputValue)
+	{
+		var saltBytes = Convert.FromHexString(salt);
+		var comparisonHash = GenerateHash(inputValue, saltBytes);
+		return comparisonHash.SequenceEqual(Convert.FromHexString(hash));
+	}
 
 	public string HashString(string inputValue, out string salt)
 	{
