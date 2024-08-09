@@ -84,7 +84,7 @@ public class RegisterVerificationService : IRegisterVerificationService
 	bool AreCharactersAllowed(string inputString, out IEnumerable<char> disallowed)
 	{
 		disallowed = inputString.Where(ch => !(Char.IsLetterOrDigit(ch) || Char.IsPunctuation(ch) || Char.IsSymbol(ch)));
-		return disallowed.Any();
+		return !disallowed.Any();
 	}
 
 	RegistrationRequestResponseDTO ValidateEmail(string email)
