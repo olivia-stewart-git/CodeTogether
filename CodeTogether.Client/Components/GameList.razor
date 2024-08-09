@@ -51,7 +51,6 @@
     {
         while (true) // TODO: does this need a cancellation token to stop when the component is unloaded/disposed?
         {
-            Console.WriteLine($"polling {pollInterval}");
             StateHasChanged();
             await UpdateGameList();
             await Task.Delay(pollInterval);
@@ -65,7 +64,6 @@
         // Clear list, I think this is not nessesary but I think gives more feedback that the game list has updated
         games = null;
         var responseString = await http.GetStringAsync("api/game/list");
-        Console.WriteLine($"got: {responseString}");
         games = JsonSerializer.Deserialize<List<GameListGameDTO>>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         StateHasChanged();
     }

@@ -12,10 +12,10 @@ public interface IRegisterVerificationService
 
 public class RegisterVerificationService : IRegisterVerificationService
 {
+	const bool StrictValidation = false;
 	readonly ApplicationDbContext dbContext;
-	const string AllowedPasswordAndUsernameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-	const int MinimumPasswordLength = 8;
-	const int MinimumUserNameLength = 5;
+	const int MinimumPasswordLength = 4;
+	const int MinimumUserNameLength = 3;
 
 	public RegisterVerificationService(ApplicationDbContext dbContext)
 	{
@@ -38,9 +38,9 @@ public class RegisterVerificationService : IRegisterVerificationService
 			return RegistrationRequestResponseDTO.Invalid("Username cannot be empty");
 		}
 
-		if (!AreCharactersAllowed(username, out var invalidCharacter))
+		if (!AreCharactersAllowed(username, out var invalidCharacters))
 		{
-			return RegistrationRequestResponseDTO.Invalid($"Make sure username contains valid characters,  {invalidCharacter} is invalid");
+			return RegistrationRequestResponseDTO.Invalid($"Make sure username contains valid characters,  '{string.Join("', '", invalidCharacters)}' are invalid");
 		}
 
 		if (username.Length < MinimumUserNameLength)
@@ -68,17 +68,12 @@ public class RegisterVerificationService : IRegisterVerificationService
 			return RegistrationRequestResponseDTO.Invalid("Password cannot be empty");
 		}
 
-		if (!AreCharactersAllowed(password, out var invalidCharacter))
-		{
-			return RegistrationRequestResponseDTO.Invalid($"Make sure password contains valid characters, {invalidCharacter} is invalid");
-		}
-
-		if (password.Length < MinimumPasswordLength)
+		if (StrictValidation && password.Length < MinimumPasswordLength)
 		{
 			return RegistrationRequestResponseDTO.Invalid($"Password must be longer than {MinimumPasswordLength} characters");
 		}
 
-		if (!Regex.IsMatch(password, @"[\d\W]"))
+		if (StrictValidation && !Regex.IsMatch(password, @"[\d\W]"))
 		{
 			return RegistrationRequestResponseDTO.Invalid("Password should contain at least one number or special character");
 		}
@@ -86,20 +81,10 @@ public class RegisterVerificationService : IRegisterVerificationService
 		return RegistrationRequestResponseDTO.Valid("Password is valid");
 	}
 
-	bool AreCharactersAllowed(string inputString, out char disallowed)
+	bool AreCharactersAllowed(string inputString, out IEnumerable<char> disallowed)
 	{
-		disallowed = 'a';
-		var set = AllowedPasswordAndUsernameCharacters.ToHashSet();
-		foreach (var c in inputString)
-		{
-			if (!set.Contains(c))
-			{
-				disallowed = c;
-				return false;
-			}
-		}
-
-		return true;
+		disallowed = inputString.Where(ch => !(Char.IsLetterOrDigit(ch) || Char.IsPunctuation(ch) || Char.IsSymbol(ch)));
+		return disallowed.Any();
 	}
 
 	RegistrationRequestResponseDTO ValidateEmail(string email)
@@ -111,7 +96,7 @@ public class RegisterVerificationService : IRegisterVerificationService
 
 		if (!email.Contains('@'))
 		{
-			return RegistrationRequestResponseDTO.Invalid("Enter a valid email");
+			return RegistrationRequestResponseDTO.Invalid("Email must contain an @");
 		}
 
 		if (dbContext.Users.Any(x => x.USR_Email == email))
