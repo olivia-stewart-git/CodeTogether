@@ -68,7 +68,7 @@ public class RegisterVerificationService : IRegisterVerificationService
 			return RegistrationRequestResponseDTO.Invalid("Password cannot be empty");
 		}
 
-		if (StrictValidation && password.Length < MinimumPasswordLength)
+		if (password.Length < MinimumPasswordLength)
 		{
 			return RegistrationRequestResponseDTO.Invalid($"Password must be longer than {MinimumPasswordLength} characters");
 		}
