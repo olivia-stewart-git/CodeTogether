@@ -43,7 +43,7 @@
                 {
                     userName = await result.Content.ReadAsStringAsync();
                 }
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
                 Console.WriteLine($"len: {userName.Length}");
             }
         });

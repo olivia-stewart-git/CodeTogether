@@ -1,0 +1,93 @@
+﻿@page "/lobby/{serverId:int}/{userId:guid}"
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.SignalR.Client
+@using CodeTogether.Client.Integration
+@implements IAsyncDisposable
+
+
+<h2>Lobby</h2>
+<p>Using server @serverId.ToString() for user @userId.ToString()</p>
+@if (!IsConnected)
+{
+    <p>Establishing connection</p>
+}
+else if (lobbyState == null)
+{
+    <p>Waiting on response</p>
+}
+else
+{
+    <span>
+        Max Players:
+        <button @onclick="() => maxPlayers = Math.Max(maxPlayers - 1, players.Count())">-</button>
+        <button @onclick="() => maxPlayers = Math.Min(maxPlayers + 1, 4)">+</button>
+    </span>
+    <h4>Players @players.Count() / </h4>
+    <ul>
+        @foreach (var player in players)
+        {
+            <li>@player</li>
+        }
+    </ul>
+    <button @onclick="SendStartGame">Start</button>
+}
+
+@code {
+    [Parameter]
+    public required Guid userId { get; set; }
+
+    [Parameter]
+    public required int serverId { get; set; }
+
+    HubConnection? hubConnection;
+
+    LobbyStateDTO? lobbyState;
+
+    bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/api/lobby-hub"))
+            .Build();
+
+        hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
+        {
+            lobbyState = state;
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.SendAsync("RequestState");
+    }
+
+    async Task DecrementPlayerCount()
+    {
+        if (lobbyState is not null)
+        {
+            lobbyState.Players.Any();
+            var newMaxPlayers = Math.Max(lobbyState.Configuration.MaxPlayers - 1, lobbyState.Players.Count());
+            //if (newMaxPlayers != lobbyState.MaxPlayers)
+            //{
+            //SendLobbyConfiguration(new LobbyConfigurationDTO { MaxPlayers = newMaxPlayers } );
+            //}
+        }
+    }
+
+    async Task SendLobbyConfiguration(LobbyConfigurationDTO config)
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("UpdateState", config);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

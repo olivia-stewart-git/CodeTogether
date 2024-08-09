@@ -1,4 +1,5 @@
 using CodeTogether.Client;
+using CodeTogether.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.ResponseCompression;
 
@@ -13,7 +14,6 @@ public class Program
 		builder.Services.RegisterServices();
 		builder.Services.RegisterRunnerServices();
 
-		//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException();
 		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
 
@@ -62,7 +62,6 @@ public class Program
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveWebAssemblyRenderMode();
-		//.AddAdditionalAssemblies(typeof(CodeTogether.Client._Imports).Assembly);
 
 		app.UseHttpsRedirection();
 
@@ -74,6 +73,7 @@ public class Program
 
 		app.MapControllers();
 		// app.MapHub<GameHub>("/gamehub");
+		app.MapHub<LobbyHub>("/api/lobby-hub");
 
 		app.Run();
 	}
