@@ -3,17 +3,20 @@
 @inject HttpClient Http
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
-
     <main>
         <div class="top-row px-4">
-            <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
-            <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
-            @if (!string.IsNullOrEmpty(userName))
+            @if (!loadedUsername)
             {
-                <span class="text-light">Hello, @userName</span>
+                <span>Loading...</span>
+            }
+            else if(userName == null)
+            {
+                <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
+                <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
+            }
+            else
+            {
+                <span>Hello, @userName</span>
             }
         </div>
 
@@ -25,15 +28,23 @@
 
 @code {
     string? userName;
+    bool loadedUsername = false;
 
     protected override void OnInitialized()
     {
-        var userRequest = Http.GetStringAsync("api/account/user");
-        userRequest.ContinueWith(task =>
+        var userRequest = Http.GetAsync("api/account/user");
+        userRequest.ContinueWith(async task =>
         {
             if (task.IsCompletedSuccessfully)
             {
-                userName = task.Result;
+                loadedUsername = true;
+                var result = task.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    userName = await result.Content.ReadAsStringAsync();
+                }
+                StateHasChanged();
+                Console.WriteLine($"len: {userName.Length}");
             }
         });
     }

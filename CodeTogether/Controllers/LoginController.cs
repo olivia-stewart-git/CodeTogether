@@ -22,7 +22,8 @@ public class LoginController : Controller
 	[Route("user")]
 	public IActionResult GetUser()
 	{
-		return Json(User.Identity?.Name ?? string.Empty);
+		var name = User.Identity?.Name;
+		return string.IsNullOrEmpty(name) ? NotFound() : Json(name);
 	}
 
 	[HttpPost]
