@@ -1,0 +1,15 @@
+﻿@page "/question-info"
+@using CodeTogether.Client.Components.Execution
+@using CodeTogether.Client.Integration.Execution
+
+<h3>QuestionInfoPage</h3>
+<p>Question Name: @question.Name</p>
+<p>Question Description: @question.Description</p>
+<TestView/>
+@code {
+    QuestionDTO question = new()
+    {
+        Name = "question name",
+        Description = "description",
+    };
+}
