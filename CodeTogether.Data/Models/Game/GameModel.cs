@@ -24,5 +24,5 @@ public class GameModel : IDbModel
 
 public enum GameState
 {
-	Lobby, Playing
+	Lobby, Starting, Playing
 }

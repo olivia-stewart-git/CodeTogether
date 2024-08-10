@@ -20,32 +20,35 @@ public class UserStateService(HttpClient http)
 
 	void EnsureRequestHasBeenMade()
 	{
-		if (userNameTask == null)
+		if (userNameTask != null)
 		{
-			// Ensures that only one request is made
-			lock (gettingUsernameLock)
-			{
-				// Second check is if another thread created the request since we last checked
-				if (userNameTask == null)
-				{
-					userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<string?>>(responseTask =>
-					{
-						var response = responseTask.Result;
-						if (response.IsSuccessStatusCode)
-						{
-							Console.WriteLine("Successfully logged in");
-							// Second ContinueWith is to cast from Task<string> to Task<string?>
-							return response.Content.ReadAsStringAsync().ContinueWith(c => (string?)c.Result);
-						}
-						else
-						{
-							return Task.FromResult<string?>(null);
-						}
-						// Unwrap() turns a Task<Task<T>> into a Task<T>
-					}).Unwrap();
-				}
-			}
+			return;
 		}
+		// Ensures that only one request is made
+		lock (gettingUsernameLock)
+		{
+			// Second check is if another thread created the request since we last checked
+			if (userNameTask != null)
+			{
+				return;
+			}
+
+			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<string?>>(responseTask =>
+			{
+				var response = responseTask.Result;
+				if (response.IsSuccessStatusCode)
+				{
+					// Second ContinueWith is to cast from Task<string> to Task<string?>
+					return response.Content.ReadAsStringAsync().ContinueWith(c => (string?)c.Result);
+				}
+				else
+				{
+					return Task.FromResult<string?>(null);
+				}
+				// Unwrap() turns a Task<Task<T>> into a Task<T>
+			}).Unwrap();
+		}
+
 	}
 
 	public void ResetCache()

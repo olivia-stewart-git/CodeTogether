@@ -39,8 +39,9 @@ public class LoginController : Controller
 
 		var claims = new List<Claim>
 		{
-			new (ClaimTypes.Name, user.USR_Email),
-			new ("UserName", user.USR_UserName),
+			new (ClaimTypes.Email, user.USR_Email),
+			new (ClaimTypes.Name, user.USR_UserName),
+			new (ClaimTypes.NameIdentifier, user.USR_PK.ToString()),
 		};
 
 		foreach (var userUserCheckPoint in user.USR_CheckPoints)

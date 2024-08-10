@@ -18,6 +18,6 @@
     {
         status = "Creating...";
         var gameId = Guid.Parse(await http.GetStringAsync($"/api/game/create?lobbyName={GameName}"));
-        await GameJoiner.JoinAndNavigateToGame(http, Navigation, gameId, "username1");
+        await GameJoiner.JoinAndNavigateToGame(http, Navigation, gameId);
     }
 }

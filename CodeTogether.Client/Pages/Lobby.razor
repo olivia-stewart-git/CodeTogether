@@ -1,4 +1,4 @@
-﻿@page "/lobby/{serverId:int}/{userId:guid}"
+﻿@page "/lobby/{serverId:int}/{gameId:guid}"
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
 @using CodeTogether.Client.Integration
@@ -6,7 +6,7 @@
 
 
 <h2>Lobby</h2>
-<p>Using server @serverId.ToString() for user @userId.ToString()</p>
+<p>Using server @serverId.ToString() for user @gameId.ToString()</p>
 @if (!IsConnected) // Maybe should have a signalr base component wrapper to have this logic?
 {
     <p>Establishing connection</p>
@@ -44,7 +44,7 @@ else
 
 @code {
     [Parameter]
-    public required Guid userId { get; set; }
+    public required Guid gameId { get; set; }
 
     [Parameter]
     public required int serverId { get; set; }
@@ -65,6 +65,7 @@ else
 
         hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
         {
+            Console.WriteLine("got state");
             lobbyState = state;
             hasSentChange = false;
             InvokeAsync(StateHasChanged);
@@ -72,7 +73,9 @@ else
 
         await hubConnection.StartAsync();
 
-        await hubConnection.SendAsync("RequestState");
+        Console.WriteLine("before sent");
+        await hubConnection.SendAsync("RequestState", gameId);
+        Console.WriteLine("sent");
     }
 
     async Task ChangeMaxPlayers(int by)
@@ -97,6 +100,7 @@ else
 
     async Task SendLobbyConfiguration(SetLobbyConfigurationDTO config)
     {
+        Console.WriteLine("sending config");
         hasSentChange = true;
         await hubConnection.SendAsync("UpdateState", config);
     }
