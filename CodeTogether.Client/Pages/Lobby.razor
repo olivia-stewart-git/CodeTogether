@@ -1,0 +1,108 @@
+﻿@page "/lobby/{serverId:int}/{userId:guid}"
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.SignalR.Client
+@using CodeTogether.Client.Integration
+@implements IAsyncDisposable
+
+
+<h2>Lobby</h2>
+<p>Using server @serverId.ToString() for user @userId.ToString()</p>
+@if (!IsConnected) // Maybe should have a signalr base component wrapper to have this logic?
+{
+    <p>Establishing connection</p>
+}
+else if (lobbyState == null)
+{
+    <p>Waiting on first response</p>
+}
+else
+{
+    <div id="options">
+        @if (hasSentChange) // Used to give feedback of a pending change, should style it like one of those red notification things that phone apps have
+        {
+            <p>o</p>
+        }
+        else
+        {
+            <p> </p>
+        }
+        <span>
+            Max Players:
+            <button @onclick="() => ChangeMaxPlayers(-1)">-</button>
+            <button @onclick="() => ChangeMaxPlayers(1)">+</button>
+        </span>
+    </div>
+    <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
+    <ul>
+        @foreach (var player in lobbyState.Players)
+        {
+            <li>@player</li>
+        }
+    </ul>
+    <button @onclick="SendStartGame">Start</button>
+}
+
+@code {
+    [Parameter]
+    public required Guid userId { get; set; }
+
+    [Parameter]
+    public required int serverId { get; set; }
+
+    HubConnection hubConnection;
+
+    LobbyStateDTO? lobbyState;
+
+    bool hasSentChange = false;
+
+    bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/api/lobby-hub"))
+            .Build();
+
+        hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
+        {
+            lobbyState = state;
+            hasSentChange = false;
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+
+        await hubConnection.SendAsync("RequestState");
+    }
+
+    async Task ChangeMaxPlayers(int by)
+    {
+        if (lobbyState is not null)
+        {
+            lobbyState.Players.Any();
+            var maxPlayersFloor = lobbyState.Players.Count();
+            var maxPlayersCeiling = 4;
+            var newMaxPlayers = Math.Clamp(lobbyState.Configuration.MaxPlayers + by, maxPlayersFloor, maxPlayersCeiling);
+            if (newMaxPlayers != lobbyState.Configuration.MaxPlayers)
+            {
+                await SendLobbyConfiguration(new SetLobbyConfigurationDTO { MaxPlayers = newMaxPlayers });
+            }
+        }
+    }
+
+    async Task SendStartGame()
+    {
+        await SendLobbyConfiguration(new SetLobbyConfigurationDTO { GoingToStart = true });
+    }
+
+    async Task SendLobbyConfiguration(SetLobbyConfigurationDTO config)
+    {
+        hasSentChange = true;
+        await hubConnection.SendAsync("UpdateState", config);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await hubConnection.DisposeAsync();
+    }
+}

@@ -1,23 +1,11 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@inject HttpClient Http
+@using CodeTogether.Client.Services
+@inject UserStateService user
 
 <div class="page">
     <main>
         <div class="top-row px-4">
-            @if (!loadedUsername)
-            {
-                <span>Loading...</span>
-            }
-            else if(userName == null)
-            {
-                <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
-                <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
-            }
-            else
-            {
-                <span>Hello, @userName</span>
-            }
+            <span>@usernameText</span>
         </div>
 
         <article class="content px-4">
@@ -27,35 +15,15 @@
 </div>
 
 @code {
-    string? userName;
-    bool loadedUsername = false;
+    string usernameText = "Loading...";
 
-    protected override void OnInitialized()
-    {
-        var userRequest = Http.GetAsync("api/account/user");
-        userRequest.ContinueWith(async task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                loadedUsername = true;
-                var result = task.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    userName = await result.Content.ReadAsStringAsync();
-                }
-                StateHasChanged();
-                Console.WriteLine($"len: {userName.Length}");
-            }
-        });
-    }
 
-    private void Login()
+    // TODO: trigger a rerender of the layout when the user is changed (e.g. when logging in)
+    // maybe add an event on UserStateService and add this components StateHasChanged?
+    protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo("account/login");
-    }
-
-    private void Register()
-    {
-        NavigationManager.NavigateTo("account/register");
+        var username = await user.GetUserName();
+        usernameText = username == null ? "Not logged in" : $"Hello {username}";
+        StateHasChanged();
     }
 }

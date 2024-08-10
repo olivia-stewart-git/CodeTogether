@@ -17,6 +17,8 @@ public class GameModel : IDbModel
 
 	public DateTime GM_CreateTimeUtc { get; set; } = DateTime.UtcNow;
 
+	public int MaxPlayers { get; set; }
+
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }
 

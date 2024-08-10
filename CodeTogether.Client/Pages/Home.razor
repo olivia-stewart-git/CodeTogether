@@ -1,11 +1,38 @@
 ﻿@page "/"
 @using CodeTogether.Client.Components
+@using CodeTogether.Client.Services
+@inject UserStateService user
+@inject NavigationManager navigation
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Welcome to CodeTogether.</h1>
 
-Welcome to your new app.
+@if (!HasLoaded)
+{
+    <p>Loading...</p>
+}
+else if (username == null)
+{
+    <h3>Please login to play</h3>
+    <NavLink href="login">Login to an existing account</NavLink>
+    <NavLink href="register">Create a new account</NavLink>
+}
+else
+{
+    <GameCreator />
+    <GameList />
+}
 
-<GameCreator />
-<GameList />
+@code {
+    bool HasLoaded = false;
+    string? username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("home initializing");
+        username = await user.GetUserName();
+        HasLoaded = true;
+        StateHasChanged();
+    }
+}
