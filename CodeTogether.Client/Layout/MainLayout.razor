@@ -1,20 +1,11 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@inject HttpClient Http
+@using CodeTogether.Client.Services
+@inject UserStateService user
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
-
     <main>
         <div class="top-row px-4">
-            <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
-            <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
-            @if (!string.IsNullOrEmpty(userName))
-            {
-                <span class="text-light">Hello, @userName</span>
-            }
+            <span>@usernameText</span>
         </div>
 
         <article class="content px-4">
@@ -24,27 +15,15 @@
 </div>
 
 @code {
-    string? userName;
+    string usernameText = "Loading...";
 
-    protected override void OnInitialized()
-    {
-        var userRequest = Http.GetStringAsync("api/account/user");
-        userRequest.ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                userName = task.Result;
-            }
-        });
-    }
 
-    private void Login()
+    // TODO: trigger a rerender of the layout when the user is changed (e.g. when logging in)
+    // maybe add an event on UserStateService and add this components StateHasChanged?
+    protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo("account/login");
-    }
-
-    private void Register()
-    {
-        NavigationManager.NavigateTo("account/register");
+        var username = await user.GetUserName();
+        usernameText = username == null ? "Not logged in" : $"Hello {username}";
+        StateHasChanged();
     }
 }

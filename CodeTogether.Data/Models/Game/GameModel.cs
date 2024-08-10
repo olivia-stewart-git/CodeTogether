@@ -17,10 +17,14 @@ public class GameModel : IDbModel
 
 	public DateTime GM_CreateTimeUtc { get; set; } = DateTime.UtcNow;
 
+	public DateTime? GM_StartedAt { get; set; }
+
+	public int MaxPlayers { get; set; }
+
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }
 
 public enum GameState
 {
-	Lobby, Playing
+	Lobby, Starting, Playing
 }

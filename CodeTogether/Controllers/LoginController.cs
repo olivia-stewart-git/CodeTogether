@@ -5,6 +5,7 @@ using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CodeTogether.Controllers;
 
@@ -22,7 +23,8 @@ public class LoginController : Controller
 	[Route("user")]
 	public IActionResult GetUser()
 	{
-		return Json(User.Identity?.Name ?? string.Empty);
+		var name = User.Identity?.Name;
+		return string.IsNullOrEmpty(name) ? BadRequest() : Json(name);
 	}
 
 	[HttpPost]
@@ -37,8 +39,9 @@ public class LoginController : Controller
 
 		var claims = new List<Claim>
 		{
-			new (ClaimTypes.Name, user.USR_Email),
-			new ("UserName", user.USR_UserName),
+			new (ClaimTypes.Email, user.USR_Email),
+			new (ClaimTypes.Name, user.USR_UserName),
+			new (ClaimTypes.NameIdentifier, user.USR_PK.ToString()),
 		};
 
 		foreach (var userUserCheckPoint in user.USR_CheckPoints)
@@ -53,7 +56,7 @@ public class LoginController : Controller
 		{
 			IsPersistent = true,
 			ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-			RedirectUri = "/login",
+			//RedirectUri = "/", // TODO: does this need to be set for expiry?
 		};
 
 		await HttpContext.SignInAsync(

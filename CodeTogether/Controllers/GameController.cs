@@ -1,11 +1,13 @@
 using CodeTogether.Client.Integration;
+using CodeTogether.Hubs;
 using CodeTogether.Service.Games;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CodeTogether.Controllers
 {
 	[Route("api/game")]
-	public class GameController(ILobbyService lobbyService, IUserService userService) : Controller
+	public class GameController(ILobbyService lobbyService) : Controller
 	{
 		/// <summary>
 		/// Returns the game id
@@ -21,12 +23,12 @@ namespace CodeTogether.Controllers
 		/// Returns the server id and player id
 		/// </summary>
 		[Route("join")]
-		public IActionResult JoinGame(string username, Guid gameId)
+		public IActionResult JoinGame(Guid gameId)
 		{
-			// For proper user accounts this should be split into two api calls, one to create a user, one to join a game
-			var user = userService.CreateUser(username);
-			lobbyService.JoinLobby(gameId, user.USR_PK);
-			return Json(new JoinGameResponse() { PlayerId = user.USR_PK, ServerId = 1});
+			var userIdString = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+			var userId = Guid.Parse(userIdString);
+			lobbyService.JoinLobby(gameId, userId);
+			return Json(new JoinGameResponse() { ServerId = 1});
 		}
 
 		[Route("list")]
