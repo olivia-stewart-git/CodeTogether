@@ -1,8 +1,10 @@
-﻿@page "/account/register"
+﻿@page "/register"
 @using CodeTogether.Client.Integration
+@using CodeTogether.Client.Services; 
 @using CodeTogether.Client.Integration.Authentication
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
+@inject UserStateService user
 
 <h3>Register</h3>
 
@@ -42,25 +44,17 @@
 
     private async Task HandleRegistration()
     {
-        var response = await Http.PostAsJsonAsync("/api/account/register", registration);
-
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            message = response.ReasonPhrase + await response.Content.ReadAsStringAsync();
-            registrationFailed = true;
-            return;
+            await user.RegisterUser(registration);
+            var loginRequest = new LoginRequestDTO { Username = registration.Username, Password = registration.Password };
+            await user.LoginAsUser(loginRequest);
+            NavigateToLogin();
         }
-
-        var registrationResponse = await response.Content.ReadFromJsonAsync<RegistrationRequestResponseDTO>();
-        if (registrationResponse.State == RegistrationState.Success)
+        catch (AccountException ex)
         {
-            // TODO: authenticate automatically
-            NavigationManager.NavigateTo("account/login");
-        }
-        else
-        {
-            message = registrationResponse.Message;
             registrationFailed = true;
+            message = $"Failed to create account: {ex.Message}";
         }
     }
 

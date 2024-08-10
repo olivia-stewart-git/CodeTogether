@@ -1,7 +1,9 @@
-﻿@page "/account/login"
+﻿@page "/login"
 @using CodeTogether.Client.Integration.Authentication
+@using CodeTogether.Client.Services 
 @inject HttpClient Http
-@inject NavigationManager NavigationManager
+@inject NavigationManager navigation
+@inject UserStateService user
 
 <h1>Login</h1>
 
@@ -34,20 +36,14 @@
 
     private async Task HandleLogin()
     {
-        var response = await Http.PostAsJsonAsync("/api/account/login", loginModel);
-        loginFailed = !response.IsSuccessStatusCode;
-        message = response.ReasonPhrase + await response.Content.ReadAsStringAsync();
-        var dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
-        if (dtoResponse != null)
+        try
         {
-            if (dtoResponse.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("/");
-            } else
-            {
-                message = dtoResponse.Message;
-                loginFailed = true;
-            }
+            await user.LoginAsUser(loginModel);
+            navigation.NavigateTo("/");
+        } catch (AccountException ex)
+        {
+            loginFailed = true;
+            message = $"Could not login: {ex.Message}";
         }
     }
 }

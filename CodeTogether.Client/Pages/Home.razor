@@ -6,11 +6,32 @@
 
 <PageTitle>Home</PageTitle>
 
-<h2>Welcome to CodeTogether.</h2>
+<h1>Welcome to CodeTogether.</h1>
 
-<GameCreator />
-<GameList />
+@if (!HasLoaded)
+{
+    <p>Loading...</p>
+}
+else if (username == null)
+{
+    <h3>Please login to play</h3>
+    <NavLink href="login">Login to an existing account</NavLink>
+    <NavLink href="register">Create a new account</NavLink>
+}
+else
+{
+    <GameCreator />
+    <GameList />
+}
 
 @code {
     bool HasLoaded = false;
+    string? username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        username = await user.GetUserName();
+        HasLoaded = true;
+        StateHasChanged();
+    }
 }
