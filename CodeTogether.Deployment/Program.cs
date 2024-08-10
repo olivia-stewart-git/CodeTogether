@@ -10,7 +10,7 @@ namespace CodeTogether.Deployment;
 
 class Program
 {
-	static void Main(string[] args)
+	static void Main()
 	{
 		Console.WriteLine("Executing auto deployment");
 		var assembly = Assembly.GetExecutingAssembly();
@@ -27,7 +27,7 @@ class Program
 		var scriptContent = reader.ReadToEnd();
 
 		// Write the script content to a temporary file
-		var assemblyDirectory = Directory.GetParent(assembly.Location).FullName;
+		var assemblyDirectory = Directory.GetParent(assembly.Location)!.FullName;
 		var tempScriptPath = Path.Combine(assemblyDirectory, "tempDeployment.ps1");
 		File.WriteAllText(tempScriptPath, scriptContent);
 
@@ -36,7 +36,7 @@ class Program
 			var startInfo = new ProcessStartInfo
 			{
 				FileName = "powershell.exe",
-				Arguments = $"-ExecutionPolicy Bypass -File \"{tempScriptPath}\" {Directory.GetParent(assemblyDirectory).FullName}",
+				Arguments = $"-ExecutionPolicy Bypass -File \"{tempScriptPath}\" \"{Directory.GetParent(assemblyDirectory)?.FullName}\"",
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
 				UseShellExecute = false,

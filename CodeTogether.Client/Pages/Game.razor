@@ -1,7 +1,55 @@
 ﻿@page "/game/{serverId:int}/{userId:guid}"
+@using Microsoft.AspNetCore.SignalR.Client
+@using GaelJ.BlazorCodeMirror6
+@using GaelJ.BlazorCodeMirror6.Models
+@using Timer = System.Timers.Timer
+@inject NavigationManager Navigation
 
 <h3>Game</h3>
 <p>Using server @serverId.ToString() for user @userId.ToString()</p>
+
+<div class="container border">
+    <div class="row text-center fw-bold">
+        <div class="col">
+            Your Code
+        </div>
+        
+        <div class="col">
+            Their Code
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <CodeMirror6Wrapper
+                IsWASM
+                @bind-Doc="@Code"
+                Placeholder="Enter your code..."
+                TabSize="4"
+                IndentationUnit="4"
+                Theme="@ThemeMirrorTheme.VSCode"
+                Language="CodeMirrorLanguage.Csharp"
+                Setup="@setup"
+                Editable
+                ReadOnly="false"
+                LineWrapping="false"
+                MaxHeight="70vh"/>
+        </div>
+        
+        <div class="col">
+            <CodeMirror6Wrapper
+                IsWASM
+                @bind-Doc="@TheirCode"
+                TabSize="4"
+                Theme="@ThemeMirrorTheme.VSCode"
+                Language="CodeMirrorLanguage.Csharp"
+                ReadOnly="true"
+                Editable="false"
+                LineWrapping="true"
+                MaxHeight="70vh"/>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]
@@ -9,4 +57,44 @@
 
     [Parameter]
     public required int serverId { get; set; }
+
+    private string Code { get; set; } = string.Empty;
+
+    private readonly CodeMirrorSetup setup = new()
+    {
+        BindMode = DocumentBindMode.OnInput
+    };
+
+    private string TheirCode { get; set; } = string.Empty;
+
+    private HubConnection? hubConnection;
+
+    private readonly Timer sendCodeTimer = new(2000);
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/gamehub")).Build();
+
+        hubConnection.On<string>("SetState", theirCode =>
+        {
+            TheirCode = theirCode;
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+
+        sendCodeTimer.Elapsed += async (_, _) =>
+        {
+            await SendCode();
+        };
+        sendCodeTimer.Enabled = true;
+    }
+
+    private async Task SendCode()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendMessage", Code);
+        }
+    }
 }

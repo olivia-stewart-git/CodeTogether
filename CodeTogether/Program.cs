@@ -14,7 +14,7 @@ public class Program
 		builder.Services.RegisterServices();
 		builder.Services.RegisterRunnerServices();
 
-		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException();
+		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException(null);
 		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
 
 
@@ -72,8 +72,8 @@ public class Program
 		app.UseStaticFiles();
 
 		app.MapControllers();
-		// app.MapHub<GameHub>("/gamehub");
 		app.MapHub<LobbyHub>("/api/lobby-hub");
+		app.MapHub<GameHub>("/gamehub");
 
 		app.Run();
 	}
