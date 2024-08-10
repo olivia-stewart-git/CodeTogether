@@ -10,7 +10,6 @@ namespace CodeTogether.Client.Components
 		{
 			// todo create ApiRequestMaker or something so the paths are in one place, or maybe use swagger
 			var responseString = await http.GetStringAsync($"/api/game/join?gameId={gameId}");
-			Console.WriteLine(responseString);
 			var response = JsonSerializer.Deserialize<JoinGameResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 			navigation.NavigateTo($"lobby/{response.ServerId}/{gameId}");
 		}
