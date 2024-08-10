@@ -30,6 +30,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("home initializing");
         username = await user.GetUserName();
         HasLoaded = true;
         StateHasChanged();

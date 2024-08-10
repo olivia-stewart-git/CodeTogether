@@ -1,7 +1,13 @@
 ﻿@inherits LayoutComponentBase
+@using CodeTogether.Client.Services
+@inject UserStateService user
 
 <div class="page">
     <main>
+        <div class="top-row px-4">
+            <span>@usernameText</span>
+        </div>
+
         <article class="content px-4">
             @Body
         </article>
@@ -9,4 +15,15 @@
 </div>
 
 @code {
+    string usernameText = "Loading...";
+
+
+    // TODO: trigger a rerender of the layout when the user is changed (e.g. when logging in)
+    // maybe add an event on UserStateService and add this components StateHasChanged?
+    protected override async Task OnInitializedAsync()
+    {
+        var username = await user.GetUserName();
+        usernameText = username == null ? "Not logged in" : $"Hello {username}";
+        StateHasChanged();
+    }
 }

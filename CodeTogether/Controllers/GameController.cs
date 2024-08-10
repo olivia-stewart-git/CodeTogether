@@ -23,10 +23,10 @@ namespace CodeTogether.Controllers
 		[Route("join")]
 		public IActionResult JoinGame(string username, Guid gameId)
 		{
-			// For proper user accounts this should be split into two api calls, one to create a user, one to join a game
-			var user = userService.CreateUser(username);
-			lobbyService.JoinLobby(gameId, user.USR_PK);
-			return Json(new JoinGameResponse() { PlayerId = user.USR_PK, ServerId = 1});
+			// TODO: get user from auth
+			//lobbyService.JoinLobby(gameId, user.USR_PK);
+			//return Json(new JoinGameResponse() { PlayerId = user.USR_PK, ServerId = 1});
+			throw new NotImplementedException();
 		}
 
 		[Route("list")]

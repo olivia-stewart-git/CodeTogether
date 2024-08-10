@@ -49,7 +49,7 @@
             await user.RegisterUser(registration);
             var loginRequest = new LoginRequestDTO { Username = registration.Username, Password = registration.Password };
             await user.LoginAsUser(loginRequest);
-            NavigateToLogin();
+            NavigationManager.NavigateTo("/");
         }
         catch (AccountException ex)
         {

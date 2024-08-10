@@ -7,30 +7,33 @@ namespace CodeTogether.Client.Services;
 
 public class UserStateService(HttpClient http)
 {
-	// Store the task rather than the result to allow multiple components to hit GetUserName without making multiple requests
-	Task<string?>? userName;
+	// Stores the logged in user as a task to allow multiple components to be awaiting the response
+	// will then be cached as the task is already completed
+	Task<string?>? userNameTask;
 	object gettingUsernameLock = new();
 
 	public async Task<string?> GetUserName()
 	{
 		EnsureRequestHasBeenMade();
-		return await userName!;
+		return await userNameTask!;
 	}
 
 	void EnsureRequestHasBeenMade()
 	{
-		if (userName == null)
+		if (userNameTask == null)
 		{
+			// Ensures that only one request is made
 			lock (gettingUsernameLock)
 			{
-				// Second check if another thread created the request since we last checked
-				if (userName == null)
+				// Second check is if another thread created the request since we last checked
+				if (userNameTask == null)
 				{
-					userName = http.GetAsync("api/account/user").ContinueWith<string?>(responseTask =>
+					userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<string?>>(responseTask =>
 					{
 						var response = responseTask.Result;
 						if (response.IsSuccessStatusCode)
 						{
+							Console.WriteLine("Successfully logged in");
 							// Second ContinueWith is to cast from Task<string> to Task<string?>
 							return response.Content.ReadAsStringAsync().ContinueWith(c => (string?)c.Result);
 						}
@@ -38,9 +41,18 @@ public class UserStateService(HttpClient http)
 						{
 							return Task.FromResult<string?>(null);
 						}
-					});
+						// Unwrap() turns a Task<Task<T>> into a Task<T>
+					}).Unwrap();
 				}
 			}
+		}
+	}
+
+	public void ResetCache()
+	{
+		lock (gettingUsernameLock)
+		{
+			userNameTask = null;
 		}
 	}
 
@@ -53,6 +65,7 @@ public class UserStateService(HttpClient http)
 		{
 			throw new LoginFailedException(dtoResponse?.Message ?? "Login failed without message");
 		}
+		ResetCache();
 	}
 
 	async public Task RegisterUser(RegisterAccountDTO registration)
