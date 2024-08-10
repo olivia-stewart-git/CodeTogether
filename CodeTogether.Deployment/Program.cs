@@ -36,7 +36,7 @@ class Program
 			var startInfo = new ProcessStartInfo
 			{
 				FileName = "powershell.exe",
-				Arguments = $"-ExecutionPolicy Bypass -File \"{tempScriptPath}\" {Directory.GetParent(assemblyDirectory).FullName}",
+				Arguments = $"-ExecutionPolicy Bypass -File \"{tempScriptPath}\" \"{Directory.GetParent(assemblyDirectory).FullName}\"",
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
 				UseShellExecute = false,

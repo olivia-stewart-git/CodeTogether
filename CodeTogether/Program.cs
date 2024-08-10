@@ -1,4 +1,5 @@
 using CodeTogether.Client;
+using CodeTogether.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.ResponseCompression;
 
@@ -73,7 +74,7 @@ public class Program
 		app.UseStaticFiles();
 
 		app.MapControllers();
-		// app.MapHub<GameHub>("/gamehub");
+		app.MapHub<GameHub>("/gamehub");
 
 		app.Run();
 	}
