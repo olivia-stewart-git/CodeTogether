@@ -61,8 +61,9 @@
     {
         lastPoll = DateTime.Now;
         nextPoll = lastPoll + pollInterval;
-        // Clear list, I think this is not nessesary but I think gives more feedback that the game list has updated
+        // Clear list, this is not nessesary but I think gives more feedback that the game list has updated
         games = null;
+        StateHasChanged();
         var responseString = await http.GetStringAsync("api/game/list");
         games = JsonSerializer.Deserialize<List<GameListGameDTO>>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         StateHasChanged();
@@ -70,6 +71,6 @@
 
     async Task JoinGame(GameListGameDTO game)
     {
-        await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id, "username2");
+        await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id);
     }
 }

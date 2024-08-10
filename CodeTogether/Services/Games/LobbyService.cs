@@ -14,10 +14,26 @@ namespace CodeTogether.Service.Games
 			return game.GM_PK;
 		}
 
+		List<GameListGameDTO>? lobbiesCache;
+		DateTime lobbiesCacheExpireAt;
+		static readonly TimeSpan cacheExpiry = TimeSpan.FromSeconds(1);
+
 		public IEnumerable<GameListGameDTO> GetLobbies()
 		{
-			var lobbies = dbContext.Games.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() });
-			return lobbies;
+			var now = DateTime.Now;
+			if (lobbiesCache == null || now > lobbiesCacheExpireAt)
+			{
+				lobbiesCache = GetLobbiesFromDatabase();
+				lobbiesCacheExpireAt = now + cacheExpiry;
+			}
+			return lobbiesCache;
+		}
+
+		List<GameListGameDTO> GetLobbiesFromDatabase()
+		{
+			return dbContext.Games
+				.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() })
+				.ToList();
 		}
 
 		public void JoinLobby(Guid gameId, Guid userId)

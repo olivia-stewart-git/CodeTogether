@@ -3,6 +3,5 @@
 	public class JoinGameResponse
 	{
 		public required int ServerId { get; set; }
-		public required Guid PlayerId { get; set; }
 	}
 }
