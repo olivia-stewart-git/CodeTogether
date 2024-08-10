@@ -1,11 +1,16 @@
 ﻿@page "/"
 @using CodeTogether.Client.Components
+@using CodeTogether.Client.Services
+@inject UserStateService user
+@inject NavigationManager navigation
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<h2>Welcome to CodeTogether.</h2>
 
 <GameCreator />
 <GameList />
+
+@code {
+    bool HasLoaded = false;
+}

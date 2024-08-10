@@ -1,6 +1,7 @@
 ﻿@page "/account/login"
 @using CodeTogether.Client.Integration.Authentication
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <h1>Login</h1>
 
@@ -41,7 +42,7 @@
         {
             if (dtoResponse.IsAuthenticated)
             {
-
+                NavigationManager.NavigateTo("/");
             } else
             {
                 message = dtoResponse.Message;

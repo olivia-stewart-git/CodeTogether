@@ -1,25 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@inject HttpClient Http
 
 <div class="page">
     <main>
-        <div class="top-row px-4">
-            @if (!loadedUsername)
-            {
-                <span>Loading...</span>
-            }
-            else if(userName == null)
-            {
-                <button class="btn btn-dark btn_padded" @onclick="Login">Login</button>
-                <button class="btn btn-dark btn_padded" @onclick="Register">Register</button>
-            }
-            else
-            {
-                <span>Hello, @userName</span>
-            }
-        </div>
-
         <article class="content px-4">
             @Body
         </article>
@@ -27,35 +9,4 @@
 </div>
 
 @code {
-    string? userName;
-    bool loadedUsername = false;
-
-    protected override void OnInitialized()
-    {
-        var userRequest = Http.GetAsync("api/account/user");
-        userRequest.ContinueWith(async task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                loadedUsername = true;
-                var result = task.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    userName = await result.Content.ReadAsStringAsync();
-                }
-                InvokeAsync(StateHasChanged);
-                Console.WriteLine($"len: {userName.Length}");
-            }
-        });
-    }
-
-    private void Login()
-    {
-        NavigationManager.NavigateTo("account/login");
-    }
-
-    private void Register()
-    {
-        NavigationManager.NavigateTo("account/register");
-    }
 }

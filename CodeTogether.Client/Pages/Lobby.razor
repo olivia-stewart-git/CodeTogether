@@ -7,24 +7,34 @@
 
 <h2>Lobby</h2>
 <p>Using server @serverId.ToString() for user @userId.ToString()</p>
-@if (!IsConnected)
+@if (!IsConnected) // Maybe should have a signalr base component wrapper to have this logic?
 {
     <p>Establishing connection</p>
 }
 else if (lobbyState == null)
 {
-    <p>Waiting on response</p>
+    <p>Waiting on first response</p>
 }
 else
 {
-    <span>
-        Max Players:
-        <button @onclick="() => maxPlayers = Math.Max(maxPlayers - 1, players.Count())">-</button>
-        <button @onclick="() => maxPlayers = Math.Min(maxPlayers + 1, 4)">+</button>
-    </span>
-    <h4>Players @players.Count() / </h4>
+    <div id="options">
+        @if (hasSentChange) // Used to give feedback of a pending change, should style it like one of those red notification things that phone apps have
+        {
+            <p>o</p>
+        }
+        else
+        {
+            <p> </p>
+        }
+        <span>
+            Max Players:
+            <button @onclick="() => ChangeMaxPlayers(-1)">-</button>
+            <button @onclick="() => ChangeMaxPlayers(1)">+</button>
+        </span>
+    </div>
+    <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
     <ul>
-        @foreach (var player in players)
+        @foreach (var player in lobbyState.Players)
         {
             <li>@player</li>
         }
@@ -39,9 +49,11 @@ else
     [Parameter]
     public required int serverId { get; set; }
 
-    HubConnection? hubConnection;
+    HubConnection hubConnection;
 
     LobbyStateDTO? lobbyState;
+
+    bool hasSentChange = false;
 
     bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
@@ -54,6 +66,7 @@ else
         hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
         {
             lobbyState = state;
+            hasSentChange = false;
             InvokeAsync(StateHasChanged);
         });
 
@@ -62,32 +75,34 @@ else
         await hubConnection.SendAsync("RequestState");
     }
 
-    async Task DecrementPlayerCount()
+    async Task ChangeMaxPlayers(int by)
     {
         if (lobbyState is not null)
         {
             lobbyState.Players.Any();
-            var newMaxPlayers = Math.Max(lobbyState.Configuration.MaxPlayers - 1, lobbyState.Players.Count());
-            //if (newMaxPlayers != lobbyState.MaxPlayers)
-            //{
-            //SendLobbyConfiguration(new LobbyConfigurationDTO { MaxPlayers = newMaxPlayers } );
-            //}
+            var maxPlayersFloor = lobbyState.Players.Count();
+            var maxPlayersCeiling = 4;
+            var newMaxPlayers = Math.Clamp(lobbyState.Configuration.MaxPlayers + by, maxPlayersFloor, maxPlayersCeiling);
+            if (newMaxPlayers != lobbyState.Configuration.MaxPlayers)
+            {
+                await SendLobbyConfiguration(new SetLobbyConfigurationDTO { MaxPlayers = newMaxPlayers });
+            }
         }
     }
 
-    async Task SendLobbyConfiguration(LobbyConfigurationDTO config)
+    async Task SendStartGame()
     {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("UpdateState", config);
-        }
+        await SendLobbyConfiguration(new SetLobbyConfigurationDTO { GoingToStart = true });
+    }
+
+    async Task SendLobbyConfiguration(SetLobbyConfigurationDTO config)
+    {
+        hasSentChange = true;
+        await hubConnection.SendAsync("UpdateState", config);
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (hubConnection is not null)
-        {
-            await hubConnection.DisposeAsync();
-        }
+        await hubConnection.DisposeAsync();
     }
 }

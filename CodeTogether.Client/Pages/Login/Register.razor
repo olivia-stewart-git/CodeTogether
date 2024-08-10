@@ -54,6 +54,7 @@
         var registrationResponse = await response.Content.ReadFromJsonAsync<RegistrationRequestResponseDTO>();
         if (registrationResponse.State == RegistrationState.Success)
         {
+            // TODO: authenticate automatically
             NavigationManager.NavigateTo("account/login");
         }
         else
