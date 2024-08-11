@@ -1,0 +1,4 @@
+
+
+ scp -i ~/Downloads/azure_vms.pem source.zip codetogetheruser@13.75.135.184:~/source.zip
+ ssh -i ~/Downloads/azure_vms.pem codetogetheruser@13.75.135.184

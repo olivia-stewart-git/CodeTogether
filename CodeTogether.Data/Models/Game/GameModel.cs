@@ -21,7 +21,7 @@ public class GameModel : IDbModel
 
 	public bool GM_Private { get; set; }
 
-	public int MaxPlayers { get; set; } = 2;
+	public int GM_MaxPlayers { get; set; } = 2;
 
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }

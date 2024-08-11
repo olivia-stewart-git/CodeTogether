@@ -56,7 +56,8 @@ namespace CodeTogether.Service.Games
 
 		public GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game)
 		{
-			game.MaxPlayers = newState.MaxPlayers ?? game.MaxPlayers;
+			game.GM_MaxPlayers = newState.MaxPlayers ?? game.GM_MaxPlayers;
+			game.GM_Private = newState.IsPrivate ?? game.GM_Private;
 
 			if (newState.GoingToStart == true)
 			{
@@ -69,6 +70,7 @@ namespace CodeTogether.Service.Games
 					if (DateTime.UtcNow > game.GM_StartedAt)
 					{
 						game.GM_GameState = GameState.Playing;
+						dbContext.SaveChanges();
 					}
 				});
 			}
