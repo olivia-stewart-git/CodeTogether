@@ -1,4 +1,5 @@
 using CodeTogether.Client;
+using CodeTogether.Data.Seeding;
 using CodeTogether.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -9,13 +10,15 @@ public class Program
 {
 	public static void Main(string[] args)
 	{
+		SchemaVersionSeeder.CheckSchemaVersion();
+
 		var builder = WebApplication.CreateBuilder(args);
 
 		builder.Services.RegisterServices();
 		builder.Services.RegisterRunnerServices();
 
 		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException(null);
-		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
+		//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
 
 
 		builder.Services.AddControllersWithViews().AddNewtonsoftJson();

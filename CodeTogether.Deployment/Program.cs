@@ -103,6 +103,10 @@ class Program
 		dbContext.Database.EnsureCreated();
 
 		var seeder = new Seeder(dbContext, Console.WriteLine);
-		seeder.ExplicitSeed(typeof(UserSeeder), typeof(QuestionSeeder));
+		seeder.ExplicitSeed(
+			typeof(UserSeeder),
+			typeof(QuestionSeeder),
+			typeof(SchemaVersionSeeder)
+		);
 	}
 }

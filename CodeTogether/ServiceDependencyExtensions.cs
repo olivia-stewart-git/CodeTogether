@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Common.Logging;
 using CodeTogether.Data;
+using CodeTogether.Data.Seeding;
 using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Runner.Scaffolds;
@@ -24,6 +25,7 @@ public static class ServiceDependencyExtensions
 	public static IServiceCollection RegisterServices(this IServiceCollection services)
 	{
 		services.AddDbContext<ApplicationDbContext>();
+		services.AddTransient<SchemaVersionSeeder>();
 		services.AddTransient<ILobbyService, LobbyService>();
 		services.AddTransient<IUserService, UserService>();
 		services.AddSingleton<IGameService, GameService>();
