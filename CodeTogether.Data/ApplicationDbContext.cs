@@ -6,6 +6,7 @@ using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace CodeTogether.Data;
 
@@ -13,8 +14,9 @@ public class ApplicationDbContext : DbContext
 {
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
+		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		var builder = new ConfigurationBuilder()
-			.SetBasePath(Directory.GetCurrentDirectory())
+			.SetBasePath(binPath)
 			.AddJsonFile("appsettings.json");
 		var configuration = builder.Build();
 		var connectionString = configuration.GetConnectionString("MainDb");
