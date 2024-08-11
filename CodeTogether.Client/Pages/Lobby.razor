@@ -32,7 +32,7 @@ else
             <button @onclick="() => ChangeMaxPlayers(1)">+</button>
         </span>
         <label for="privateSwitch">Private:</label>
-        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" value="@lobbyState.Configuration.IsPrivate"/>
+        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate"/>
     </div>
     <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
     <ul>
@@ -68,6 +68,7 @@ else
 
         hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
         {
+            Console.WriteLine(state.Configuration.IsPrivate);
             lobbyState = state;
             hasSentChange = false;
             InvokeAsync(StateHasChanged);

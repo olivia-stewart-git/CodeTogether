@@ -1,11 +1,18 @@
 ﻿@inherits LayoutComponentBase
 @using CodeTogether.Client.Services
 @inject UserStateService user
+@inject NavigationManager nav
 
 <div class="page">
     <main>
         <div class="top-row px-4">
-            <span>@usernameText</span>
+            <div class="top-row-left">
+                <button class="btn btn-dark btn_padded" @onclick="GoHome">Home</button>
+            </div>
+            <div class="top-row-right">
+                <span>@usernameText</span>
+                <button class="btn btn-dark btn_padded" @onclick="Logout">Logout</button>
+            </div>
         </div>
 
         <article class="content px-4">
@@ -25,5 +32,12 @@
         var username = await user.GetUserName();
         usernameText = username == null ? "Not logged in" : $"Hello {username}";
         StateHasChanged();
+    }
+
+    void GoHome() => nav.NavigateTo("/");
+
+    void Logout()
+    {
+        throw new NotImplementedException();
     }
 }
