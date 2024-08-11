@@ -19,6 +19,8 @@ public class GameModel : IDbModel
 
 	public DateTime? GM_StartedAt { get; set; }
 
+	public bool GM_Private { get; set; }
+
 	public int MaxPlayers { get; set; } = 2;
 
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();

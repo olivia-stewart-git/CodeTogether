@@ -34,7 +34,15 @@ namespace CodeTogether.Service.Games
 		List<GameListGameDTO> GetLobbiesFromDatabase()
 		{
 			return dbContext.Games
-				.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() })
+				.Where(g => !g.GM_Private)
+				.Select(m => new GameListGameDTO
+				{
+					CreatedAt = m.GM_CreateTimeUtc,
+					Name = m.GM_Name,
+					Id = m.GM_PK,
+					NumPlayers = m.Users.Count(),
+					Playing = m.GM_GameState == GameState.Playing
+				})
 				.ToList();
 		}
 

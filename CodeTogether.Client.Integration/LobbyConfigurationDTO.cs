@@ -15,6 +15,8 @@ namespace CodeTogether.Client.Integration
 		public int? MaxPlayers { get; set; }
 
 		public bool? GoingToStart { get; set; }
+
+		public bool? IsPrivate { get; set; }
 	}
 
 	public class LobbyConfigurationDTO
@@ -22,5 +24,7 @@ namespace CodeTogether.Client.Integration
 		public int MaxPlayers { get; set; }
 
 		public DateTime? StartingAtUtc { get; set; }
+		
+		public bool IsPrivate { get; set; }
 	}
 }
