@@ -23,6 +23,7 @@
 
     <button type="submit" class="btn btn-primary">Login</button>
 </EditForm>
+<button class="btn btn-link" @onclick="NavigateToRegister">Don''t have an account? Register here.></button>
 
 @if (loginFailed)
 {
@@ -45,5 +46,10 @@
             loginFailed = true;
             message = $"Could not login: {ex.Message}";
         }
+    }
+
+    void NavigateToRegister()
+    {
+        navigation.NavigateTo("/register");
     }
 }

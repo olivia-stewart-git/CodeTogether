@@ -39,6 +39,7 @@ else
             <li>@player</li>
         }
     </ul>
+    <Timer CompletesAtUtc="@lobbyState.Configuration.StartingAtUtc" Callback="@GoToGame" />
     <button @onclick="SendStartGame">Start</button>
 }
 
@@ -99,6 +100,11 @@ else
     {
         hasSentChange = true;
         await hubConnection.SendAsync("UpdateState", config);
+    }
+
+    void GoToGame()
+    {
+        Navigation.NavigateTo("/game");
     }
 
     public async ValueTask DisposeAsync()
