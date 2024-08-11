@@ -1,4 +1,5 @@
 using CodeTogether.Client;
+using CodeTogether.Data;
 using CodeTogether.Data.Seeding;
 using CodeTogether.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,8 +19,6 @@ public class Program
 		builder.Services.RegisterRunnerServices();
 
 		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException(null);
-		//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseUrl) });
-
 
 		builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

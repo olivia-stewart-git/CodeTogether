@@ -5,7 +5,7 @@ using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace CodeTogether.Data;
 
@@ -13,8 +13,12 @@ public class ApplicationDbContext : DbContext
 {
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder
-			.UseSqlServer("Server=localhost;Initial Catalog=CodeTogether;Integrated Security=SSPI;TrustServerCertificate=True");
+		var builder = new ConfigurationBuilder()
+			.SetBasePath(Directory.GetCurrentDirectory())
+			.AddJsonFile("appsettings.json");
+		var configuration = builder.Build();
+		var connectionString = configuration.GetConnectionString("MainDb");
+		optionsBuilder.UseSqlServer(connectionString);
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
