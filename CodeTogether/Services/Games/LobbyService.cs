@@ -1,6 +1,8 @@
 ﻿using CodeTogether.Client.Integration;
+using CodeTogether.Client.Pages;
 using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Service.Games
 {
@@ -32,7 +34,15 @@ namespace CodeTogether.Service.Games
 		List<GameListGameDTO> GetLobbiesFromDatabase()
 		{
 			return dbContext.Games
-				.Select(m => new GameListGameDTO { CreatedAt = m.GM_CreateTimeUtc, Name = m.GM_Name, Id = m.GM_PK, NumPlayers = m.Users.Count() })
+				.Where(g => !g.GM_Private)
+				.Select(m => new GameListGameDTO
+				{
+					CreatedAt = m.GM_CreateTimeUtc,
+					Name = m.GM_Name,
+					Id = m.GM_PK,
+					NumPlayers = m.Users.Count(),
+					Playing = m.GM_GameState == GameState.Playing
+				})
 				.ToList();
 		}
 
@@ -42,6 +52,34 @@ namespace CodeTogether.Service.Games
 			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
 			user.USR_Game = game;
 			dbContext.SaveChanges();
+		}
+
+		public GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game)
+		{
+			game.MaxPlayers = newState.MaxPlayers ?? game.MaxPlayers;
+
+			if (newState.GoingToStart == true)
+			{
+				var countdownLength = TimeSpan.FromSeconds(5);
+				game.GM_StartedAt = DateTime.UtcNow + countdownLength;
+				Task.Run(async () =>
+				{
+					await Task.Delay(countdownLength);
+					// TODO: does the captured game update if another message changes it?
+					if (DateTime.UtcNow > game.GM_StartedAt)
+					{
+						game.GM_GameState = GameState.Playing;
+					}
+				});
+			}
+			if (newState.GoingToStart == false)
+			{
+				game.GM_StartedAt = null;
+			}
+
+			dbContext.SaveChanges();
+
+			return game;
 		}
 	}
 }

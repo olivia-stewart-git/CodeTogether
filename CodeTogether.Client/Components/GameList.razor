@@ -13,6 +13,7 @@
             <th>Name</th>
             <th>Players #</th>
             <th>Created At</th>
+            <th>In Game</th>
         </tr>
     </thead>
     @if (games == null)
@@ -24,10 +25,11 @@
         <tbody>
             @foreach (GameListGameDTO game in games)
             {
-                <tr @onclick="() => JoinGame(game)">
+                <tr @onclick="() => JoinGame(game)" class="@GetRowCssClass(game)">
                     <td>@game.Name</td>
                     <td>@game.NumPlayers</td>
                     <td>@game.CreatedAt</td>
+                    <td>@game.Playing</td>
                 </tr>
             }
         </tbody>
@@ -46,6 +48,8 @@
     {
         Task.Run(PollGameList);
     }
+
+    string GetRowCssClass(GameListGameDTO game) => game.Playing ? "" : "joinableRow";
 
     async Task PollGameList()
     {

@@ -5,6 +5,8 @@ using static System.Net.WebRequestMethods;
 
 namespace CodeTogether.Client.Services;
 
+// TODO: can user AuthenticationStateProvider instead of some of this?
+// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.authorization.authenticationstateprovider?view=aspnetcore-8.0
 public class UserStateService(HttpClient http)
 {
 	// Stores the logged in user as a task to allow multiple components to be awaiting the response

@@ -10,6 +10,7 @@ public class StmDataModel : IDbModel
 	public class Constants
 	{
 		public const string HasSeeded = "HasSeeded";
+		public const string SchemaVersion = "SchemaVersion";
 	}
 
 	public Guid STM_PK { get; set; } = Guid.NewGuid();

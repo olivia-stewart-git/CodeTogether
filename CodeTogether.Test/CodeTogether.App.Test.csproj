@@ -22,4 +22,8 @@
     <ProjectReference Include="..\CodeTogether\CodeTogether.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Games\" />
+  </ItemGroup>
+
 </Project>

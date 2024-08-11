@@ -2,7 +2,7 @@
 }
 
 
-tbody > tr:hover {
+.joinableRow:hover {
     cursor: pointer;
     background-color: #aaa;
 }

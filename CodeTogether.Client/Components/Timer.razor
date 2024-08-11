@@ -1,5 +1,38 @@
-﻿<h3>Timer</h3>
+﻿@if (CompletesAtUtc != null)
+{
+    <div>@timeLeftText</div>
+}
 
 @code {
+    [Parameter]
+    public required DateTime? CompletesAtUtc { get; set; }
 
+    [Parameter]
+    public Action? Callback { get; set; }
+
+    string timeLeftText = "";
+
+    protected override void OnInitialized()
+    {
+        Task.Run(UpdateProgress);
+    }
+
+    async Task UpdateProgress()
+    {
+        while (true)
+        {
+            if (CompletesAtUtc.HasValue)
+            {
+                var timeLeft = CompletesAtUtc.Value - DateTime.UtcNow;
+                timeLeftText = $"{Math.Round(timeLeft.TotalSeconds, 1)}s";
+                StateHasChanged();
+                if(timeLeft < TimeSpan.Zero)
+                {
+                    Callback?.Invoke();
+                }
+            }
+            await Task.Delay(100);
+        }
+
+    }
 }
