@@ -1,4 +1,6 @@
-﻿@if (CompletesAtUtc != null)
+﻿@implements IDisposable
+
+@if (CompletesAtUtc != null)
 {
     <div>@timeLeftText</div>
 }
@@ -10,16 +12,19 @@
     [Parameter]
     public Action? Callback { get; set; }
 
+    bool active = false;
+
     string timeLeftText = "";
 
     protected override void OnInitialized()
     {
+        active = true;
         Task.Run(UpdateProgress);
     }
 
     async Task UpdateProgress()
     {
-        while (true)
+        while (active)
         {
             if (CompletesAtUtc.HasValue)
             {
@@ -33,6 +38,10 @@
             }
             await Task.Delay(100);
         }
+    }
 
+    public void Dispose()
+    {
+        active = false;
     }
 }

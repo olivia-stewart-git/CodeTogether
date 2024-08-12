@@ -1,8 +1,10 @@
 ﻿@page "/lobby/{serverId:int}/{gameId:guid}"
-@inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
+@using CodeTogether.Client.Services 
 @using CodeTogether.Client.Integration
 @implements IAsyncDisposable
+@inject NavigationManager Navigation
+@inject UserStateService user
 
 
 <h2>Lobby</h2>
@@ -62,16 +64,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var currentUser = await user.GetUserName();
+        if (currentUser == null)
+        {
+            Navigation.NavigateTo("/");
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/api/lobby-hub"))
             .Build();
 
-        hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", (state) =>
+        hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", async (state) =>
         {
-            Console.WriteLine(state.Configuration.IsPrivate);
             lobbyState = state;
             hasSentChange = false;
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On("NotInGame", () =>
+        {
+            Navigation.NavigateTo("/");
         });
 
         await hubConnection.StartAsync();
@@ -120,6 +132,9 @@ else
 
     public async ValueTask DisposeAsync()
     {
-        await hubConnection.DisposeAsync();
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }

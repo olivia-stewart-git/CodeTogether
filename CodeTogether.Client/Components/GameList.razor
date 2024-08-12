@@ -1,4 +1,5 @@
-﻿@inject HttpClient http
+﻿@implements IDisposable
+@inject HttpClient http
 @inject NavigationManager navigation 
 @using CodeTogether.Client.Integration
 @using System.Text.Json
@@ -44,8 +45,11 @@
     DateTime lastPoll;
     DateTime nextPoll;
 
+    bool active = true;
+
     protected override void OnInitialized()
     {
+        active = true;
         Task.Run(PollGameList);
     }
 
@@ -53,7 +57,7 @@
 
     async Task PollGameList()
     {
-        while (true) // TODO: does this need a cancellation token to stop when the component is unloaded/disposed?
+        while (active)
         {
             StateHasChanged();
             await UpdateGameList();
@@ -76,5 +80,10 @@
     async Task JoinGame(GameListGameDTO game)
     {
         await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id);
+    }
+
+    public void Dispose()
+    {
+        active = false;
     }
 }
