@@ -12,18 +12,6 @@ namespace CodeTogether.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ArgumentCollections",
-                columns: table => new
-                {
-                    TC_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TC_TO_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ArgumentCollections", x => x.TC_PK);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
                 {
@@ -38,6 +26,18 @@ namespace CodeTogether.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.GM_PK);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuestionSignatures",
+                columns: table => new
+                {
+                    TC_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TC_TO_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionSignatures", x => x.TC_PK);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,25 +65,6 @@ namespace CodeTogether.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Arguments",
-                columns: table => new
-                {
-                    OT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OT_AssemblyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    OT_TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    TC_TO_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Arguments", x => x.OT_PK);
-                    table.ForeignKey(
-                        name: "FK_Arguments_ArgumentCollections_TC_TO_FK",
-                        column: x => x.TC_TO_FK,
-                        principalTable: "ArgumentCollections",
-                        principalColumn: "TC_PK");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -104,6 +85,25 @@ namespace CodeTogether.Data.Migrations
                         column: x => x.USR_GM_FK,
                         principalTable: "Games",
                         principalColumn: "GM_PK");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArgumentTypes",
+                columns: table => new
+                {
+                    OT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OT_AssemblyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    OT_TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TC_TO_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArgumentTypes", x => x.OT_PK);
+                    table.ForeignKey(
+                        name: "FK_ArgumentTypes_QuestionSignatures_TC_TO_FK",
+                        column: x => x.TC_TO_FK,
+                        principalTable: "QuestionSignatures",
+                        principalColumn: "TC_PK");
                 });
 
             migrationBuilder.CreateTable(
@@ -140,15 +140,15 @@ namespace CodeTogether.Data.Migrations
                 {
                     table.PrimaryKey("PK_ExecutionConfigurations", x => x.EXE_PK);
                     table.ForeignKey(
-                        name: "FK_ExecutionConfigurations_ArgumentCollections_EXE_TC_FK",
-                        column: x => x.EXE_TC_FK,
-                        principalTable: "ArgumentCollections",
-                        principalColumn: "TC_PK");
-                    table.ForeignKey(
-                        name: "FK_ExecutionConfigurations_Arguments_EXE_TO_FK",
+                        name: "FK_ExecutionConfigurations_ArgumentTypes_EXE_TO_FK",
                         column: x => x.EXE_TO_FK,
-                        principalTable: "Arguments",
+                        principalTable: "ArgumentTypes",
                         principalColumn: "OT_PK");
+                    table.ForeignKey(
+                        name: "FK_ExecutionConfigurations_QuestionSignatures_EXE_TC_FK",
+                        column: x => x.EXE_TC_FK,
+                        principalTable: "QuestionSignatures",
+                        principalColumn: "TC_PK");
                 });
 
             migrationBuilder.CreateTable(
@@ -247,8 +247,8 @@ namespace CodeTogether.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Arguments_TC_TO_FK",
-                table: "Arguments",
+                name: "IX_ArgumentTypes_TC_TO_FK",
+                table: "ArgumentTypes",
                 column: "TC_TO_FK");
 
             migrationBuilder.CreateIndex(
@@ -331,10 +331,10 @@ namespace CodeTogether.Data.Migrations
                 name: "ExecutionConfigurations");
 
             migrationBuilder.DropTable(
-                name: "Arguments");
+                name: "ArgumentTypes");
 
             migrationBuilder.DropTable(
-                name: "ArgumentCollections");
+                name: "QuestionSignatures");
         }
     }
 }

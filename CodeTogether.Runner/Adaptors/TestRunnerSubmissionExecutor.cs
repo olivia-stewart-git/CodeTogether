@@ -23,7 +23,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 
 	public ExecutionResultModel Execute(Assembly targetAssembly)
 	{
-		TestRunExecutionModel fullExecution = new TestRunExecutionModel();
+		TestExecutionModel fullExecution = new TestExecutionModel();
 		List<TestRunModel> testRuns = [];
 		foreach (var testCaseModel in testCases)
 		{
@@ -84,7 +84,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 		return objects.ToArray();
 	}
 
-	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult, TestRunExecutionModel testRun)
+	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult, TestExecutionModel testRun)
 	{
 		var expectedType = executionConfiguration.EXE_ReturnArgument?.OT_Type;
 		if (expectedType == null)

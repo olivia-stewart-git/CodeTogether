@@ -56,11 +56,11 @@ public class ApplicationDbContext : DbContext
 
 	public virtual DbSet<TestCaseModel> TestCases { get; set; }
 	public virtual DbSet<TestRunModel> TestRuns { get; set; }
-	public virtual DbSet<TestRunExecutionModel> TestExecutions { get; set; }
+	public virtual DbSet<TestExecutionModel> TestExecutions { get; set; }
 
 	public virtual DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	public virtual DbSet<TypeModel> Arguments { get; set; }
-	public virtual DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
+	public virtual DbSet<TypeModel> ArgumentTypes { get; set; }
+	public virtual DbSet<QuestionSignatureModel> QuestionSignatures { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
 	public virtual DbSet<ExecutionResultModel> ExecutionResults { get; set; }

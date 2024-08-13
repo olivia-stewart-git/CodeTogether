@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813073719_Initial-Create")]
+    [Migration("20240813082125_Initial-Create")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -172,7 +172,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TC_PK");
 
-                    b.ToTable("ArgumentCollections");
+                    b.ToTable("QuestionSignatures");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.TestCaseModel", b =>
@@ -261,7 +261,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasIndex("TC_TO_FK");
 
-                    b.ToTable("Arguments");
+                    b.ToTable("ArgumentTypes");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.StmDataModel", b =>

@@ -169,7 +169,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TC_PK");
 
-                    b.ToTable("ArgumentCollections");
+                    b.ToTable("QuestionSignatures");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.TestCaseModel", b =>
@@ -258,7 +258,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasIndex("TC_TO_FK");
 
-                    b.ToTable("Arguments");
+                    b.ToTable("ArgumentTypes");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.StmDataModel", b =>
