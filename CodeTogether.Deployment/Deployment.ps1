@@ -13,6 +13,10 @@ try
     dotnet tool restore
     Write-Host "Dotnet restored successfully"
 
+	Write-Host "Dropping the database..."
+    dotnet ef database drop -f --project CodeTogether.Data
+    Write-Host "Database dropped successfully"
+
     Write-Host "Updating the database..."
     dotnet ef database update --project CodeTogether.Data
     Write-Host "Database updated successfully"
