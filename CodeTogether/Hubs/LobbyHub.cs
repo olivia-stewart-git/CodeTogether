@@ -61,7 +61,7 @@ namespace CodeTogether.Hubs
 
 		async Task BroadcastLobbyStateTogroup(GameModel game)
 		{
-			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAt, IsPrivate = game.GM_Private };
+			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAtUtc, IsPrivate = game.GM_Private };
 			var state = new LobbyStateDTO { Configuration = config, Players = game.Users.Select(x => x.USR_UserName) };
 
 			await Clients.Group(game.GM_PK.ToString()).SendAsync("StateHasBeenUpdated", state);

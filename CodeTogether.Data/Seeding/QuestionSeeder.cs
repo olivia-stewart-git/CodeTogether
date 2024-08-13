@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Data.Models.Factories;
 using CodeTogether.Data.Models.Questions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Data.Seeding;
 
@@ -16,10 +17,15 @@ public class QuestionSeeder : ISeedStep
 
 	public int Order { get; } = 1;
 
-	public void Seed()
+	public void Seed(bool initialSeed)
 	{
+		dbContext.Database.BeginTransaction();
+
+		dbContext.Questions.ExecuteDelete();
 		SeedSimpleAdd();
 		SeedHelloWorld();
+
+		dbContext.Database.CommitTransaction();
 	}
 
 	void SeedSimpleAdd()

@@ -10,8 +10,10 @@ namespace CodeTogether.Deployment;
 
 class Program
 {
-	static void Main()
+	static void Main(string[] args)
 	{
+
+
 		Console.WriteLine("Executing auto deployment");
 		var assembly = Assembly.GetExecutingAssembly();
 

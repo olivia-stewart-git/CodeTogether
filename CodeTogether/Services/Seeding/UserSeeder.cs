@@ -15,9 +15,12 @@ public class UserSeeder : ISeedStep
 	}
 
 	public int Order => 0;
-	public void Seed()
+	public void Seed(bool initialSeed)
 	{
-		CreateAdminUser();
+		if (initialSeed)
+		{
+			CreateAdminUser();
+		}
 	}
 
 	void CreateAdminUser()
