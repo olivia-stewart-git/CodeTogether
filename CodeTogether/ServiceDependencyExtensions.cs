@@ -27,7 +27,6 @@ public static class ServiceDependencyExtensions
 		services.AddDbContext<ApplicationDbContext>();
 		services.AddTransient<SchemaVersionSeeder>();
 		services.AddTransient<ILobbyService, LobbyService>();
-		services.AddTransient<IUserService, UserService>();
 		services.AddSingleton<IGameService, GameService>();
 
 		services.AddTransient<ICryptographyService, CryptographyService>();

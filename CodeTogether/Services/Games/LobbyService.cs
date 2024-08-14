@@ -36,6 +36,7 @@ namespace CodeTogether.Service.Games
 			var oldGameCutoff = TimeSpan.FromHours(3);
 			var now = DateTime.UtcNow;
 			return dbContext.Games
+				.ToList()
 				.Where(g => !g.GM_Private && (now - g.LastActionTime) < oldGameCutoff)
 				.Select(m => new GameListGameDTO
 				{
