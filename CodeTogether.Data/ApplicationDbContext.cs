@@ -56,7 +56,7 @@ public class ApplicationDbContext : DbContext
 
 	public virtual DbSet<TestCaseModel> TestCases { get; set; }
 	public virtual DbSet<TestRunModel> TestRuns { get; set; }
-	public virtual DbSet<TestExecutionModel> TestExecutions { get; set; }
+	public virtual DbSet<TestRunExecutionModel> TestExecutions { get; set; }
 
 	public virtual DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
 	public virtual DbSet<TypeModel> ArgumentTypes { get; set; }
