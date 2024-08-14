@@ -50,12 +50,15 @@ namespace CodeTogether.Service.Games
 				.ToList();
 		}
 
-		public void JoinLobby(Guid gameId, Guid userId)
+		public bool JoinLobby(Guid gameId, Guid userId)
 		{
-			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
-			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
-			dbContext.GamePlayers.Add(new GamePlayerModel { GMP_User = user, GMP_Game = game });
+			if (dbContext.GamePlayers.Any(gp => gp.GMP_USR_FK == userId && gp.GMP_GM_FK == gameId))
+			{
+				return false;
+			}
+			dbContext.GamePlayers.Add(new GamePlayerModel { GMP_USR_FK = userId, GMP_GM_FK = gameId} );
 			dbContext.SaveChanges();
+			return true;
 		}
 
 		public GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game)

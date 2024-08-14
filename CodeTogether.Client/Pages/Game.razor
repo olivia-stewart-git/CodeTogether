@@ -1,4 +1,4 @@
-﻿@page "/game/{serverId:int}/{gameId:guid}"
+﻿@page "/game/{ServerId:int}/{GameId:guid}/{PlayerCount:int}"
 @*todo: be able to copy urls to join a game*@
 @using Microsoft.AspNetCore.SignalR.Client
 @using GaelJ.BlazorCodeMirror6
@@ -7,7 +7,7 @@
 @inject NavigationManager Navigation
 
 <h3>Game</h3>
-<p>Using server @serverId.ToString() for game @gameId.ToString()</p>
+<p>Using server @ServerId.ToString() for game @GameId.ToString() with @PlayerCount.ToString() players</p>
 
 <div class="container border">
     <div class="row text-center fw-bold">
@@ -64,10 +64,13 @@
 
 @code {
         [Parameter]
-        public required Guid gameId { get; set; }
+        public required Guid GameId { get; set; }
 
         [Parameter]
-        public required int serverId { get; set; }
+        public required int ServerId { get; set; }
+
+        [Parameter]
+        public required int PlayerCount { get; set; } // required for page layout
 
     private string Code { get; set; } = string.Empty;
 
@@ -89,6 +92,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        
         hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/gamehub")).Build();
 
         hubConnection.On<string>("SetState", theirCode =>

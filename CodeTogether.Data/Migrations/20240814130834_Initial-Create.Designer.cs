@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240814063329_Initial-Create")]
+    [Migration("20240814130834_Initial-Create")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,26 @@ namespace CodeTogether.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Game.GamePlayerModel", b =>
+                {
+                    b.Property<Guid>("GMP_GM_FK")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GMP_USR_FK")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GMP_MostRecentCode")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GMP_GM_FK", "GMP_USR_FK");
+
+                    b.HasIndex("GMP_USR_FK");
+
+                    b.ToTable("GamePlayers");
+                });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Game.UserModel", b =>
                 {
@@ -39,9 +59,6 @@ namespace CodeTogether.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("USR_GM_FK")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("USR_LastHeardFromAt")
                         .HasColumnType("datetime2");
@@ -62,8 +79,6 @@ namespace CodeTogether.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("USR_PK");
-
-                    b.HasIndex("USR_GM_FK");
 
                     b.ToTable("Users");
                 });
@@ -347,13 +362,38 @@ namespace CodeTogether.Data.Migrations
                     b.ToTable("TestExecutions");
                 });
 
-            modelBuilder.Entity("CodeTogether.Data.Models.Game.UserModel", b =>
+            modelBuilder.Entity("GameModelUserModel", b =>
                 {
-                    b.HasOne("CodeTogether.Data.Models.Questions.GameModel", "USR_Game")
-                        .WithMany("Users")
-                        .HasForeignKey("USR_GM_FK");
+                    b.Property<Guid>("GamesGM_PK")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("USR_Game");
+                    b.Property<Guid>("UsersUSR_PK")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("GamesGM_PK", "UsersUSR_PK");
+
+                    b.HasIndex("UsersUSR_PK");
+
+                    b.ToTable("GameModelUserModel");
+                });
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Game.GamePlayerModel", b =>
+                {
+                    b.HasOne("CodeTogether.Data.Models.Questions.GameModel", "GMP_Game")
+                        .WithMany("GamePlayers")
+                        .HasForeignKey("GMP_GM_FK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeTogether.Data.Models.Game.UserModel", "GMP_User")
+                        .WithMany("GamePlayers")
+                        .HasForeignKey("GMP_USR_FK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GMP_Game");
+
+                    b.Navigation("GMP_User");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.ExecutionConfigurationModel", b =>
@@ -446,9 +486,29 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("EXR_TestRun");
                 });
 
+            modelBuilder.Entity("GameModelUserModel", b =>
+                {
+                    b.HasOne("CodeTogether.Data.Models.Questions.GameModel", null)
+                        .WithMany()
+                        .HasForeignKey("GamesGM_PK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeTogether.Data.Models.Game.UserModel", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUSR_PK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Game.UserModel", b =>
+                {
+                    b.Navigation("GamePlayers");
+                });
+
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.GameModel", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("GamePlayers");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.QuestionModel", b =>
