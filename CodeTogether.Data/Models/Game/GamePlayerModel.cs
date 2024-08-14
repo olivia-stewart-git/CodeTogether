@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Questions;
 using Microsoft.EntityFrameworkCore;
 // ReSharper disable InconsistentNaming
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CodeTogether.Data.Models.Game;
 
 [PrimaryKey(nameof(GMP_GM_FK), nameof(GMP_USR_FK))]
-public class GamePlayerModel
+public class GamePlayerModel : IDbModel
 {
 	[ForeignKey(nameof(GMP_GM_FK))]
 	public GameModel GMP_Game { get; set; } = null!;
