@@ -1,4 +1,4 @@
-﻿@page "/game/{ServerId:int}/{GameId:guid}/{PlayerCount:int}"
+﻿@page "/game/{ServerId:int}/{GameId:guid}"
 @*todo: be able to copy urls to join a game*@
 @using Microsoft.AspNetCore.SignalR.Client
 @using GaelJ.BlazorCodeMirror6
@@ -7,7 +7,7 @@
 @inject NavigationManager Navigation
 
 <h3>Game</h3>
-<p>Using server @ServerId.ToString() for game @GameId.ToString() with @PlayerCount.ToString() players</p>
+<p>Using server @ServerId.ToString() for game @GameId.ToString()</p>
 
 <div class="container border">
     <div class="row text-center fw-bold">
@@ -44,8 +44,9 @@
         </div>
         
         <div class="col">
-            @foreach (var codeContents in TheirCode)
+            @foreach (var codeContents in TheirCode.Values)
             {
+                var maxHeight = $"calc(70vh / {TheirCode.Count})";
                 <div class="row">
                     <CodeMirror6Wrapper
                         IsWASM
@@ -55,7 +56,8 @@
                         Language="CodeMirrorLanguage.Csharp"
                         ReadOnly="true"
                         Editable="false"
-                        LineWrapping="true"/>
+                        LineWrapping="true"
+                        MaxHeight="@maxHeight"/>
                 </div>
             }
         </div>
@@ -69,9 +71,6 @@
         [Parameter]
         public required int ServerId { get; set; }
 
-        [Parameter]
-        public required int PlayerCount { get; set; } // required for page layout
-
     private string Code { get; set; } = string.Empty;
 
     private readonly CodeMirrorSetup setup = new()
@@ -84,7 +83,7 @@
         public required string content;
     }
 
-    private List<CodeContents> TheirCode { get; set; } = new List<CodeContents>() { new CodeContents { content = "" } };
+    private Dictionary<Guid, CodeContents> TheirCode { get; set; } = new() {{ Guid.Empty, new CodeContents { content = string.Empty }}};
 
     private HubConnection? hubConnection;
 
@@ -97,7 +96,7 @@
 
         hubConnection.On<string>("SetState", theirCode =>
         {
-            TheirCode[0].content = theirCode;
+            TheirCode[Guid.Empty].content = theirCode;
             InvokeAsync(StateHasChanged);
         });
 
