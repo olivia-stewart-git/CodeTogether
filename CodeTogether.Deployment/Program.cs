@@ -31,14 +31,11 @@ class Program
 	{
 		Console.WriteLine("Connecting to database");
 		using var dbContext = new ApplicationDbContext();
+
 		dbContext.Database.BeginTransaction();
 
-		Console.WriteLine("Ensure Database Exists");
-		dbContext.Database.EnsureCreated();
 		Console.WriteLine("Running migrations");
 		dbContext.Database.Migrate();
-
-		dbContext.Database.CommitTransaction();
 
 		var seeder = new Seeder(dbContext, Console.WriteLine);
 		seeder.ExplicitSeed(
@@ -46,6 +43,8 @@ class Program
 			typeof(QuestionSeeder),
 			typeof(SchemaVersionSeeder)
 		);
+
+		dbContext.Database.CommitTransaction();
 	}
 
 	static bool RunPowershellScript()
