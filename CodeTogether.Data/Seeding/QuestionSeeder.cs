@@ -35,8 +35,8 @@ public class QuestionSeeder : ISeedStep
 		dbContext.TestCases.ExecuteDelete();
 		dbContext.Questions.ExecuteDelete();
 		dbContext.ExecutionConfigurations.ExecuteDelete();
-		dbContext.QuestionSignatures.ExecuteDelete();
 		dbContext.ArgumentTypes.ExecuteDelete();
+		dbContext.QuestionSignatures.ExecuteDelete();
 	}
 
 	void SeedSimpleAdd()
