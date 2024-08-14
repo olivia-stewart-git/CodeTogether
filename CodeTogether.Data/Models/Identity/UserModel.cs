@@ -27,7 +27,7 @@ public class UserModel : IDbModel
 
 	public DateTime USR_LastHeardFromAt { get; set; }
 
-	[ForeignKey(nameof(USR_GM_FK))]
-	public GameModel? USR_Game { get; set; }
-	public Guid? USR_GM_FK { get; set; }
+	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
+
+	public IEnumerable<GameModel> Games { get; set; } = new List<GameModel>();
 }

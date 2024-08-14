@@ -67,6 +67,7 @@ public class ApplicationDbContext : DbContext
 
 	public virtual DbSet<GameModel> Games { get; set; }
 	public virtual DbSet<UserModel> Users { get; set; }
+	public virtual DbSet<GamePlayerModel> GamePlayers { get; set; }
 
 	#endregion
 }

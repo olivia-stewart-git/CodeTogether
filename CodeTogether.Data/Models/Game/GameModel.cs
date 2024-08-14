@@ -28,6 +28,8 @@ public class GameModel : IDbModel
 	[NotMapped]
 	public DateTime LastActionTime => GM_StartedAtUtc.HasValue ? GM_StartedAtUtc.Value : GM_CreateTimeUtc;
 
+	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
+
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }
 

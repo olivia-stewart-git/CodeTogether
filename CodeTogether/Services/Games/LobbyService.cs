@@ -1,6 +1,7 @@
 ﻿using CodeTogether.Client.Integration;
 using CodeTogether.Client.Pages;
 using CodeTogether.Data;
+using CodeTogether.Data.Models.Game;
 using CodeTogether.Data.Models.Questions;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,7 +54,7 @@ namespace CodeTogether.Service.Games
 		{
 			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
 			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
-			user.USR_Game = game;
+			dbContext.GamePlayers.Add(new GamePlayerModel { GMP_User = user, GMP_Game = game });
 			dbContext.SaveChanges();
 		}
 
