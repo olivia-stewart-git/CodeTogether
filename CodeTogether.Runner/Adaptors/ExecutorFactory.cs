@@ -4,19 +4,17 @@ namespace CodeTogether.Runner.Adaptors;
 
 public class ExecutorFactory : IExecutorFactory
 {
-	public bool TryGetExecutor(
+	public ISubmissionExecutor? TryGetExecutor(
 		ExecutionConfigurationModel configuration, 
-		IEnumerable<TestCaseModel> testCases, 
-		out ISubmissionExecutor submissionExecutor)
+		IEnumerable<TestCaseModel> testCases)
 	{
 		switch (configuration.EXE_ExecutionRunnerName)
 		{
 			case nameof(ClassInstanceSubmissionExecutor):
-				submissionExecutor = new ClassInstanceSubmissionExecutor(configuration, testCases);
-				return true;
+				return new ClassInstanceSubmissionExecutor(configuration, testCases);
+			default:
+				return null;
 		}
 
-		submissionExecutor = null;
-		return false;
 	}
 }

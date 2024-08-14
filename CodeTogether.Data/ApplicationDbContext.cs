@@ -5,7 +5,8 @@ using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace CodeTogether.Data;
 
@@ -13,8 +14,13 @@ public class ApplicationDbContext : DbContext
 {
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder
-			.UseSqlServer("Server=localhost;Initial Catalog=CodeTogether;Integrated Security=SSPI;TrustServerCertificate=True");
+		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		var builder = new ConfigurationBuilder()
+			.SetBasePath(binPath)
+			.AddJsonFile("appsettings.json");
+		var configuration = builder.Build();
+		var connectionString = configuration.GetConnectionString("MainDb");
+		optionsBuilder.UseSqlServer(connectionString);
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,8 +59,8 @@ public class ApplicationDbContext : DbContext
 	public virtual DbSet<TestRunExecutionModel> TestExecutions { get; set; }
 
 	public virtual DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	public virtual DbSet<TypeModel> Arguments { get; set; }
-	public virtual DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
+	public virtual DbSet<TypeModel> ArgumentTypes { get; set; }
+	public virtual DbSet<QuestionSignatureModel> QuestionSignatures { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
 	public virtual DbSet<ExecutionResultModel> ExecutionResults { get; set; }

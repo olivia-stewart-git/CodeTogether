@@ -1,16 +1,53 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using CodeTogether.Data;
+﻿using CodeTogether.Data;
 using CodeTogether.Data.Seeding;
 using CodeTogether.Services.Seeding;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace CodeTogether.Deployment;
 
 class Program
 {
-	static void Main()
+	static void Main(string[] args)
+	{
+		if (!args.Contains("SeedOnly"))
+		{
+			var ranSuccessfully = RunPowershellScript();
+			if (!ranSuccessfully)
+			{
+				return;
+			}
+		}
+		else
+		{
+			Console.WriteLine("Skipping powershell script");
+		}
+
+		SetupDb();
+	}
+
+	static void SetupDb()
+	{
+		Console.WriteLine("Connecting to database");
+		using var dbContext = new ApplicationDbContext();
+
+		dbContext.Database.BeginTransaction();
+
+		Console.WriteLine("Running migrations");
+		dbContext.Database.Migrate();
+
+		var seeder = new Seeder(dbContext, Console.WriteLine);
+		seeder.ExplicitSeed(
+			typeof(UserSeeder),
+			typeof(QuestionSeeder),
+			typeof(SchemaVersionSeeder)
+		);
+
+		dbContext.Database.CommitTransaction();
+	}
+
+	static bool RunPowershellScript()
 	{
 		Console.WriteLine("Executing auto deployment");
 		var assembly = Assembly.GetExecutingAssembly();
@@ -20,7 +57,7 @@ class Program
 		if (stream == null)
 		{
 			Console.WriteLine("PowerShell script not found.");
-			return;
+			return false;
 		}
 
 		using var reader = new StreamReader(stream);
@@ -78,14 +115,12 @@ class Program
 				}
 			}
 
-			if (!hasErrors)
-			{
-				SeedDb();
-			}
+			return !hasErrors;
 		}
 		catch (Exception ex)
 		{
 			Console.WriteLine($"An error occurred: {ex.Message}");
+			return false;
 		}
 		finally
 		{
@@ -95,18 +130,5 @@ class Program
 				File.Delete(tempScriptPath);
 			}
 		}
-	}
-
-	static void SeedDb()
-	{
-		using var dbContext = new ApplicationDbContext();
-		dbContext.Database.EnsureCreated();
-
-		var seeder = new Seeder(dbContext, Console.WriteLine);
-		seeder.ExplicitSeed(
-			typeof(UserSeeder),
-			typeof(QuestionSeeder),
-			typeof(SchemaVersionSeeder)
-		);
 	}
 }

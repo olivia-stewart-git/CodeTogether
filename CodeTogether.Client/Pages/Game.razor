@@ -22,42 +22,52 @@
     
     <div class="row">
         <div class="col">
-            <CodeMirror6Wrapper
-                IsWASM
-                @bind-Doc="@Code"
-                Placeholder="Enter your code..."
-                TabSize="4"
-                IndentationUnit="4"
-                Theme="@ThemeMirrorTheme.VSCode"
-                Language="CodeMirrorLanguage.Csharp"
-                Setup="@setup"
-                Editable
-                ReadOnly="false"
-                LineWrapping="false"
-                MaxHeight="70vh"/>
+            <div class="row">
+                <CodeMirror6Wrapper
+                    IsWASM
+                    @bind-Doc="@Code"
+                    Placeholder="Enter your code..."
+                    TabSize="4"
+                    IndentationUnit="4"
+                    Theme="@ThemeMirrorTheme.VSCode"
+                    Language="CodeMirrorLanguage.Csharp"
+                    Setup="@setup"
+                    Editable
+                    ReadOnly="false"
+                    LineWrapping="false"
+                    MaxHeight="70vh"/>
+                <button>Run</button>
+            </div>
+            <div class="row">
+                Run output
+            </div>
         </div>
         
         <div class="col">
-            <CodeMirror6Wrapper
-                IsWASM
-                @bind-Doc="@TheirCode"
-                TabSize="4"
-                Theme="@ThemeMirrorTheme.VSCode"
-                Language="CodeMirrorLanguage.Csharp"
-                ReadOnly="true"
-                Editable="false"
-                LineWrapping="true"
-                MaxHeight="70vh"/>
+            @foreach (var codeContents in TheirCode)
+            {
+                <div class="row">
+                    <CodeMirror6Wrapper
+                        IsWASM
+                        @bind-Doc="@codeContents.content"
+                        TabSize="4"
+                        Theme="@ThemeMirrorTheme.VSCode"
+                        Language="CodeMirrorLanguage.Csharp"
+                        ReadOnly="true"
+                        Editable="false"
+                        LineWrapping="true"/>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @code {
-    [Parameter]
-    public required Guid gameId { get; set; }
+        [Parameter]
+        public required Guid gameId { get; set; }
 
-    [Parameter]
-    public required int serverId { get; set; }
+        [Parameter]
+        public required int serverId { get; set; }
 
     private string Code { get; set; } = string.Empty;
 
@@ -66,7 +76,12 @@
         BindMode = DocumentBindMode.OnInput
     };
 
-    private string TheirCode { get; set; } = string.Empty;
+    class CodeContents
+    {
+        public required string content;
+    }
+
+    private List<CodeContents> TheirCode { get; set; } = new List<CodeContents>() { new CodeContents { content = "" } };
 
     private HubConnection? hubConnection;
 
@@ -78,7 +93,7 @@
 
         hubConnection.On<string>("SetState", theirCode =>
         {
-            TheirCode = theirCode;
+            TheirCode[0].content = theirCode;
             InvokeAsync(StateHasChanged);
         });
 

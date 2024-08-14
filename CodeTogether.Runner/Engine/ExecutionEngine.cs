@@ -26,7 +26,8 @@ public class ExecutionEngine : IExecutionEngine
 
 		var scaffold = scaffoldLoader.LoadScaffold(question.QST_ExecutionConfigurationModel.EXE_ScaffoldName);
 
-		if(!executorFactory.TryGetExecutor(configuration, question.QST_TestCases, out var executor))
+		var executor = executorFactory.TryGetExecutor(configuration, question.QST_TestCases);
+		if (executor == null)
 		{
 			throw new ExecutionSetupException($"Could not resolve an executor for {configuration.EXE_ExecutionRunnerName}");
 		}

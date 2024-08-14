@@ -23,6 +23,7 @@ public class LoginController : Controller
 	[Route("user")]
 	public IActionResult GetUser()
 	{
+		// TODO: check that the user actually exists in the database?
 		var name = User.Identity?.Name;
 		return string.IsNullOrEmpty(name) ? BadRequest() : Json(name);
 	}

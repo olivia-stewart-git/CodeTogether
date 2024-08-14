@@ -9,7 +9,7 @@ namespace CodeTogether.Data.Seeding
 	{
 		public int Order => 1;
 
-		public void Seed()
+		public void Seed(bool initalSeed)
 		{
 			var schemaHash = GetSchemaVersionHash();
 			dbContext.StmData.Add(new StmDataModel { STM_Key = StmDataModel.Constants.SchemaVersion, STM_Value = schemaHash});
