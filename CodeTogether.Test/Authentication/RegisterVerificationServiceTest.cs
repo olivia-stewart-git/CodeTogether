@@ -14,7 +14,7 @@ internal class RegisterVerificationServiceTest
 	public void TestAllowsValidPassword(RegisterAccountDTO request, RegistrationState expectedState)
 	{
 		var mockContext = new Mock<ApplicationDbContext>();
-		mockContext.SetupMock(x => x.Users, new List<UserModel>());
+		mockContext.SetupMockDbSet(x => x.Users, new List<UserModel>());
 
 		var verificationService = new RegisterVerificationService(mockContext.Object);
 
@@ -27,7 +27,7 @@ internal class RegisterVerificationServiceTest
 	public void TestNotAllowedDuplicateEmail()
 	{
 		var mockContext = new Mock<ApplicationDbContext>();
-		mockContext.SetupMock(x => x.Users, new List<UserModel> { new UserModel { USR_Email = "myMail@gmail.com" } });
+		mockContext.SetupMockDbSet(x => x.Users, new List<UserModel> { new UserModel { USR_Email = "myMail@gmail.com" } });
 
 		var request = new RegisterAccountDTO { Username = "successName", Password = "Password123", Email = "myMail@gmail.com" };
 		var verificationService = new RegisterVerificationService(mockContext.Object);

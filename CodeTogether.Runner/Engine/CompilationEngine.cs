@@ -8,11 +8,11 @@ namespace CodeTogether.Runner.Engine;
 
 public class CompilationEngine : ICompilationEngine
 {
-	public Assembly CreateCompilation(string assemblyName, string sourceCode, params Type[] referenceTypes)
+	public Assembly CreateCompilation(string assemblyName, string sourceCode, IEnumerable<Type>? referenceTypes = null)
 	{
 		var references = ((IEnumerable<MetadataReference>)Net80.References.All).ToHashSet();
-		// TODO: will users actually be using types that aren't in system?
-		foreach (var referenceType in referenceTypes)
+		// TODO: don't reinclude system types?
+		foreach (var referenceType in (referenceTypes ?? Array.Empty<Type>()).ToHashSet() )
 		{
 			references.AddAssembly(referenceType);
 		}

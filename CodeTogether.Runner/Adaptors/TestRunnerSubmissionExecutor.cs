@@ -49,6 +49,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			: ExecutionStatus.Success;
 
 		submissionResult.EXR_TestRuns = testRuns;
+		submissionResult.EXR_Status = status;
 		return submissionResult;
 	}
 

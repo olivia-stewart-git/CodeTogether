@@ -110,6 +110,7 @@ public class TestClass
 			};
 
 			var result = engine.ExecuteAgainstQuestion(question, code);
+			Assert.That(result.EXR_CompileError, Is.EqualTo(null));
 			Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
 		}
 

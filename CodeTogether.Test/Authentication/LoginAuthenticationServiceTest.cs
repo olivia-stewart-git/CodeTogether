@@ -23,7 +23,7 @@ internal class LoginAuthenticationServiceTest
 		cryptographyService.Setup(x => x.VerifyHash(It.IsAny<string>(), It.IsAny<string>(), validPassword)).Returns(true);
 
 		var mockContext = new Mock<ApplicationDbContext>();
-		mockContext.SetupMock(x => x.Users, new List<UserModel>
+		mockContext.SetupMockDbSet(x => x.Users, new List<UserModel>
 		{
 			new UserModel()
 			{

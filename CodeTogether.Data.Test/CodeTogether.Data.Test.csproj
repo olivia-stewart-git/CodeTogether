@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Data\CodeTogether.Data.csproj" />
+    <ProjectReference Include="..\CodeTogether.TestFramework\CodeTogether.TestFramework.csproj" />
   </ItemGroup>
 
 </Project>

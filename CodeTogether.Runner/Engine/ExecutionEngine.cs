@@ -22,9 +22,13 @@ public class ExecutionEngine : IExecutionEngine
 		var executor = executorFactory.GetExecutor(configuration, question.QST_TestCases)
 			?? throw new ExecutionSetupException($"Could not resolve an executor for {configuration.EXE_ExecutionRunnerName}");
 
+		var parameterTypes = question.QST_Scaffold.EXE_Parameters.Select(p => p.TC_Type.OT_Type ?? throw new InvalidOperationException("Scaffold should not have invalid parameter types"));
+		var returnType = question.QST_Scaffold.EXE_ReturnType.OT_Type ?? throw new InvalidOperationException("Scaffold should not have invalid return type");
+		var typesReferences = parameterTypes.Append(returnType);
+
 		try
 		{
-			var compilation = compilationEngine.CreateCompilation(compilationName, code);
+			var compilation = compilationEngine.CreateCompilation(compilationName, code, typesReferences);
 			return executor.Execute(compilation);
 		}
 		catch (CompilationException compilationException)

@@ -56,7 +56,7 @@ public class TestClass
 		Assembly? assembly = null;
 		Assert.DoesNotThrow(() =>
 		{
-			assembly = compilationEngine.CreateCompilation("myAssembly", testCode, typeof(TestInputClass));
+			assembly = compilationEngine.CreateCompilation("myAssembly", testCode, new[] { typeof(TestInputClass) });
 		});
 		Assert.IsNotNull(assembly);
 		var classType = assembly.GetType("TestClass");

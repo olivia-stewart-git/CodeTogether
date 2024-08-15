@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
+using CodeTogether.TestFramework;
+using CodeTogether.Data.Models.Questions;
 
 namespace CodeTogether.Data.Seeding.Test
 {
@@ -17,7 +14,9 @@ namespace CodeTogether.Data.Seeding.Test
 				.Where(t => t.GetInterfaces().Contains(typeof(ISeedStep)))
 				.ToList();
 
-			var seeder = new Seeder(new Mock<ApplicationDbContext>().Object, s => {});
+			var mockDb = new Mock<ApplicationDbContext>();
+			mockDb.SetupMockDbSet(db => db.Scaffolds, new List<ScaffoldModel>());
+			var seeder = new Seeder(mockDb.Object, s => {});
 			var seedSteps = seeder.GetSeedSteps().ToList();
 			Assert.That(seedSteps.Count, Is.EqualTo(allSeedSteps.Count));
 		}
