@@ -14,11 +14,17 @@ public class ScaffoldModel : IDbModel
 	[MaxLength(50)] 
 	public required string EXE_ScaffoldName { get; set; }
 
+	[MaxLength(int.MaxValue)]
+	public required string EXE_ScaffoldText { get; set; }
+
 	[MaxLength(50)]
-	public required string EXE_ExecutionRunnerName { get; set; }
+	public required ExecutionRunnerType EXE_ExecutionRunnerName { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]
-	public required TypeModel EXE_ReturnArgument { get; set; }
+	public required TypeModel EXE_ReturnType { get; set; }
+
+	[MaxLength(100)]
+	public required string EXE_ExeuctionRunnerArgument { get; set; }
 
 	[InverseProperty(nameof(ParameterModel.TC_Scaffold))]
 	public IEnumerable<ParameterModel> EXE_Parameters { get; set; } = [];

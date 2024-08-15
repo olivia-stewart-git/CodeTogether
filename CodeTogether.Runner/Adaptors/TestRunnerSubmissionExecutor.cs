@@ -7,18 +7,16 @@ namespace CodeTogether.Runner.Adaptors;
 
 public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 {
-	protected readonly ScaffoldModel scaffold;
 	readonly IEnumerable<TestCaseModel> testCases;
 
-	protected TestRunnerSubmissionExecutor(ScaffoldModel scaffold, IEnumerable<TestCaseModel> testCases)
+	protected TestRunnerSubmissionExecutor(IEnumerable<TestCaseModel> testCases)
 	{
-		this.scaffold = scaffold;
 		this.testCases = testCases;
 	}
 
-	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
+	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments, QuestionModel question);
 
-	public SubmissionResultModel Execute(Assembly targetAssembly)
+	public SubmissionResultModel Execute(Assembly targetAssembly, QuestionModel question)
 	{
 		List<TestRunModel> testRuns = [];
 		var submissionResult = new SubmissionResultModel { EXR_Status = ExecutionStatus.InProgress };
@@ -27,7 +25,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
-				var result = GetExecutionResult(targetAssembly, arguments);
+				var result = GetExecutionResult(targetAssembly, arguments, question);
 				var testRun = AssertTestCase(testCaseModel, result, submissionResult);
 				testRuns.Add(testRun);
 			}
@@ -75,7 +73,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 
 	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? actualResult, SubmissionResultModel submissionResult)
 	{
-		var expectedType = scaffold.EXE_ReturnArgument?.OT_Type;
+		var expectedType = scaffold.EXE_ReturnType?.OT_Type;
 		if (expectedType == null)
 		{
 			return new TestRunModel()

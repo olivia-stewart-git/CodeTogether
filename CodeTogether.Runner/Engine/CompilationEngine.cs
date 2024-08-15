@@ -11,6 +11,7 @@ public class CompilationEngine : ICompilationEngine
 	public Assembly CreateCompilation(string assemblyName, string sourceCode, params Type[] referenceTypes)
 	{
 		var references = ((IEnumerable<MetadataReference>)Net80.References.All).ToHashSet();
+		// TODO: will users actually be using types that aren't in system?
 		foreach (var referenceType in referenceTypes)
 		{
 			references.AddAssembly(referenceType);

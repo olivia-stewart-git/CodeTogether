@@ -41,7 +41,7 @@ invalid code !!!!!
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ScaffoldName = "testScaffold",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
-					EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
+					EXE_ReturnType = TypeModel.FromType(typeof(int)),
 					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
@@ -97,7 +97,7 @@ public class TestClass
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
 					EXE_ScaffoldName = "testScaffold",
-					EXE_ReturnArgument = TypeModel.FromType(typeof(TestJsonObject)),
+					EXE_ReturnType = TypeModel.FromType(typeof(TestJsonObject)),
 					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(string)), TypeModel.FromType(typeof(string))]
@@ -147,7 +147,7 @@ public class TestClass
 				{
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
-					EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
+					EXE_ReturnType = TypeModel.FromType(typeof(int)),
 					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]

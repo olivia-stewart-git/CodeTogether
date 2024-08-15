@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Data.Models.Factories;
 using CodeTogether.Data.Models.Questions;
+using CodeTogether.Runner.Scaffolds;
 
 namespace CodeTogether.Data.Seeding;
 
@@ -24,21 +25,30 @@ public class QuestionSeeder : ISeedStep
 
 	void SeedSimpleAdd()
 	{
-		// TODO: Add scaffold factory
+		// TODO: proper factory
+		var scaffoldFcatory = new ScaffoldModelFactory();
 		var scaffold = new ScaffoldModel
 		{
 			EXE_ScaffoldName = "IntIntToInt",
 			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ReturnArgument = typeModelFactory.Get(typeof(int)),
+			EXE_ReturnType = typeModelFactory.Get(typeof(int)),
+			EXE_ExecutionRunnerArgument = "Problem::Solve",
 		};
 
 		var parameters = new List<ParameterModel>()
 		{
-			new () { TC_Name = "a", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold },
-			new () { TC_Name = "b", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold }
+			new () { TC_Name = "a", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold, TC_Position = 0 },
+			new () { TC_Name = "b", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold, TC_Position = 1 }
 		};
 
 		scaffold.EXE_Parameters = parameters;
+
+		var simpleAddQuestion = new QuestionModel()
+		{
+			QST_Name = "SimpleAdd",
+			QST_Description = "Return the result of adding both arguments together",
+			QST_Scaffold = scaffold,
+		};
 
 		var testCases = new TestCaseModel[]
 		{
@@ -48,6 +58,7 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["1","2"],
 				TST_ExpectedResponse = "3",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
 			new ()
 			{
@@ -55,6 +66,7 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["111","2320"],
 				TST_ExpectedResponse = "2431",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
 			new ()
 			{
@@ -62,28 +74,24 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["-3","5"],
 				TST_ExpectedResponse = "2",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
 		};
 
-		var simpleAddQuestion = new QuestionModel()
-		{
-			QST_Name = QuestionModel.Constants.SimpleAdd,
-			QST_Description = "Return the result of adding both arguments together",
-			QST_Scaffold = scaffold,
-			QST_TestCases = testCases,
-		};
 
+		simpleAddQuestion.QST_TestCases = testCases;
 		dbContext.Questions.Add(simpleAddQuestion);
 		dbContext.SaveChanges();
 	}
 
 	void SeedHelloWorld()
 	{
+		var scaffoldFcatory = new ScaffoldModelFactory();
 		var scaffold = new ScaffoldModel()
 		{
 			EXE_ScaffoldName = "PureString",
 			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ReturnArgument = typeModelFactory.Get(typeof(string))
+			EXE_ReturnType = typeModelFactory.Get(typeof(string))
 		};
 
 		var testCases = new TestCaseModel[]

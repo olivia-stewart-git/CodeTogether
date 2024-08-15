@@ -13,7 +13,7 @@ internal class ClassInstanceSubmissionExecutorTest
 			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 			//EXE_ExecutionArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
 			EXE_ScaffoldName = string.Empty,
-			EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
+			EXE_ReturnType = TypeModel.FromType(typeof(int)),
 			EXE_Parameters = new List<ParameterModel>()
 			{
 				new () {TC_Name = ""}, //[TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]

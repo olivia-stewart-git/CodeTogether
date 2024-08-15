@@ -22,5 +22,5 @@ public class TestCaseModel : IDbModel
 	public required string TST_ExpectedResponse { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]
-	public required QuestionModel TST_Question { get; set; };
+	public required QuestionModel TST_Question { get; set; }
 }

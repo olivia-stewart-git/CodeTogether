@@ -8,12 +8,6 @@ namespace CodeTogether.Data.Models.Questions;
 [PrimaryKey(nameof(QST_PK))]
 public class QuestionModel : IDbModel
 {
-	public class Constants
-	{
-		public const string HelloWorld = "Hello World!";
-		public const string SimpleAdd = "SimpleAdd";
-	}
-
 	public Guid QST_PK { get; set; } = Guid.NewGuid();
 
 	[Required]
