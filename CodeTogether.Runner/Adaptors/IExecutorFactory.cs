@@ -5,7 +5,7 @@ namespace CodeTogether.Runner.Adaptors;
 
 public interface IExecutorFactory
 {
-	bool TryGetExecutor(ExecutionConfigurationModel configuration,
+	bool TryGetExecutor(ScaffoldModel configuration,
 		IEnumerable<TestCaseModel> testCases,
 		out ISubmissionExecutor submissionExecutor);
 }

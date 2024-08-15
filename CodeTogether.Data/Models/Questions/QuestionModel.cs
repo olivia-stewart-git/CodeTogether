@@ -24,9 +24,7 @@ public class QuestionModel : IDbModel
 	[MaxLength(300)]
 	public required string QST_Description { get; set; }
 
-	[ForeignKey(nameof(QST_EXE_FK))]
-	public required ExecutionConfigurationModel QST_ExecutionConfigurationModel { get; set; }
-	public Guid QST_EXE_FK { get; set; }
+	public required ScaffoldModel QST_Scaffold { get; set; }
 
 	[InverseProperty(nameof(TestCaseModel.TST_Question))]
 	public IEnumerable<TestCaseModel> QST_TestCases { get; set; } = [];

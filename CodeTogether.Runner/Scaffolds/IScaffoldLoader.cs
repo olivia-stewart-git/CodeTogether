@@ -1,7 +1,8 @@
-﻿namespace CodeTogether.Runner.Scaffolds;
+﻿using CodeTogether.Data.Models.Questions;
+
+namespace CodeTogether.Runner.Scaffolds;
 
 public interface IScaffoldLoader
 {
-	Scaffold LoadScaffold(string scaffoldName);
-	List<Scaffold> LoadAllScaffolds();
+	string LoadScaffold(QuestionModel question);
 }

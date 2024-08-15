@@ -36,13 +36,13 @@ invalid code !!!!!
 						TST_Arguments = ["1", "2"]
 					}
 				},
-				QST_ExecutionConfigurationModel = new()
+				QST_Scaffold = new()
 				{
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ScaffoldName = "testScaffold",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
 					EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
-					EXE_InputArguments = new QuestionSignatureModel()
+					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 					}
@@ -51,8 +51,8 @@ invalid code !!!!!
 
 			var result = engine.ExecuteAgainstQuestion(question, code);
 			Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Error));
-			Assert.NotNull(result.EXR_Exception);
-			Assert.That(result.EXR_Exception.GetType(), Is.EqualTo(typeof(CompilationException)));
+			Assert.NotNull(result.EXR_CompileError);
+			Assert.That(result.EXR_CompileError.GetType(), Is.EqualTo(typeof(CompilationException)));
 		}
 
 		[Test]
@@ -92,13 +92,13 @@ public class TestClass
 						TST_Arguments = [returnName, returnValue]
 					}
 				},
-				QST_ExecutionConfigurationModel = new()
+				QST_Scaffold = new()
 				{
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
 					EXE_ScaffoldName = "testScaffold",
 					EXE_ReturnArgument = TypeModel.FromType(typeof(TestJsonObject)),
-					EXE_InputArguments = new QuestionSignatureModel()
+					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(string)), TypeModel.FromType(typeof(string))]
 					}
@@ -143,12 +143,12 @@ public class TestClass
 						TST_Arguments = ["1", "2"]
 					}
 				},
-				QST_ExecutionConfigurationModel = new ()
+				QST_Scaffold = new ()
 				{
 					EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
 					EXE_ExecutionArgument = "TestClass::TestMethod",
 					EXE_ReturnArgument = TypeModel.FromType(typeof(int)),
-					EXE_InputArguments = new QuestionSignatureModel()
+					EXE_Parameters = new ParameterModel()
 					{
 						TC_Types = [TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
 					}
@@ -157,7 +157,7 @@ public class TestClass
 
 			var result = engine.ExecuteAgainstQuestion(question, code);
 			Assert.That(result.EXR_Status, Is.EqualTo(expectedStatus));
-			Assert.That(result.EXR_TestRun!.TRX_TestRuns[0].TCR_ActualResult, Is.EqualTo(expectedActualResult));
+			Assert.That(result.EXR_TestRuns!.TRX_TestRuns[0].TCR_ActualResult, Is.EqualTo(expectedActualResult));
 		}
 
 		Mock<IScaffoldLoader> scaffoldLoaderMock;

@@ -19,12 +19,12 @@ public class ExecutionEngine : IExecutionEngine
 		this.scaffoldLoader = scaffoldLoader;
 	}
 
-	public ExecutionResultModel ExecuteAgainstQuestion(QuestionModel question, string code)
+	public SubmissionResultModel ExecuteAgainstQuestion(QuestionModel question, string code)
 	{
-		var configuration = question.QST_ExecutionConfigurationModel;
+		var configuration = question.QST_Scaffold;
 		var compilationName = $"Compilation_{question.QST_Name}{Guid.NewGuid()}";
 
-		var scaffold = scaffoldLoader.LoadScaffold(question.QST_ExecutionConfigurationModel.EXE_ScaffoldName);
+		var scaffold = scaffoldLoader.LoadScaffold(question);
 
 		if(!executorFactory.TryGetExecutor(configuration, question.QST_TestCases, out var executor))
 		{
@@ -38,10 +38,10 @@ public class ExecutionEngine : IExecutionEngine
 		}
 		catch (CompilationException compilationException)
 		{
-			return new ExecutionResultModel()
+			return new SubmissionResultModel()
 			{
 				EXR_Status = ExecutionStatus.Error,
-				EXR_Exception = compilationException
+				EXR_CompileError = compilationException
 			};
 		}
 	}

@@ -21,8 +21,6 @@ public class TestCaseModel : IDbModel
 	[MaxLength(100)]
 	public required string TST_ExpectedResponse { get; set; }
 
-	[ForeignKey(nameof(TST_QST_FK))]
 	[DeleteBehavior(DeleteBehavior.NoAction)]
-	public QuestionModel? TST_Question { get; set; } = null!;
-	public Guid? TST_QST_FK { get; set; }
+	public required QuestionModel TST_Question { get; set; };
 }

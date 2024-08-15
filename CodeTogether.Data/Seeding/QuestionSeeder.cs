@@ -24,23 +24,21 @@ public class QuestionSeeder : ISeedStep
 
 	void SeedSimpleAdd()
 	{
-		var inputArguments = new QuestionSignatureModel()
+		// TODO: Add scaffold factory
+		var scaffold = new ScaffoldModel
 		{
-			TC_Types =
-			[
-				typeModelFactory.Get(typeof(int)),
-				typeModelFactory.Get(typeof(int)),
-			]
-		};
-
-		var executionConfiguration = new ExecutionConfigurationModel
-		{
-			EXE_ScaffoldName = "SimpleAddScaffold",
+			EXE_ScaffoldName = "IntIntToInt",
 			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ExecutionArgument = "SimpleAdd::Add",
-			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = typeModelFactory.Get(typeof(int)),
 		};
+
+		var parameters = new List<ParameterModel>()
+		{
+			new () { TC_Name = "a", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold },
+			new () { TC_Name = "b", TC_Type = typeModelFactory.Get(typeof(int)), TC_Scaffold = scaffold }
+		};
+
+		scaffold.EXE_Parameters = parameters;
 
 		var testCases = new TestCaseModel[]
 		{
@@ -71,7 +69,7 @@ public class QuestionSeeder : ISeedStep
 		{
 			QST_Name = QuestionModel.Constants.SimpleAdd,
 			QST_Description = "Return the result of adding both arguments together",
-			QST_ExecutionConfigurationModel = executionConfiguration,
+			QST_Scaffold = scaffold,
 			QST_TestCases = testCases,
 		};
 
@@ -81,13 +79,10 @@ public class QuestionSeeder : ISeedStep
 
 	void SeedHelloWorld()
 	{
-		var inputArguments = new QuestionSignatureModel();
-		var executionConfiguration = new ExecutionConfigurationModel()
+		var scaffold = new ScaffoldModel()
 		{
-			EXE_ScaffoldName = "HelloWorldScaffold",
+			EXE_ScaffoldName = "PureString",
 			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ExecutionArgument = "HelloWorldProblem::HelloWorld",
-			EXE_InputArguments = inputArguments,
 			EXE_ReturnArgument = typeModelFactory.Get(typeof(string))
 		};
 
@@ -106,7 +101,7 @@ public class QuestionSeeder : ISeedStep
 		{
 			QST_Name = QuestionModel.Constants.HelloWorld,
 			QST_Description = "Return the string \"Hello World!\", you can do that can't you?",
-			QST_ExecutionConfigurationModel = executionConfiguration,
+			QST_Scaffold = scaffold,
 			QST_TestCases = testCases
 		};
 

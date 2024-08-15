@@ -5,11 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CodeTogether.Data.Models.Questions;
 
 [PrimaryKey(nameof(TC_PK))]
-public class QuestionSignatureModel : IDbModel
+public class ParameterModel : IDbModel
 {
 	public Guid TC_PK { get; set; } = Guid.NewGuid();
 
-	[ForeignKey(nameof(TC_TO_FK))]
-	public IList<TypeModel> TC_Types { get; set; } = [];
-	public Guid TC_TO_FK { get; set; }
+	public required string TC_Name { get; set; }
+
+	public required TypeModel TC_Type { get; set; }
+
+	public required int TC_Position { get; set; }
+
+	public required ScaffoldModel TC_Scaffold { get; set; }
 }

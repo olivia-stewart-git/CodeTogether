@@ -38,7 +38,7 @@ public class ApplicationDbContext : DbContext
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
 
-		modelBuilder.HasJsonConversion<ExecutionResultModel, Exception>(x => x.EXR_Exception)
+		modelBuilder.HasJsonConversion<SubmissionResultModel, Exception>(x => x.EXR_CompileError)
 					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
 
@@ -50,14 +50,13 @@ public class ApplicationDbContext : DbContext
 
 	public virtual DbSet<TestCaseModel> TestCases { get; set; }
 	public virtual DbSet<TestRunModel> TestRuns { get; set; }
-	public virtual DbSet<TestRunExecutionModel> TestExecutions { get; set; }
 
-	public virtual DbSet<ExecutionConfigurationModel> ExecutionConfigurations { get; set; }
-	public virtual DbSet<TypeModel> Arguments { get; set; }
-	public virtual DbSet<QuestionSignatureModel> ArgumentCollections { get; set; }
+	public virtual DbSet<ScaffoldModel> Scaffolds { get; set; }
+	public virtual DbSet<TypeModel> Types { get; set; }
+	public virtual DbSet<ParameterModel> Parameters { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
-	public virtual DbSet<ExecutionResultModel> ExecutionResults { get; set; }
+	public virtual DbSet<SubmissionResultModel> SubmissionResults { get; set; }
 
 	public virtual DbSet<GameModel> Games { get; set; }
 	public virtual DbSet<UserModel> Users { get; set; }

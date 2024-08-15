@@ -18,7 +18,7 @@ public class SubmissionModel : IDbModel
 	public required string SBM_Code { get; set; } = string.Empty;
 
 	[ForeignKey(nameof(SBM_EXR_FK))]
-	public ExecutionResultModel? SBM_Execution { get; set; }
+	public SubmissionResultModel? SBM_Execution { get; set; }
 	public Guid? SBM_EXR_FK { get; set; }
 
     [ForeignKey(nameof(SBM_QST_FK))]

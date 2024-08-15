@@ -5,6 +5,6 @@ namespace CodeTogether.Runner.Adaptors;
 
 public interface ISubmissionExecutor
 {
-	ExecutionResultModel Execute(Assembly targetAssembly);
-	IEnumerable<Type> GetAddTypes();
+	SubmissionResultModel Execute(Assembly targetAssembly);
+	//IEnumerable<Type> GetAddTypes(); // TODO: why
 }
