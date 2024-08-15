@@ -31,14 +31,13 @@ public class QuestionSeeder : ISeedStep
 	public void ClearQuestionsAndSubmissions()
 	{
 		dbContext.Submissions.ExecuteDelete();
-		dbContext.ExecutionResults.ExecuteDelete();
+		dbContext.SubmissionResults.ExecuteDelete();
 		dbContext.TestRuns.ExecuteDelete();
-		dbContext.TestExecutions.ExecuteDelete();
 		dbContext.TestCases.ExecuteDelete();
 		dbContext.Questions.ExecuteDelete();
-		dbContext.ExecutionConfigurations.ExecuteDelete();
-		dbContext.ArgumentTypes.ExecuteDelete();
-		dbContext.QuestionSignatures.ExecuteDelete();
+		dbContext.Scaffolds.ExecuteDelete();
+		dbContext.Parameters.ExecuteDelete();
+		dbContext.Types.ExecuteDelete();
 	}
 
 	void SeedSimpleAdd()
