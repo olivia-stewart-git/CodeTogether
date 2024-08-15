@@ -1,4 +1,5 @@
-﻿using CodeTogether.Data;
+﻿using CodeTogether.Common;
+using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
@@ -53,8 +54,16 @@ internal class ScaffoldModelFactory : IScaffoldModelFactory
 
 	ScaffoldModel GetExecutionRunnerScaffold(IEnumerable<ParameterInfo> parameters, Type returnType)
 	{
-		var parametersString = string.Join(", ", parameters.Select(p => $"{p.Type.Name} {p.Name}"));
-		var scaffoldText = string.Format(classInstanceTemplate, returnType, parametersString);
+		var parametersString = string.Join(", ", parameters.Select(p => $"{p.Type.GetAliasedName()} {p.Name}"));
+		var scaffoldText = @$"using System;
+
+public class Problem
+{{
+	public {returnType.GetAliasedName()} Solve({parametersString})
+	{{
+
+	}}
+}}";
 
 		var scaffold = new ScaffoldModel
 		{
@@ -78,16 +87,4 @@ internal class ScaffoldModelFactory : IScaffoldModelFactory
 
 		return scaffold;
 	}
-
-	const string classInstanceTemplate = @"using System;
-
-public class Problem
-{
-	public {0} Solve({1})
-	{
-
-	}
-}
-";
-
 }

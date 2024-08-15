@@ -25,6 +25,7 @@ If your intellisense is not working while editing .razor files, follow this http
 
 When adding new blazor or css files make sure to set their build action property as Content rather than the default of None
 
+To add a new migrations do `dotnet ef migrations add {migration name}` in the CodeTogether.Data project, the run the CodeTogether.Deployment project which will run ef database update and run the seeder
 
 # Deployment
 
