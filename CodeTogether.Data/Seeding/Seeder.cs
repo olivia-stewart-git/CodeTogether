@@ -2,7 +2,7 @@
 
 namespace CodeTogether.Data.Seeding;
 
-public class Seeder : ISeeder
+public class Seeder
 {
 	readonly ApplicationDbContext dbContext;
 	readonly Action<string> logging;
@@ -22,37 +22,18 @@ public class Seeder : ISeeder
 		SeedCore(steps);
 	}
 
-	public void Seed()
-	{
-		SeedCore(GetSeedSteps());
-	}
-
 	void SeedCore(IEnumerable<ISeedStep> steps)
 	{
-		if (HasSeeded())
-		{
-			return;
-		}
+		var initialSeed = !HasSeeded();
 
 		foreach (var seedStep in steps)
 		{
 			logging($"starting seed step: {seedStep.GetType().FullName}");
-			seedStep.Seed();
+			seedStep.Seed(initialSeed);
 		}
 
 		FillHasSeeded();
 		logging("Seeding complete");
-	}
-
-	public IEnumerable<ISeedStep> GetSeedSteps()
-	{
-		var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-		return assemblies
-			.SelectMany(x => x.GetTypes())
-			.Where(x => typeof(ISeedStep).IsAssignableFrom(x) && x is { IsInterface: false, IsAbstract: false })
-			.Select(x => Activator.CreateInstance(x, dbContext))
-			.OfType<ISeedStep>()
-			.OrderBy(x => x.Order);
 	}
 
 	bool HasSeeded()

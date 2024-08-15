@@ -3,5 +3,5 @@
 public interface ISeedStep
 {
 	public int Order { get; }
-	public void Seed();
+	public void Seed(bool initialSeed);
 }

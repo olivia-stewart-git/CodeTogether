@@ -1,6 +1,7 @@
 ﻿using CodeTogether.Client.Integration;
 using CodeTogether.Client.Pages;
 using CodeTogether.Data;
+using CodeTogether.Data.Models.Game;
 using CodeTogether.Data.Models.Questions;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,8 +34,11 @@ namespace CodeTogether.Service.Games
 
 		List<GameListGameDTO> GetLobbiesFromDatabase()
 		{
+			var oldGameCutoff = TimeSpan.FromHours(3);
+			var now = DateTime.UtcNow;
 			return dbContext.Games
-				.Where(g => !g.GM_Private)
+				.ToList()
+				.Where(g => !g.GM_Private && (now - g.LastActionTime) < oldGameCutoff)
 				.Select(m => new GameListGameDTO
 				{
 					CreatedAt = m.GM_CreateTimeUtc,
@@ -46,12 +50,15 @@ namespace CodeTogether.Service.Games
 				.ToList();
 		}
 
-		public void JoinLobby(Guid gameId, Guid userId)
+		public bool JoinLobby(Guid gameId, Guid userId)
 		{
-			var user = dbContext.Users.Find(userId) ?? throw new ArgumentException("Invalid user");
-			var game = dbContext.Games.Find(gameId) ?? throw new ArgumentException("Invalid game");
-			user.USR_Game = game;
+			if (dbContext.GamePlayers.Any(gp => gp.GMP_USR_FK == userId && gp.GMP_GM_FK == gameId))
+			{
+				return false;
+			}
+			dbContext.GamePlayers.Add(new GamePlayerModel { GMP_USR_FK = userId, GMP_GM_FK = gameId} );
 			dbContext.SaveChanges();
+			return true;
 		}
 
 		public GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game)
@@ -62,12 +69,12 @@ namespace CodeTogether.Service.Games
 			if (newState.GoingToStart == true)
 			{
 				var countdownLength = TimeSpan.FromSeconds(5);
-				game.GM_StartedAt = DateTime.UtcNow + countdownLength;
+				game.GM_StartedAtUtc = DateTime.UtcNow + countdownLength;
 				Task.Run(async () =>
 				{
 					await Task.Delay(countdownLength);
 					// TODO: does the captured game update if another message changes it?
-					if (DateTime.UtcNow > game.GM_StartedAt)
+					if (DateTime.UtcNow > game.GM_StartedAtUtc)
 					{
 						game.GM_GameState = GameState.Playing;
 						dbContext.SaveChanges();
@@ -76,7 +83,7 @@ namespace CodeTogether.Service.Games
 			}
 			if (newState.GoingToStart == false)
 			{
-				game.GM_StartedAt = null;
+				game.GM_StartedAtUtc = null;
 			}
 
 			dbContext.SaveChanges();

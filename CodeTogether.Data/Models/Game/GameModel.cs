@@ -1,7 +1,9 @@
 ﻿using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Game;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeTogether.Data.Models.Questions;
 
@@ -17,12 +19,16 @@ public class GameModel : IDbModel
 
 	public DateTime GM_CreateTimeUtc { get; set; } = DateTime.UtcNow;
 
-	public DateTime? GM_StartedAt { get; set; }
+	public DateTime? GM_StartedAtUtc { get; set; }
 
 	public bool GM_Private { get; set; }
 
 	public int GM_MaxPlayers { get; set; } = 2;
 
+	[NotMapped]
+	public DateTime LastActionTime => GM_StartedAtUtc.HasValue ? GM_StartedAtUtc.Value : GM_CreateTimeUtc;
+
+	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
 	public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
 }
 

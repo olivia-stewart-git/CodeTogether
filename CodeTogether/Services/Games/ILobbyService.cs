@@ -9,7 +9,7 @@ namespace CodeTogether.Service.Games
 
 		IEnumerable<GameListGameDTO> GetLobbies();
 
-		void JoinLobby(Guid gameId, Guid userId);
+		bool JoinLobby(Guid gameId, Guid userId);
 
 		GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game);
 	}

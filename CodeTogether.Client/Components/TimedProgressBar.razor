@@ -1,4 +1,6 @@
-﻿<progress value="@progress" max="1.0"></progress>
+﻿@implements IDisposable
+
+<progress value="@progress" max="1.0"></progress>
 
 @code {
     [Parameter]
@@ -8,21 +10,28 @@
 
     double progress = 0.0;
 
+    bool active = true;
+
     protected override void OnInitialized()
     {
+        active = true;
         Task.Run(UpdateProgress);
     }
 
     async Task UpdateProgress()
     {
         var now = DateTime.Now;
-        while (true)
+        while (active)
         {
             now = DateTime.Now;
             progress = (now - StartedAt) / (CompletesAt - StartedAt);
             StateHasChanged();
             await Task.Delay(100);
         }
+    }
 
+    public void Dispose()
+    {
+        active = false;
     }
 }
