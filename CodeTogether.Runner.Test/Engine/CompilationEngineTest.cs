@@ -1,5 +1,4 @@
-﻿using CodeTogether.Runner.Scaffolds;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace CodeTogether.Runner.Engine.Test;
 
@@ -13,20 +12,6 @@ internal class CompilationEngineTest
 public static vod Main(string[] args) {
 	return 0;
 }"));
-	}
-
-	[Test]
-	public void TestScaffoldsCompile()
-	{
-		var compilationEngine = new CompilationEngine();
-		var scaffoldLoader = new ScaffoldLoader();
-		Assert.Multiple(() =>
-		{
-			foreach (var scaffoldCode in scaffoldLoader.LoadAllScaffolds())
-			{
-				Assert.DoesNotThrow(() => compilationEngine.CreateCompilation("Compilation", scaffoldCode.ScaffoldCode));
-			}
-		});
 	}
 
 	[Test]
@@ -71,7 +56,7 @@ public class TestClass
 		Assembly? assembly = null;
 		Assert.DoesNotThrow(() =>
 		{
-			assembly = compilationEngine.CreateCompilation("myAssembly", testCode, typeof(TestInputClass));
+			assembly = compilationEngine.CreateCompilation("myAssembly", testCode, new[] { typeof(TestInputClass) });
 		});
 		Assert.IsNotNull(assembly);
 		var classType = assembly.GetType("TestClass");

@@ -9,11 +9,13 @@ public class QuestionSeeder : ISeedStep
 {
 	readonly ApplicationDbContext dbContext;
 	readonly ICachedTypeModelFactory typeModelFactory;
+	readonly IScaffoldModelFactory scaffoldModelFactory;
 
 	public QuestionSeeder(ApplicationDbContext dbContext)
 	{
 		this.dbContext = dbContext;
-		this.typeModelFactory = new CachedCachedTypeModelFactory();
+		typeModelFactory = new CachedCachedTypeModelFactory();
+		scaffoldModelFactory = new ScaffoldModelFactory(dbContext, typeModelFactory);
 	}
 
 	public int Order { get; } = 1;
@@ -29,37 +31,33 @@ public class QuestionSeeder : ISeedStep
 	public void ClearQuestionsAndSubmissions()
 	{
 		dbContext.Submissions.ExecuteDelete();
-		dbContext.ExecutionResults.ExecuteDelete();
+		dbContext.SubmissionResults.ExecuteDelete();
 		dbContext.TestRuns.ExecuteDelete();
-		dbContext.TestExecutions.ExecuteDelete();
 		dbContext.TestCases.ExecuteDelete();
 		dbContext.Questions.ExecuteDelete();
-		dbContext.ExecutionConfigurations.ExecuteDelete();
-		dbContext.ArgumentTypes.ExecuteDelete();
-		dbContext.QuestionSignatures.ExecuteDelete();
+		dbContext.Scaffolds.ExecuteDelete();
+		dbContext.Parameters.ExecuteDelete();
+		dbContext.Types.ExecuteDelete();
 	}
 
 	void SeedSimpleAdd()
 	{
-		var inputArguments = new QuestionSignatureModel()
+		ParameterInfo[] parameters =
+		[
+			new ParameterInfo("a", typeof(int)),
+			new ParameterInfo("b", typeof(int)),
+		];
+
+		var scaffold = scaffoldModelFactory.GetScaffold(parameters, typeof(int));
+
+		var simpleAddQuestion = new QuestionModel()
 		{
-			TC_Types =
-			[
-				typeModelFactory.Get(typeof(int)),
-				typeModelFactory.Get(typeof(int)),
-			]
+			QST_Name = "Simple Add",
+			QST_Description = "Return the result of adding both arguments together",
+			QST_Scaffold = scaffold,
 		};
 
-		var executionConfiguration = new ExecutionConfigurationModel
-		{
-			EXE_ScaffoldName = "SimpleAddScaffold",
-			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ExecutionArgument = "SimpleAdd::Add",
-			EXE_InputArguments = inputArguments,
-			EXE_ReturnArgument = typeModelFactory.Get(typeof(int)),
-		};
-
-		var testCases = new TestCaseModel[]
+		simpleAddQuestion.QST_TestCases = new TestCaseModel[]
 		{
 			new ()
 			{
@@ -67,6 +65,7 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["1","2"],
 				TST_ExpectedResponse = "3",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
 			new ()
 			{
@@ -74,6 +73,7 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["111","2320"],
 				TST_ExpectedResponse = "2431",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
 			new ()
 			{
@@ -81,15 +81,8 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = ["-3","5"],
 				TST_ExpectedResponse = "2",
 				TST_IsHidden = false,
+				TST_Question = simpleAddQuestion,
 			},
-		};
-
-		var simpleAddQuestion = new QuestionModel()
-		{
-			QST_Name = QuestionModel.Constants.SimpleAdd,
-			QST_Description = "Return the result of adding both arguments together",
-			QST_ExecutionConfigurationModel = executionConfiguration,
-			QST_TestCases = testCases,
 		};
 
 		dbContext.Questions.Add(simpleAddQuestion);
@@ -98,17 +91,16 @@ public class QuestionSeeder : ISeedStep
 
 	void SeedHelloWorld()
 	{
-		var inputArguments = new QuestionSignatureModel();
-		var executionConfiguration = new ExecutionConfigurationModel()
+		var scaffold = scaffoldModelFactory.GetScaffold(Array.Empty<ParameterInfo>(), typeof(string));
+
+		var helloWorldQuestion = new QuestionModel()
 		{
-			EXE_ScaffoldName = "HelloWorldScaffold",
-			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			EXE_ExecutionArgument = "HelloWorldProblem::HelloWorld",
-			EXE_InputArguments = inputArguments,
-			EXE_ReturnArgument = typeModelFactory.Get(typeof(string))
+			QST_Name = "Hello World",
+			QST_Description = "Return the string \"Hello World!\", you can do that can't you?",
+			QST_Scaffold = scaffold,
 		};
 
-		var testCases = new TestCaseModel[]
+		helloWorldQuestion.QST_TestCases = new TestCaseModel[]
 		{
 			new ()
 			{
@@ -116,16 +108,10 @@ public class QuestionSeeder : ISeedStep
 				TST_Arguments = [],
 				TST_ExpectedResponse = "Hello World!",
 				TST_IsHidden = false,
+				TST_Question = helloWorldQuestion,
 			},
 		};
 
-		var helloWorldQuestion = new QuestionModel()
-		{
-			QST_Name = QuestionModel.Constants.HelloWorld,
-			QST_Description = "Return the string \"Hello World!\", you can do that can't you?",
-			QST_ExecutionConfigurationModel = executionConfiguration,
-			QST_TestCases = testCases
-		};
 
 		dbContext.Questions.Add(helloWorldQuestion);
 		dbContext.SaveChanges();

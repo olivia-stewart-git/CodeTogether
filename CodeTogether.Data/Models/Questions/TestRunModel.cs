@@ -20,11 +20,7 @@ public class TestRunModel : IDbModel
 	[MaxLength(400)] 
 	public Exception? TCR_Exception { get; set; } = null;
 
-	[ForeignKey(nameof(TCR_TST_FK))]
 	public required TestCaseModel TCR_Parent { get; set; }
-	public Guid TCR_TST_FK { get; set; }
 
-	[ForeignKey(nameof(TCR_TST_FK))]
-    public TestRunExecutionModel? TCT_Execution { get; set; }
-	public Guid? TCR_TRX_FK { get; set; }
+    public required SubmissionResultModel TCR_SubmissionResult { get; set; }
 }

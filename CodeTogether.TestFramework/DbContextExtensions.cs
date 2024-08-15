@@ -7,7 +7,7 @@ namespace CodeTogether.TestFramework;
 
 public static class DbContextExtensions
 {
-	public static Mock<ApplicationDbContext> SetupMock<T>(this Mock<ApplicationDbContext> dbContext, Expression<Func<ApplicationDbContext, DbSet<T>>> accessExpression, IList<T> set) where T : class
+	public static Mock<ApplicationDbContext> SetupMockDbSet<T>(this Mock<ApplicationDbContext> dbContext, Expression<Func<ApplicationDbContext, DbSet<T>>> accessExpression, IList<T> set) where T : class
 	{
 		var data = set.AsQueryable();
 		var mockSet = new Mock<DbSet<T>>();

@@ -3,7 +3,6 @@ using CodeTogether.Data;
 using CodeTogether.Data.Seeding;
 using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Engine;
-using CodeTogether.Runner.Scaffolds;
 using CodeTogether.Service.Games;
 using CodeTogether.Services.Authentication;
 using CodeTogether.Services.Games;
@@ -14,7 +13,6 @@ public static class ServiceDependencyExtensions
 {
 	public static IServiceCollection RegisterRunnerServices(this IServiceCollection services)
 	{
-		services.AddSingleton<IScaffoldLoader, ScaffoldLoader>();
 		services.AddTransient<IExecutionEngine, ExecutionEngine>();
 		services.AddTransient<ICompilationEngine, CompilationEngine>();
 		services.AddTransient<IExecutorFactory, ExecutorFactory>();

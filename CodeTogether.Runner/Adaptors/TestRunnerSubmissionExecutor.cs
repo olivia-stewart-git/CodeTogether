@@ -7,31 +7,28 @@ namespace CodeTogether.Runner.Adaptors;
 
 public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 {
-	protected readonly ExecutionConfigurationModel executionConfiguration;
+	protected readonly ScaffoldModel scaffold;
 	readonly IEnumerable<TestCaseModel> testCases;
 
-	protected TestRunnerSubmissionExecutor(ExecutionConfigurationModel executionConfiguration, IEnumerable<TestCaseModel> testCases)
+	protected TestRunnerSubmissionExecutor(ScaffoldModel scaffold, IEnumerable<TestCaseModel> testCases)
 	{
-		this.executionConfiguration = executionConfiguration;
+		this.scaffold = scaffold;
 		this.testCases = testCases;
 	}
 
-	public IEnumerable<Type> GetAddTypes() => InputTypes;
-	public abstract IEnumerable<Type> InputTypes { get; }
-
 	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
-	public ExecutionResultModel Execute(Assembly targetAssembly)
+	public SubmissionResultModel Execute(Assembly targetAssembly)
 	{
-		TestRunExecutionModel fullExecution = new TestRunExecutionModel();
 		List<TestRunModel> testRuns = [];
+		var submissionResult = new SubmissionResultModel { EXR_Status = ExecutionStatus.InProgress };
 		foreach (var testCaseModel in testCases)
 		{
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
 				var result = GetExecutionResult(targetAssembly, arguments);
-				var testRun = AssertTestCase(testCaseModel, result, fullExecution);
+				var testRun = AssertTestCase(testCaseModel, result, submissionResult);
 				testRuns.Add(testRun);
 			}
 			catch (ExecutionRuntimeException ex)
@@ -42,7 +39,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 					TCR_Exception = ex,
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
-					TCT_Execution = fullExecution,
+					TCR_SubmissionResult = submissionResult,
                 });
 			}
 		}
@@ -51,42 +48,35 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			? testRuns.Any(x => x.TCR_Status == TestCaseStatus.Error) ? ExecutionStatus.Error : ExecutionStatus.Failure
 			: ExecutionStatus.Success;
 
-		fullExecution.TRX_TestRuns = testRuns;
-		return new ExecutionResultModel
-		{
-			EXR_Status = status,
-			EXR_TestRun = fullExecution,
-        };
+		submissionResult.EXR_TestRuns = testRuns;
+		submissionResult.EXR_Status = status;
+		return submissionResult;
 	}
 
 	object[] GetTestCaseArguments(TestCaseModel testCase)
 	{
-		var inputTypes = executionConfiguration.EXE_InputArguments?.TC_Types;
-		if (inputTypes == null || inputTypes.Count == 0)
+		var scaffoldParameters = scaffold.EXE_Parameters.ToList();
+
+		if (scaffoldParameters.Count != testCase.TST_Arguments.Length)
 		{
-			return [];
+			throw new InvalidOperationException("MissMatch between expected number of arguments from scaffold and actual number in test case");
 		}
 
-		if (inputTypes.Count != testCase.TST_Arguments.Length)
-		{
-			throw new InvalidOperationException("MissMatch in test case arguments");
-		}
-
-		List<object> objects = [];
+		List<object> arguments = [];
 		for (int i = 0; i < testCase.TST_Arguments.Length; i++)
 		{
-			var targetType = inputTypes[i];
+			var targetType = scaffoldParameters[i];
 			var targetObject = testCase.TST_Arguments[i];
-			var converted = TypeConverter.Convert(targetObject, targetType.OT_Type ?? throw new InvalidOperationException("Cannot expect null argument"));
-			objects.Add(converted);
+			var converted = TypeConverter.Convert(targetObject, targetType.TC_Type.OT_Type ?? throw new InvalidOperationException("Parameter type could not be resolved"));
+			arguments.Add(converted);
 		}
 
-		return objects.ToArray();
+		return arguments.ToArray();
 	}
 
-	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? inputResult, TestRunExecutionModel testRun)
+	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? actualResult, SubmissionResultModel submissionResult)
 	{
-		var expectedType = executionConfiguration.EXE_ReturnArgument?.OT_Type;
+		var expectedType = scaffold.EXE_ReturnType?.OT_Type;
 		if (expectedType == null)
 		{
 			return new TestRunModel()
@@ -94,34 +84,24 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				TCR_ActualResult = string.Empty,
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
-				TCT_Execution = testRun,
+				TCR_SubmissionResult = submissionResult,
 				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}"),
             };
 		}
 
-		var expectedResult = testCase.TST_ExpectedResponse;
-		if (expectedResult == "null" && inputResult is null)
-		{
-			return new TestRunModel()
-			{
-				TCR_ActualResult = "null",
-				TCR_Status = TestCaseStatus.Success,
-				TCR_Parent = testCase,
-				TCT_Execution = testRun,
-            };
-        }
-		var convertExpected = TypeConverter.Convert(expectedResult, expectedType);
+		var expectedResultString = testCase.TST_ExpectedResponse;
+		var expectedResult = TypeConverter.Convert(expectedResultString, expectedType);
 
-		var equal = inputResult?.Equals(convertExpected)
+		var equal = actualResult?.Equals(expectedResult)
 			?? throw new InvalidOperationException("Returned null result");
 		var status = equal ? TestCaseStatus.Success : TestCaseStatus.Failure;
 
 		return new TestRunModel()
 		{
-			TCR_ActualResult = inputResult.ToString() ?? string.Empty,
+			TCR_ActualResult = actualResult.ToString() ?? string.Empty,
 			TCR_Status = status,
 			TCR_Parent = testCase,
-			TCT_Execution = testRun,
+			TCR_SubmissionResult = submissionResult,
         };
     }
 }

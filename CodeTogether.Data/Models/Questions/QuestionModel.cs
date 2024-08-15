@@ -8,12 +8,6 @@ namespace CodeTogether.Data.Models.Questions;
 [PrimaryKey(nameof(QST_PK))]
 public class QuestionModel : IDbModel
 {
-	public class Constants
-	{
-		public const string HelloWorld = "Hello World!";
-		public const string SimpleAdd = "SimpleAdd";
-	}
-
 	public Guid QST_PK { get; set; } = Guid.NewGuid();
 
 	[Required]
@@ -24,9 +18,7 @@ public class QuestionModel : IDbModel
 	[MaxLength(300)]
 	public required string QST_Description { get; set; }
 
-	[ForeignKey(nameof(QST_EXE_FK))]
-	public required ExecutionConfigurationModel QST_ExecutionConfigurationModel { get; set; }
-	public Guid QST_EXE_FK { get; set; }
+	public required ScaffoldModel QST_Scaffold { get; set; }
 
 	[InverseProperty(nameof(TestCaseModel.TST_Question))]
 	public IEnumerable<TestCaseModel> QST_TestCases { get; set; } = [];

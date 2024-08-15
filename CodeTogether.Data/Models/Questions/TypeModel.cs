@@ -21,10 +21,10 @@ public class TypeModel : IDbModel
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
 
 	[MaxLength(100)]
-	public string? OT_AssemblyName { get; set; }
+	public required string OT_AssemblyName { get; set; }
 
 	[MaxLength(100)]
-	public string? OT_TypeName { get; set; }
+	public required string OT_TypeName { get; set; }
 
 	[NotMapped]
 	public Type? OT_Type

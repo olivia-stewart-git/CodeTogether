@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
+using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
 
 namespace CodeTogether.Runner.Adaptors;
 
 public interface ISubmissionExecutor
 {
-	ExecutionResultModel Execute(Assembly targetAssembly);
-	IEnumerable<Type> GetAddTypes();
+	SubmissionResultModel Execute(Assembly targetAssembly);
 }

@@ -9,16 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scaffolds\HelloWorldScaffold.txt" />
-    <None Remove="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\HelloWorldScaffold.txt" />
-    <EmbeddedResource Include="Scaffolds\ScaffoldFiles\SimpleAddScaffold.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Basic.Reference.Assemblies" Version="1.7.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />

@@ -2,8 +2,8 @@
 
 public enum ExecutionStatus
 {
-	None,
-	Success,
-	Failure,
-	Error
+	InProgress,
+	Success, // All tests passed
+	Failure, // Some tests failed
+	Error // Failed to build
 }
