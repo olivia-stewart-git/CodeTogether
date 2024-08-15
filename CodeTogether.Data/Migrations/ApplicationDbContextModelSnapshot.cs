@@ -80,42 +80,6 @@ namespace CodeTogether.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ExecutionConfigurationModel", b =>
-                {
-                    b.Property<Guid>("EXE_PK")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EXE_ExecutionArgument")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("EXE_ExecutionRunnerName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("EXE_ScaffoldName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid?>("EXE_TC_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("EXE_TO_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("EXE_PK");
-
-                    b.HasIndex("EXE_TC_FK");
-
-                    b.HasIndex("EXE_TO_FK");
-
-                    b.ToTable("ExecutionConfigurations");
-                });
-
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.GameModel", b =>
                 {
                     b.Property<Guid>("GM_PK")
@@ -147,6 +111,34 @@ namespace CodeTogether.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ParameterModel", b =>
+                {
+                    b.Property<Guid>("TC_PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TC_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TC_Position")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TC_ScaffoldEXE_PK")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TC_TypeOT_PK")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TC_PK");
+
+                    b.HasIndex("TC_ScaffoldEXE_PK");
+
+                    b.HasIndex("TC_TypeOT_PK");
+
+                    b.ToTable("Parameters");
+                });
+
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.QuestionModel", b =>
                 {
                     b.Property<Guid>("QST_PK")
@@ -158,33 +150,54 @@ namespace CodeTogether.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<Guid>("QST_EXE_FK")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("QST_Name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<Guid>("QST_ScaffoldEXE_PK")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("QST_PK");
 
-                    b.HasIndex("QST_EXE_FK");
+                    b.HasIndex("QST_ScaffoldEXE_PK");
 
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("CodeTogether.Data.Models.Questions.QuestionSignatureModel", b =>
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ScaffoldModel", b =>
                 {
-                    b.Property<Guid>("TC_PK")
+                    b.Property<Guid>("EXE_PK")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TC_TO_FK")
+                    b.Property<string>("EXE_ExecutionRunnerArgument")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("EXE_ExecutionRunnerName")
+                        .HasMaxLength(50)
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("EXE_ReturnTypeOT_PK")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("TC_PK");
+                    b.Property<string>("EXE_ScaffoldName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.ToTable("QuestionSignatures");
+                    b.Property<string>("EXE_ScaffoldText")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EXE_PK");
+
+                    b.HasIndex("EXE_ReturnTypeOT_PK");
+
+                    b.ToTable("Scaffolds");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.TestCaseModel", b =>
@@ -206,7 +219,7 @@ namespace CodeTogether.Data.Migrations
                     b.Property<bool>("TST_IsHidden")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("TST_QST_FK")
+                    b.Property<Guid>("TST_QuestionQST_PK")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TST_Title")
@@ -216,7 +229,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TST_PK");
 
-                    b.HasIndex("TST_QST_FK");
+                    b.HasIndex("TST_QuestionQST_PK");
 
                     b.ToTable("TestCases");
                 });
@@ -236,18 +249,20 @@ namespace CodeTogether.Data.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
+                    b.Property<Guid>("TCR_ParentTST_PK")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("TCR_Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TCR_TRX_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TCR_TST_FK")
+                    b.Property<Guid>("TCR_SubmissionResultEXR_PK")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("TCR_PK");
 
-                    b.HasIndex("TCR_TST_FK");
+                    b.HasIndex("TCR_ParentTST_PK");
+
+                    b.HasIndex("TCR_SubmissionResultEXR_PK");
 
                     b.ToTable("TestRuns");
                 });
@@ -259,21 +274,18 @@ namespace CodeTogether.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("OT_AssemblyName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("OT_TypeName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid?>("TC_TO_FK")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("OT_PK");
 
-                    b.HasIndex("TC_TO_FK");
-
-                    b.ToTable("ArgumentTypes");
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.StmDataModel", b =>
@@ -326,37 +338,21 @@ namespace CodeTogether.Data.Migrations
                     b.ToTable("Submissions");
                 });
 
-            modelBuilder.Entity("CodeTogether.Runner.Engine.ExecutionResultModel", b =>
+            modelBuilder.Entity("CodeTogether.Runner.Engine.SubmissionResultModel", b =>
                 {
                     b.Property<Guid>("EXR_PK")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("EXR_Exception")
+                    b.Property<string>("EXR_CompileError")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EXR_Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("EXR_TRX_FK")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("EXR_PK");
 
-                    b.HasIndex("EXR_TRX_FK");
-
-                    b.ToTable("ExecutionResults");
-                });
-
-            modelBuilder.Entity("CodeTogether.Runner.Engine.TestRunExecutionModel", b =>
-                {
-                    b.Property<Guid>("TRX_PK")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("TRX_PK");
-
-                    b.ToTable("TestExecutions");
+                    b.ToTable("SubmissionResults");
                 });
 
             modelBuilder.Entity("GameModelUserModel", b =>
@@ -393,73 +389,80 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("GMP_User");
                 });
 
-            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ExecutionConfigurationModel", b =>
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ParameterModel", b =>
                 {
-                    b.HasOne("CodeTogether.Data.Models.Questions.QuestionSignatureModel", "EXE_InputArguments")
+                    b.HasOne("CodeTogether.Data.Models.Questions.ScaffoldModel", "TC_Scaffold")
+                        .WithMany("EXE_Parameters")
+                        .HasForeignKey("TC_ScaffoldEXE_PK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeTogether.Data.Models.Questions.TypeModel", "TC_Type")
                         .WithMany()
-                        .HasForeignKey("EXE_TC_FK")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("TC_TypeOT_PK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("CodeTogether.Data.Models.Questions.TypeModel", "EXE_ReturnArgument")
-                        .WithMany()
-                        .HasForeignKey("EXE_TO_FK")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.Navigation("TC_Scaffold");
 
-                    b.Navigation("EXE_InputArguments");
-
-                    b.Navigation("EXE_ReturnArgument");
+                    b.Navigation("TC_Type");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.QuestionModel", b =>
                 {
-                    b.HasOne("CodeTogether.Data.Models.Questions.ExecutionConfigurationModel", "QST_ExecutionConfigurationModel")
+                    b.HasOne("CodeTogether.Data.Models.Questions.ScaffoldModel", "QST_Scaffold")
                         .WithMany()
-                        .HasForeignKey("QST_EXE_FK")
+                        .HasForeignKey("QST_ScaffoldEXE_PK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("QST_ExecutionConfigurationModel");
+                    b.Navigation("QST_Scaffold");
+                });
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ScaffoldModel", b =>
+                {
+                    b.HasOne("CodeTogether.Data.Models.Questions.TypeModel", "EXE_ReturnType")
+                        .WithMany()
+                        .HasForeignKey("EXE_ReturnTypeOT_PK")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EXE_ReturnType");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.TestCaseModel", b =>
                 {
                     b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "TST_Question")
                         .WithMany("QST_TestCases")
-                        .HasForeignKey("TST_QST_FK")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("TST_QuestionQST_PK")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("TST_Question");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.TestRunModel", b =>
                 {
-                    b.HasOne("CodeTogether.Runner.Engine.TestRunExecutionModel", "TCT_Execution")
-                        .WithMany("TRX_TestRuns")
-                        .HasForeignKey("TCR_TST_FK")
+                    b.HasOne("CodeTogether.Data.Models.Questions.TestCaseModel", "TCR_Parent")
+                        .WithMany()
+                        .HasForeignKey("TCR_ParentTST_PK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodeTogether.Data.Models.Questions.TestCaseModel", "TCR_Parent")
-                        .WithMany()
-                        .HasForeignKey("TCR_TST_FK")
+                    b.HasOne("CodeTogether.Runner.Engine.SubmissionResultModel", "TCR_SubmissionResult")
+                        .WithMany("EXR_TestRuns")
+                        .HasForeignKey("TCR_SubmissionResultEXR_PK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("TCR_Parent");
 
-                    b.Navigation("TCT_Execution");
-                });
-
-            modelBuilder.Entity("CodeTogether.Data.Models.Questions.TypeModel", b =>
-                {
-                    b.HasOne("CodeTogether.Data.Models.Questions.QuestionSignatureModel", null)
-                        .WithMany("TC_Types")
-                        .HasForeignKey("TC_TO_FK");
+                    b.Navigation("TCR_SubmissionResult");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Submission.SubmissionModel", b =>
                 {
-                    b.HasOne("CodeTogether.Runner.Engine.ExecutionResultModel", "SBM_Execution")
+                    b.HasOne("CodeTogether.Runner.Engine.SubmissionResultModel", "SBM_Execution")
                         .WithMany()
                         .HasForeignKey("SBM_EXR_FK");
 
@@ -472,15 +475,6 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("SBM_Execution");
 
                     b.Navigation("SBM_Question");
-                });
-
-            modelBuilder.Entity("CodeTogether.Runner.Engine.ExecutionResultModel", b =>
-                {
-                    b.HasOne("CodeTogether.Runner.Engine.TestRunExecutionModel", "EXR_TestRun")
-                        .WithMany()
-                        .HasForeignKey("EXR_TRX_FK");
-
-                    b.Navigation("EXR_TestRun");
                 });
 
             modelBuilder.Entity("GameModelUserModel", b =>
@@ -513,14 +507,14 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("QST_TestCases");
                 });
 
-            modelBuilder.Entity("CodeTogether.Data.Models.Questions.QuestionSignatureModel", b =>
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.ScaffoldModel", b =>
                 {
-                    b.Navigation("TC_Types");
+                    b.Navigation("EXE_Parameters");
                 });
 
-            modelBuilder.Entity("CodeTogether.Runner.Engine.TestRunExecutionModel", b =>
+            modelBuilder.Entity("CodeTogether.Runner.Engine.SubmissionResultModel", b =>
                 {
-                    b.Navigation("TRX_TestRuns");
+                    b.Navigation("EXR_TestRuns");
                 });
 #pragma warning restore 612, 618
         }
