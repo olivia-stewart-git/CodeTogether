@@ -15,7 +15,7 @@ public class TestCaseModel : IDbModel
 	[MaxLength(30)]
 	public required string TST_Title { get; set; }
 
-	[MaxLength(100)]
+	[MaxLength(int.MaxValue)]
 	public required string[] TST_Arguments { get; set; }
 
 	[MaxLength(100)]
