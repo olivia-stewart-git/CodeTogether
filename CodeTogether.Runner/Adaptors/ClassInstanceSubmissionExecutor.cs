@@ -1,7 +1,6 @@
 ﻿using CodeTogether.Data.Models.Questions;
 using System.Reflection;
 using CodeTogether.Runner.Engine;
-using CodeTogether.Runner.Scaffolds;
 
 namespace CodeTogether.Runner.Adaptors;
 
@@ -12,9 +11,9 @@ public class ClassInstanceSubmissionExecutor : TestRunnerSubmissionExecutor
 	{
 	}
 
-	public override object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments, QuestionModel question)
+	public override object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments)
     {
-	    var runArguments = scaffold.EXE_ExeuctionRunnerArgument.Split("::", StringSplitOptions.RemoveEmptyEntries);
+	    var runArguments = scaffold.EXE_ExecutionRunnerArgument.Split("::", StringSplitOptions.RemoveEmptyEntries);
 		var typeName = runArguments[0];
 		var methodName = runArguments[1];
 

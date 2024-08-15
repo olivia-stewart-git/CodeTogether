@@ -8,17 +8,22 @@ internal class ClassInstanceSubmissionExecutorTest
 {
 	ScaffoldModel CreateExecutionConfiguration()
 	{
-		return new ScaffoldModel()
+		var scaffold = new ScaffoldModel()
 		{
-			EXE_ExecutionRunnerName = "ClassInstanceSubmissionExecutor",
-			//EXE_ExecutionArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
-			EXE_ScaffoldName = string.Empty,
+			EXE_ExecutionRunnerName = ExecutionRunnerType.ClassInstance,
+			EXE_ExecutionRunnerArgument = "CodeTogether.Runner.Adaptors.Test.TestRunner::DoCalculation",
+			EXE_ScaffoldName = "scaffoldKeyForTest",
+			EXE_ScaffoldText = "",
 			EXE_ReturnType = TypeModel.FromType(typeof(int)),
-			EXE_Parameters = new List<ParameterModel>()
-			{
-				new () {TC_Name = ""}, //[TypeModel.FromType(typeof(int)), TypeModel.FromType(typeof(int))]
-			}
 		};
+
+		scaffold.EXE_Parameters = new List<ParameterModel>()
+		{
+			new () { TC_Name = "a", TC_Position = 0, TC_Type = TypeModel.FromType(typeof(int)), TC_Scaffold = scaffold },
+			new () { TC_Name = "b", TC_Position = 1, TC_Type = TypeModel.FromType(typeof(int)), TC_Scaffold = scaffold },
+		};
+
+		return scaffold;
 	}
 
 	[Test]
@@ -50,7 +55,7 @@ internal class ClassInstanceSubmissionExecutorTest
 
 		var result = adaptor.Execute(assembly);
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
-		Assert.That(result.EXR_TestRuns.TRX_TestRuns, Has.Count.EqualTo(2));
+		Assert.That(result.EXR_TestRuns.Count(), Is.EqualTo(2));
     }
 
 	[Test]
@@ -74,7 +79,7 @@ internal class ClassInstanceSubmissionExecutorTest
 
 		var result = adaptor.Execute(assembly);
 		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
-		Assert.That(result.EXR_TestRuns.TRX_TestRuns, Has.Count.EqualTo(1));
+		Assert.That(result.EXR_TestRuns.Count(), Is.EqualTo(1));
 	}
 }
 

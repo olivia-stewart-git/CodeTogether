@@ -24,7 +24,7 @@ public class ScaffoldModel : IDbModel
 	public required TypeModel EXE_ReturnType { get; set; }
 
 	[MaxLength(100)]
-	public required string EXE_ExeuctionRunnerArgument { get; set; }
+	public required string EXE_ExecutionRunnerArgument { get; set; }
 
 	[InverseProperty(nameof(ParameterModel.TC_Scaffold))]
 	public IEnumerable<ParameterModel> EXE_Parameters { get; set; } = [];

@@ -6,5 +6,5 @@ namespace CodeTogether.Runner.Adaptors;
 
 public interface ISubmissionExecutor
 {
-	SubmissionResultModel Execute(Assembly targetAssembly, QuestionModel question);
+	SubmissionResultModel Execute(Assembly targetAssembly);
 }

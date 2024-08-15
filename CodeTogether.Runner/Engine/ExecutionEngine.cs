@@ -18,11 +18,9 @@ public class ExecutionEngine : IExecutionEngine
 	{
 		var configuration = question.QST_Scaffold;
 		var compilationName = $"Compilation_{question.QST_Name}{Guid.NewGuid()}";
-
-		if(!executorFactory.TryGetExecutor(configuration, question.QST_TestCases, out var executor))
-		{
-			throw new ExecutionSetupException($"Could not resolve an executor for {configuration.EXE_ExecutionRunnerName}");
-		}
+		
+		var executor = executorFactory.GetExecutor(configuration, question.QST_TestCases)
+			?? throw new ExecutionSetupException($"Could not resolve an executor for {configuration.EXE_ExecutionRunnerName}");
 
 		try
 		{

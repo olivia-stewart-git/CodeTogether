@@ -16,7 +16,7 @@ public class Seeder : ISeeder
 	public void ExplicitSeed(params Type[] seederTypes)
 	{
 		var steps = seederTypes
-			.Select(x => Activator.CreateInstance(x, dbContext))
+			.Select(x => Activator.CreateInstance(x, dbContext)) // TODO: should construct with DI
 			.OfType<ISeedStep>()
 			.OrderBy(x => x.Order);
 		SeedCore(steps);

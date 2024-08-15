@@ -7,16 +7,18 @@ namespace CodeTogether.Runner.Adaptors;
 
 public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 {
+	protected readonly ScaffoldModel scaffold;
 	readonly IEnumerable<TestCaseModel> testCases;
 
-	protected TestRunnerSubmissionExecutor(IEnumerable<TestCaseModel> testCases)
+	protected TestRunnerSubmissionExecutor(ScaffoldModel scaffold, IEnumerable<TestCaseModel> testCases)
 	{
+		this.scaffold = scaffold;
 		this.testCases = testCases;
 	}
 
-	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments, QuestionModel question);
+	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
-	public SubmissionResultModel Execute(Assembly targetAssembly, QuestionModel question)
+	public SubmissionResultModel Execute(Assembly targetAssembly)
 	{
 		List<TestRunModel> testRuns = [];
 		var submissionResult = new SubmissionResultModel { EXR_Status = ExecutionStatus.InProgress };
@@ -25,7 +27,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
-				var result = GetExecutionResult(targetAssembly, arguments, question);
+				var result = GetExecutionResult(targetAssembly, arguments);
 				var testRun = AssertTestCase(testCaseModel, result, submissionResult);
 				testRuns.Add(testRun);
 			}
