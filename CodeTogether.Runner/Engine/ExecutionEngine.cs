@@ -24,7 +24,7 @@ public class ExecutionEngine : IExecutionEngine
 
 		var parameterTypes = question.QST_Scaffold.EXE_Parameters.Select(p => p.TC_Type.OT_Type ?? throw new InvalidOperationException("Scaffold should not have invalid parameter types"));
 		var returnType = question.QST_Scaffold.EXE_ReturnType.OT_Type ?? throw new InvalidOperationException("Scaffold should not have invalid return type");
-		var typesReferences = parameterTypes.Append(returnType);
+		var typesReferences = parameterTypes.Append(returnType).Where(t => !t.Namespace.StartsWith("System"));
 
 		try
 		{
