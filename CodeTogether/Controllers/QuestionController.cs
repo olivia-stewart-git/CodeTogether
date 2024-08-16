@@ -41,12 +41,10 @@ public class QuestionController : Controller
 			ScaffoldCode = question.QST_Scaffold.EXE_ScaffoldText,
 			TestCases = question.QST_TestCases.Select(x => new TestCaseDto
 			{
+				Id = x.TST_PK,
 				Name = x.TST_Title,
 				Arguments = x.TST_Arguments,
 				ExpectedResponse = x.TST_ExpectedResponse, 
-				HasBeenRun = false,
-				IsPassed = false,
-				ActualResult = null
 			}).ToList()
 		};
 		return Json(questionDTO);

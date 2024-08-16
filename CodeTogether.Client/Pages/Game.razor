@@ -56,6 +56,14 @@
             <div class="row">
                 Run output
             </div>
+            <div class="row">
+                <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
+                @if (submitting)
+                {
+                    <div class="spinner-border m-5" role="status">
+                    </div>
+                }
+            </div>
         </div>
         
         <div class="col">
@@ -147,6 +155,35 @@
         if (hubConnection is not null)
         {
             await hubConnection.SendAsync("SendMessage", Code);
+        }
+    }
+
+    bool submitting;
+    async Task Submit()
+    {
+        if (questionDto == null)
+        {
+            return;
+        }
+        if (submitting)
+        {
+            return;
+        }
+
+        try
+        {
+            var request = new ExecutionRequestDTO
+            {
+                RawCode = Code,
+                GameId = GameId,
+                QuestionId = questionDto.Id
+            };
+            var response = await Http.PostAsJsonAsync<ExecutionRequestDTO>("api/execution/execute", request);
+            submitting = true;
+        }
+        finally
+        {
+            submitting = false;
         }
     }
 }

@@ -1,9 +1,7 @@
 using CodeTogether.Client.Integration;
-using CodeTogether.Hubs;
 using CodeTogether.Service.Games;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Controllers
 {
@@ -16,6 +14,10 @@ namespace CodeTogether.Controllers
 		[Route("create")]
 		public IActionResult CreateGame(string lobbyName)
 		{
+			if (string.IsNullOrEmpty(lobbyName))
+			{
+				return BadRequest();
+			}
 			var gameId = lobbyService.CreateLobby(lobbyName);
 			return Content(gameId.ToString());
 		}

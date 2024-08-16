@@ -3,14 +3,14 @@
 
 <h3>Create Game</h3>
 
-<div class="card" style="width: 30rem;">
+<div class="card" style="width: 30rem;padding: 15px">
     <form class="form-inline" onsubmit="@CreateGame()">
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">Game Name</span>
+                <span class="input-group-text" id="basic-addon3">Game Name</span>
             </div>
-            <input type="text" class="form-control" placeholder="Name" aria-label="GameName" aria-describedby="basic-addon1" @bind="GameName">
-            <button type="submit" class="btn btn-primary mb-2">Create</button>
+            <input type="text" class="form-control" placeholder="Name" aria-label="GameName" aria-describedby="basic-addon3" @bind="GameName">
+            <button type="submit" class="btn btn-primary mb-3">Create</button>
         </div>
     </form>
     @if (!string.IsNullOrWhiteSpace(status))
@@ -27,8 +27,13 @@
 
     async Task CreateGame()
     {
-        status = "Creating...";
+        if (string.IsNullOrWhiteSpace(GameName))
+        {
+            status = "Please enter a name";
+            return;
+        }
         var gameId = Guid.Parse(await http.GetStringAsync($"/api/game/create?lobbyName={GameName}"));
+        status = "Creating...";
         await GameJoiner.JoinAndNavigateToGame(http, Navigation, gameId);
     }
 }
