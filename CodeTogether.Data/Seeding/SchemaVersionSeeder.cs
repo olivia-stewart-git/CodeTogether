@@ -41,7 +41,7 @@ namespace CodeTogether.Data.Seeding
 			}
 			if (expectedSchemaVersionHash != actualSchemaVersionHash)
 			{
-				throw new InvalidOperationException("Schema in database is outdated from schema in code, please run CodeTogether.Deployment to update");
+				throw new InvalidOperationException("Schema in database is outdated from schema in code, create a migration and then run CodeTogether.Deployment to update");
 			}
 		}
 	}

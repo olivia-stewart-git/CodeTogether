@@ -34,7 +34,7 @@ public class ApplicationDbContext : DbContext
 			.Property(x => x.TST_Arguments)
 			.HasConversion(
 				v => string.Join(',', v),
-				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
+				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
 				stringValueComparer);
 
 		modelBuilder.Entity<UserModel>()

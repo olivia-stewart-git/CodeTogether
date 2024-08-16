@@ -57,13 +57,13 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 	{
 		var scaffoldParameters = scaffold.EXE_Parameters.ToList();
 
-		if (scaffoldParameters.Count != testCase.TST_Arguments.Length)
+		if (scaffoldParameters.Count != testCase.TST_Arguments.Count)
 		{
 			throw new InvalidOperationException("MissMatch between expected number of arguments from scaffold and actual number in test case");
 		}
 
 		List<object> arguments = [];
-		for (int i = 0; i < testCase.TST_Arguments.Length; i++)
+		for (int i = 0; i < testCase.TST_Arguments.Count; i++)
 		{
 			var targetType = scaffoldParameters[i];
 			var targetObject = testCase.TST_Arguments[i];

@@ -44,7 +44,7 @@ namespace CodeTogether.Service.Games
 					CreatedAt = m.GM_CreateTimeUtc,
 					Name = m.GM_Name,
 					Id = m.GM_PK,
-					NumPlayers = m.Users.Count(),
+					NumPlayers = m.GamePlayers.Count(),
 					Playing = m.GM_GameState == GameState.Playing
 				})
 				.ToList();
@@ -52,11 +52,15 @@ namespace CodeTogether.Service.Games
 
 		public bool JoinLobby(Guid gameId, Guid userId)
 		{
+			var user = dbContext.Users.Where(u => u.USR_PK == userId).First();
+
 			if (dbContext.GamePlayers.Any(gp => gp.GMP_USR_FK == userId && gp.GMP_GM_FK == gameId))
 			{
 				return false;
 			}
-			dbContext.GamePlayers.Add(new GamePlayerModel { GMP_USR_FK = userId, GMP_GM_FK = gameId} );
+			var player = new GamePlayerModel { GMP_USR_FK = userId, GMP_GM_FK = gameId };
+			dbContext.GamePlayers.Add(player);
+			user.USR_CurrentGame = player;
 			dbContext.SaveChanges();
 			return true;
 		}
@@ -73,7 +77,6 @@ namespace CodeTogether.Service.Games
 				Task.Run(async () =>
 				{
 					await Task.Delay(countdownLength);
-					// TODO: does the captured game update if another message changes it?
 					if (DateTime.UtcNow > game.GM_StartedAtUtc)
 					{
 						game.GM_GameState = GameState.Playing;

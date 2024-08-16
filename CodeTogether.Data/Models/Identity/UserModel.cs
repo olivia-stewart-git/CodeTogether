@@ -27,7 +27,10 @@ public class UserModel : IDbModel
 
 	public DateTime USR_LastHeardFromAt { get; set; }
 
-	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
+	[ForeignKey(nameof(USR_GMP_FK))]
+	public GamePlayerModel? USR_CurrentGame { get; set; }
+	public Guid? USR_GMP_FK { get; set; }
 
-	public IEnumerable<GameModel> Games { get; set; } = new List<GameModel>();
+	[InverseProperty(nameof(GamePlayerModel.GMP_User))]
+	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
 }
