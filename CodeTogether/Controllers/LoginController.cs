@@ -55,13 +55,20 @@ public class LoginController : Controller
 		{
 			IsPersistent = true,
 			ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-			RedirectUri = "/",
+			//RedirectUri = "/", //do not redirect if messes things up!1
 		};
 
-		await HttpContext.SignInAsync(
-			CookieAuthenticationDefaults.AuthenticationScheme,
-			new ClaimsPrincipal(claimsIdentity),
-			authProperties);
+		try
+		{
+			await HttpContext.SignInAsync(
+				CookieAuthenticationDefaults.AuthenticationScheme,
+				new ClaimsPrincipal(claimsIdentity),
+				authProperties);
+		}
+		catch (Exception e)
+		{
+			return Json(new LoginResponseDTO() { IsAuthenticated = false, Message = $"Something went wrong attempting to sign in {e.Message}"});
+		}
 
 		return Json(LoginResponseDTO.Success);
 	}

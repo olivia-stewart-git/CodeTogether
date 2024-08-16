@@ -61,6 +61,12 @@ public class UserStateService(HttpClient http)
 		}
 	}
 
+	/// <summary>
+	/// Try perform logon
+	/// </summary>
+	/// <param name="loginModel"></param>
+	/// <returns></returns>
+	/// <exception cref="LoginFailedException"></exception>
 	public async Task LoginAsUser(LoginRequestDTO loginModel)
 	{
 		var response = await http.PostAsJsonAsync("/api/account/login", loginModel);

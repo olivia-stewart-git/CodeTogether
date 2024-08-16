@@ -53,10 +53,11 @@
         try
         {
             awaitingResponse = true;
+
             await user.LoginAsUser(loginModel);
             awaitingResponse = false;
 
-            //navigation.NavigateTo("/");
+            navigation.NavigateTo("/");
         } 
         catch (AccountException ex)
         {
