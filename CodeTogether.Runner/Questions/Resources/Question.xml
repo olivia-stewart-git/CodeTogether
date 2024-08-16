@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Question>
+	<Name>Add Two Numbers</Name>
+	<Description>
+		This is a question
+	</Description>
+	
+	<Execution Type="ClassInstance">
+		
+	</Execution>
+
+	<TestCases>
+		<TestCase Expected="3" Title="1 + 2" Description="Add 1 and 2">
+			<Input>1</Input>
+			<Input>2</Input>
+		</TestCase>
+	</TestCases>
+</Question>

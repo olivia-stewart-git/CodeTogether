@@ -1,11 +1,9 @@
 ﻿using CodeTogether.Client.Integration.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CodeTogether.Controllers;
 
@@ -57,7 +55,7 @@ public class LoginController : Controller
 		{
 			IsPersistent = true,
 			ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-			//RedirectUri = "/", // TODO: does this need to be set for expiry?
+			RedirectUri = "/",
 		};
 
 		await HttpContext.SignInAsync(
@@ -65,6 +63,14 @@ public class LoginController : Controller
 			new ClaimsPrincipal(claimsIdentity),
 			authProperties);
 
+		return Json(LoginResponseDTO.Success);
+	}
+
+	[HttpPost]
+	[Route("logout")]
+	public async Task<IActionResult> Logout()
+	{
+		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 		return Json(LoginResponseDTO.Success);
 	}
 }

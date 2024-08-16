@@ -64,7 +64,17 @@ public class UserStateService(HttpClient http)
 	public async Task LoginAsUser(LoginRequestDTO loginModel)
 	{
 		var response = await http.PostAsJsonAsync("/api/account/login", loginModel);
-		var dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
+		LoginResponseDTO? dtoResponse;
+		try 
+		{
+			response.EnsureSuccessStatusCode();
+			dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
+		}
+		catch (Exception ex)
+		{
+			throw new LoginFailedException($"Network error: {ex.Message}{Environment.NewLine}{await response.Content.ReadAsStringAsync()}");
+		}
+
 		var loginSuccess = dtoResponse?.IsAuthenticated ?? false;
 		if (!loginSuccess)
 		{
@@ -73,7 +83,7 @@ public class UserStateService(HttpClient http)
 		ResetCache();
 	}
 
-	async public Task RegisterUser(RegisterAccountDTO registration)
+	public async Task RegisterUser(RegisterAccountDTO registration)
 	{
 		var response = await http.PostAsJsonAsync("/api/account/register", registration);
 		if (!response.IsSuccessStatusCode) // Network error

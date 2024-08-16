@@ -4,8 +4,8 @@
 public class LoginResponseDTO
 {
 	public static LoginResponseDTO Failed => new LoginResponseDTO { IsAuthenticated = false, Message = "Invalid username or password." };
-	public static LoginResponseDTO Success => new LoginResponseDTO { IsAuthenticated = true, };
+	public static LoginResponseDTO Success => new LoginResponseDTO { IsAuthenticated = true, Message = "Login Successful"};
 
 	public bool IsAuthenticated { get; set; } = false;
-	public string Message { get; set; } = string.Empty;
+	public string Message { get; set; } = "string.Empty";
 }

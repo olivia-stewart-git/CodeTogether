@@ -2,16 +2,17 @@
 @using CodeTogether.Client.Services
 @inject UserStateService user
 @inject NavigationManager nav
+@inject HttpClient http
 
 <div class="page">
     <main>
         <div class="top-row px-4">
             <div class="top-row-left">
-                <button class="btn btn-dark btn_padded" @onclick="GoHome">Home</button>
+                <button class="btn btn-dark" @onclick="GoHome">Home</button>
             </div>
             <div class="top-row-right">
                 <span>@usernameText</span>
-                <button class="btn btn-dark btn_padded" @onclick="Logout">Logout</button>
+                <button class="btn btn-dark" @onclick="Logout">Logout</button>
             </div>
         </div>
 
@@ -36,8 +37,9 @@
 
     void GoHome() => nav.NavigateTo("/");
 
-    void Logout()
+    async Task Logout()
     {
-        throw new NotImplementedException();
+        await http.PostAsync("api/account/logout", null);
+        nav.NavigateTo("/login");
     }
 }

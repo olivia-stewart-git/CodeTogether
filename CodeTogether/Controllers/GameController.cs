@@ -3,6 +3,7 @@ using CodeTogether.Hubs;
 using CodeTogether.Service.Games;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Controllers
 {

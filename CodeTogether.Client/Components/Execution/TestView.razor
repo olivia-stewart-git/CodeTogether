@@ -1,36 +1,32 @@
-﻿@using CodeTogether.Client.Integration.Execution
+﻿@using System.ComponentModel.DataAnnotations
+@using CodeTogether.Client.Integration.Execution
 
 <div class="test-view">
     <div id="infoDropdown">
         <button class="btn btn-primary btn-alignLeft dropdown-toggle" style="width: 100%; margin: 5px;" id="dropdownMenuButton" @onclick="ToggleInfo">
-            @testCase.Name
+            @TestCase.Name
         </button>
         @if (showInfo)
         {
             <div>
                 <p></p>
-                <p>@testCase.Description</p>
+                <p>@TestCase.Description</p>
                 <p></p>
-                <p>Arguments: @string.Join(", ", testCase.Arguments)</p>
-                <p>Expected Response: @testCase.ExpectedResponse</p>
+                <p>Arguments: @string.Join(", ", TestCase.Arguments)</p>
+                <p>Expected Response: @TestCase.ExpectedResponse</p>
             </div>
         }
     </div>
 </div>
 
-@code {
+@code 
+{
+    [Parameter] public required TestCaseDto TestCase { get; set; }
+
     bool showInfo = false;
 
     void ToggleInfo()
     {
         showInfo = !showInfo;
     }
-
-    private readonly TestCaseDto testCase = new ()
-    {
-        Name = "test name",
-        Arguments = ["1", "2", "3"],
-        ExpectedResponse = "expected output", 
-        Description = "description",
-    };
 }

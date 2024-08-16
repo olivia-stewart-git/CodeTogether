@@ -1,0 +1,23 @@
+﻿@using CodeTogether.Client.Integration.Execution
+<h3>QuestionView</h3>
+
+<div class="card">
+    <div class="card-header">
+        <h4>@Question.Name</h4>
+    </div>
+    <div class="card-body">
+        <p>@Question.Description</p>
+    </div>
+    <ul>
+        @foreach (var testCase in Question.TestCases)
+        {
+            <li>
+                <TestCaseView TestCase="@testCase" />
+            </li>
+        })
+    </ul>
+</div>
+
+@code {
+    [Parameter] public required QuestionDTO Question { get; set; }
+}

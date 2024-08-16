@@ -26,12 +26,12 @@ public class UserSeeder : ISeedStep
 	void CreateAdminUser()
 	{
 		var cryptographyService = new CryptographyService();
-		var password = "admin";
+		var password = "sysadminpass";
 		var email = "ct.client.admin@gmail.com";
 		var hash = cryptographyService.HashString(password, out var salt);
 		var user = new UserModel
 		{
-			USR_UserName = "admin",
+			USR_UserName = "sysadmin",
 			USR_Email = email,
 			USR_PasswordHash = hash,
 			USR_PasswordSalt = salt,
