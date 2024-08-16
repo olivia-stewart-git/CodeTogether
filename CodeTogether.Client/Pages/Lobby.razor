@@ -92,6 +92,7 @@ else
 
         hubConnection.On("NotInGame", () =>
         {
+            Console.WriteLine("Not in game");
             Navigation.NavigateTo("/");
         });
 

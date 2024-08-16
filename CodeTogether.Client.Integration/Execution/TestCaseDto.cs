@@ -10,7 +10,7 @@ namespace CodeTogether.Client.Integration.Execution
 	public class TestCaseDto
 	{
 		public string Name { get; set; } = string.Empty;
-		public string[] Arguments { get; set; } = [];
+		public IEnumerable<string> Arguments { get; set; } = [];
 		public string ExpectedResponse { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
 

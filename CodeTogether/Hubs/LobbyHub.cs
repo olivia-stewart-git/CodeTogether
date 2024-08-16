@@ -12,7 +12,8 @@ namespace CodeTogether.Hubs
 	{
 		public override async Task OnConnectedAsync()
 		{
-			if (TryGetGame(out var game))
+			var game = GetActiveGameForPlayer();
+			if (game != null)
 			{
 				await Groups.AddToGroupAsync(Context.ConnectionId, game.GM_PK.ToString());
 
@@ -27,7 +28,8 @@ namespace CodeTogether.Hubs
 		// Used for things like configuration changes and triggering the start of the game
 		public async Task UpdateState(SetLobbyConfigurationDTO newState)
 		{
-			if (TryGetGame(out var game))
+			var game = GetActiveGameForPlayer();
+			if (game != null)
 			{
 				lobbyService.UpdateConfiguration(newState, game);
 
@@ -39,30 +41,23 @@ namespace CodeTogether.Hubs
 			}
 		}
 
-		bool TryGetGame([NotNullWhen(returnValue: true)] out GameModel? game)
+		GameModel? GetActiveGameForPlayer()
 		{
-			game = null;
-
 			var validId = Guid.TryParse(Context.UserIdentifier ?? "", out Guid userId);
 			if (!validId)
 			{
-				return false;
+				return null;
 			}
 
-			var maybeGame = dbContext.Games.Include(g => g.Users).Where(g => g.Users.Any(u => u.USR_PK == userId)).FirstOrDefault();
-			if (maybeGame == null)
-			{
-				return false;
-			}
-
-			game = maybeGame;
-			return true;
+			var games = dbContext.Games.Include(g => g.GamePlayers);
+			var game = dbContext.Games.Where(g => g.GamePlayers.Any(u => u.GMP_USR_FK == userId)).FirstOrDefault();
+			return game;
 		}
 
 		async Task BroadcastLobbyStateTogroup(GameModel game)
 		{
 			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAtUtc, IsPrivate = game.GM_Private };
-			var state = new LobbyStateDTO { Configuration = config, Players = game.Users.Select(x => x.USR_UserName) };
+			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Select(x => x.GMP_User.USR_UserName) };
 
 			await Clients.Group(game.GM_PK.ToString()).SendAsync("StateHasBeenUpdated", state);
 		}

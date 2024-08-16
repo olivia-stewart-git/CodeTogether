@@ -23,10 +23,10 @@ public class QuestionController : Controller
 	[Route("get/{gameId}")]
 	public IActionResult GetQuestion(Guid gameId)
 	{
-		var question = dbContext.Questions.Take(1)
-			.Include(x => x.QST_Scaffold)
-			.Include(x => x.QST_TestCases)
-			.FirstOrDefault();
+		var questions = dbContext.Questions;//.Take(1)
+		var questions2 = questions.Include(x => x.QST_Scaffold);
+		var questions3 = questions2.Include(x => x.QST_TestCases);
+		var question = questions3.FirstOrDefault();
 
 		if (question == null)
 		{

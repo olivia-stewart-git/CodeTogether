@@ -6,15 +6,19 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable InconsistentNaming
 
 namespace CodeTogether.Data.Models.Game;
-
-[PrimaryKey(nameof(GMP_GM_FK), nameof(GMP_USR_FK))]
+ 
+[PrimaryKey(nameof(GMP_PK))]
 public class GamePlayerModel : IDbModel
 {
+	public Guid GMP_PK { get; set; }
+
 	[ForeignKey(nameof(GMP_GM_FK))]
+	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public GameModel GMP_Game { get; set; } = null!;
 	public Guid GMP_GM_FK { get; set; }
 
 	[ForeignKey(nameof(GMP_USR_FK))]
+	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public UserModel GMP_User { get; set; } = null!;
 	public Guid GMP_USR_FK { get; set; }
 
