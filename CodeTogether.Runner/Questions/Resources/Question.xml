@@ -5,9 +5,13 @@
 		This is a question
 	</Description>
 	
-	<Execution Type="ClassInstance">
-		
-	</Execution>
+	<Scaffold Type="ClassInstance">
+		<Signature>
+			<Name>Sum::Sum</Name>
+			<Parameter name="a" type="int"/>
+			<Parameter name="a" type="node"/>
+		</Signature>		
+	</Scaffold>
 
 	<TestCases>
 		<TestCase Expected="3" Title="1 + 2" Description="Add 1 and 2">
@@ -15,4 +19,14 @@
 			<Input>2</Input>
 		</TestCase>
 	</TestCases>
+
+	<AddInfo>
+		<TypeDeclaration name="node">
+			public class Node 
+			{
+				public int Value { get; set; }
+				public Node Next { get; set; }
+			}
+		</TypeDeclaration>
+	</AddInfo>
 </Question>
