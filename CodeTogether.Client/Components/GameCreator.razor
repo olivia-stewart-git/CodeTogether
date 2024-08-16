@@ -2,19 +2,30 @@
 @inject HttpClient http
 
 <h3>Create Game</h3>
-<label for="optionCheckbox">Options or something</label>
-<input id="optionCheckbox" type="checkbox" />
 
-<label for="gameNameText">Game Name:</label>
-<input type="text" @bind="GameName"/>
-
-<button @onclick="Create">Create</button>
-<p>@status</p>
+<div class="card" style="width: 30rem;">
+    <form class="form-inline" onsubmit="@CreateGame()">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Game Name</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Name" aria-label="GameName" aria-describedby="basic-addon1" @bind="GameName">
+            <button type="submit" class="btn btn-primary mb-2">Create</button>
+        </div>
+    </form>
+    @if (!string.IsNullOrWhiteSpace(status))
+    {
+        <div class="alert alert-info" role="alert">
+            @status
+        </div>
+    }
+</div>
 
 @code {
     string GameName = "";
-    string status = "";
-    async Task Create()
+    string? status = null;
+
+    async Task CreateGame()
     {
         status = "Creating...";
         var gameId = Guid.Parse(await http.GetStringAsync($"/api/game/create?lobbyName={GameName}"));

@@ -39,7 +39,7 @@ namespace CodeTogether.Hubs
 			}
 		}
 
-		bool TryGetGame([NotNullWhen(returnValue: true)]  out GameModel? game)
+		bool TryGetGame([NotNullWhen(returnValue: true)] out GameModel? game)
 		{
 			game = null;
 

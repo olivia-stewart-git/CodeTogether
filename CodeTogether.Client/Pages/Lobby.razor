@@ -17,6 +17,12 @@ else if (lobbyState == null)
 {
     <p>Waiting on first response</p>
 }
+else if (errorOccured)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 else
 {
     <div id="options">
@@ -55,11 +61,12 @@ else
     public required int serverId { get; set; }
 
     HubConnection hubConnection;
-
     LobbyStateDTO? lobbyState;
 
-    bool hasSentChange = false;
+    bool errorOccured;
+    string errorMessage = string.Empty;
 
+    bool hasSentChange;
     bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
     protected override async Task OnInitializedAsync()
@@ -67,7 +74,9 @@ else
         var currentUser = await user.GetUserName();
         if (currentUser == null)
         {
-            Navigation.NavigateTo("/");
+            errorOccured = true;
+            errorMessage = "Could not find current user";
+            return;
         }
 
         hubConnection = new HubConnectionBuilder()
