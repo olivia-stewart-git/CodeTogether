@@ -36,7 +36,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				testRuns.Add(new TestRunModel()
 				{
 					TCR_ActualResult = string.Empty,
-					TCR_Exception = ex,
+					TCR_Exception = ex.Message,
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
 					TCR_SubmissionResult = submissionResult,
@@ -85,7 +85,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
 				TCR_SubmissionResult = submissionResult,
-				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}"),
+				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}").Message,
             };
 		}
 

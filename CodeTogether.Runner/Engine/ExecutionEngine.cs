@@ -36,7 +36,7 @@ public class ExecutionEngine : IExecutionEngine
 			return new SubmissionResultModel()
 			{
 				EXR_Status = ExecutionStatus.Error,
-				EXR_CompileError = compilationException
+				EXR_CompileError = compilationException.Message,
 			};
 		}
 	}

@@ -21,7 +21,6 @@ public class CompletedSubmissionModel : IDbModel
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	[ForeignKey(nameof(CSM_GM_FK))]
 	public GameModel? CSM_Game { get; set; } = null!;
-
 	public Guid? CSM_GM_FK { get; set; } = null!;
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]

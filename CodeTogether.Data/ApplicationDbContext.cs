@@ -43,9 +43,6 @@ public class ApplicationDbContext : DbContext
 				v => string.Join(',', v),
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
-
-		modelBuilder.HasJsonConversion<SubmissionResultModel, Exception>(x => x.EXR_CompileError)
-					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
 
 	#region Models
