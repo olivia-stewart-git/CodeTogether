@@ -62,7 +62,7 @@
         Task.Run(PollGameList);
     }
 
-    string GetRowCssClass(GameListGameDTO game) => game.Playing ? "" : "table-dark";
+    string GetRowCssClass(GameListGameDTO game) => (!game.Playing && game.NumPlayers < game.MaxPlayers) ? "joinable-row" : "unjoinable-row";
 
     async Task PollGameList()
     {

@@ -1,6 +1,5 @@
 ﻿@using CodeTogether.Client.Integration.Execution
-<h3>QuestionView</h3>
-
+@using CodeTogether.Client.Components.Execution
 <div class="card">
     <div class="card-header">
         <h4>@Question.Name</h4>
@@ -8,13 +7,14 @@
     <div class="card-body">
         <p>@Question.Description</p>
     </div>
+    <b>Sample Test Cases</b>
     <ul>
         @foreach (var testCase in Question.TestCases)
         {
             <li>
-                <TestCaseView TestCase="@testCase" />
+                <TestView TestCase="@testCase" />
             </li>
-        })
+        }
     </ul>
 </div>
 

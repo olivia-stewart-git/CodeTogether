@@ -8,7 +8,6 @@
 
 
 <h2>Lobby</h2>
-<p>Using server @serverId.ToString() for user @gameId.ToString()</p>
 @if (!IsConnected) // Maybe should have a signalr base component wrapper to have this logic?
 {
     <p>Establishing connection</p>
@@ -25,6 +24,7 @@ else if (errorOccured)
 }
 else
 {
+    <div>In Lobby for game: "@lobbyState.Name"</div>
     <div id="options">
         @if (hasSentChange)
         {
