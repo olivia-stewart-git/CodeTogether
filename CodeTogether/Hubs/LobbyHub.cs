@@ -49,15 +49,15 @@ namespace CodeTogether.Hubs
 				return null;
 			}
 
-			var games = dbContext.Games.Include(g => g.GamePlayers);
-			var game = dbContext.Games.Where(g => g.GamePlayers.Any(u => u.GMP_USR_FK == userId)).FirstOrDefault();
-			return game;
+			var user = dbContext.Users.First(x => x.USR_PK == userId);
+			var player = dbContext.GamePlayers.Include(p => p.GMP_Game).Where(p => p.GMP_PK == user.USR_GMP_FK).FirstOrDefault();
+			return player?.GMP_Game;
 		}
 
 		async Task BroadcastLobbyStateTogroup(GameModel game)
 		{
 			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAtUtc, IsPrivate = game.GM_Private };
-			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Select(x => x.GMP_User.USR_UserName) };
+			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Where(x => x.GMP_Game == game).Select(gp => gp.GMP_User.USR_UserName) };
 
 			await Clients.Group(game.GM_PK.ToString()).SendAsync("StateHasBeenUpdated", state);
 		}

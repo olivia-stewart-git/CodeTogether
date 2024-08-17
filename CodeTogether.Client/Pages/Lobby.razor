@@ -26,9 +26,9 @@ else if (errorOccured)
 else
 {
     <div id="options">
-        @if (hasSentChange) // Used to give feedback of a pending change, should style it like one of those red notification things that phone apps have
+        @if (hasSentChange)
         {
-            <p>o</p>
+            <p>Sending...</p>
         }
         else
         {
@@ -71,6 +71,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        lobbyState = null;
         var currentUser = await user.GetUserName();
         if (currentUser == null)
         {
@@ -85,6 +86,7 @@ else
 
         hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", async (state) =>
         {
+            Console.WriteLine(state.Configuration.StartingAtUtc);
             lobbyState = state;
             hasSentChange = false;
             await InvokeAsync(StateHasChanged);

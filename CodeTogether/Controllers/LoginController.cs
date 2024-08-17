@@ -56,6 +56,7 @@ public class LoginController : Controller
 			IsPersistent = true,
 			ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
 			//RedirectUri = "/", //do not redirect if messes things up!1
+			// TODO: work out how to do token refreshes
 		};
 
 		try

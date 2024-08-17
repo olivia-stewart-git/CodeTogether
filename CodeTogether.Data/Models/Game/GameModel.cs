@@ -15,8 +15,6 @@ public class GameModel : IDbModel
 	[MaxLength(100)]
 	public required string GM_Name { get; set; }
 
-	public GameState GM_GameState { get; set; } = GameState.Lobby;
-
 	public DateTime GM_CreateTimeUtc { get; set; } = DateTime.UtcNow;
 
 	public DateTime? GM_StartedAtUtc { get; set; }
@@ -29,9 +27,4 @@ public class GameModel : IDbModel
 	public DateTime LastActionTime => GM_StartedAtUtc.HasValue ? GM_StartedAtUtc.Value : GM_CreateTimeUtc;
 
 	public IEnumerable<GamePlayerModel> GamePlayers { get; set; } = new List<GamePlayerModel>();
-}
-
-public enum GameState
-{
-	Lobby, Playing
 }
