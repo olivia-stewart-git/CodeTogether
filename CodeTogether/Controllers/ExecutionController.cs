@@ -52,7 +52,7 @@ public class ExecutionController : Controller
 		{
 			CSM_CompletedAt = DateTime.Now,
 			CSM_Code = runCodeRequest.RawCode,
-			CSM_USR_FK = runCodeRequest.UserId,
+			CSM_USR_FK = userId,
 			CSM_Result = result,
 			CSM_GM_FK = runCodeRequest.GameId
 		};
