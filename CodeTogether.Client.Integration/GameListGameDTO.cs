@@ -6,6 +6,7 @@ public class GameListGameDTO
 	public required Guid Id { get; set; }
 	public required string Name { get; set; }
 	public required int NumPlayers { get; set; }
+	public required int MaxPlayers { get; set; }
 	public required bool Playing { get; set; }
 	public required DateTime CreatedAt { get; set; }
 }

@@ -90,7 +90,7 @@ else
             lobbyState = state;
             hasSentChange = false;
             await InvokeAsync(StateHasChanged);
-        });
+        }); 
 
         hubConnection.On("NotInGame", () =>
         {

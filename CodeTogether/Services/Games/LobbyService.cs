@@ -46,13 +46,20 @@ namespace CodeTogether.Service.Games
 					Name = m.GM_Name,
 					Id = m.GM_PK,
 					NumPlayers = m.GamePlayers.Count(),
+					MaxPlayers = m.GM_MaxPlayers,
 					Playing = m.GM_StartedAtUtc != null,
 				})
 				.ToList();
 		}
 
-		public bool JoinLobby(Guid gameId, Guid userId)
+		public void JoinLobby(Guid gameId, Guid userId)
 		{
+			var alreadyInGame = dbContext.GamePlayers.Any(gp => gp.GMP_USR_FK == userId && gp.GMP_GM_FK == gameId);
+			if (alreadyInGame)
+			{
+				return;
+			}
+
 			var game = dbContext.Games.Include(g => g.GamePlayers).First(g => g.GM_PK == gameId);
 			if (game.GM_StartedAtUtc != null)
 			{
@@ -64,18 +71,12 @@ namespace CodeTogether.Service.Games
 				throw new InvalidOperationException("Game full");
 			}
 
-
 			var user = dbContext.Users.Where(u => u.USR_PK == userId).First();
 
-			if (dbContext.GamePlayers.Any(gp => gp.GMP_USR_FK == userId && gp.GMP_GM_FK == gameId))
-			{
-				return false;
-			}
 			var player = new GamePlayerModel { GMP_USR_FK = userId, GMP_GM_FK = gameId };
 			dbContext.GamePlayers.Add(player);
 			user.USR_CurrentGame = player;
 			dbContext.SaveChanges();
-			return true;
 		}
 
 		public GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game)
