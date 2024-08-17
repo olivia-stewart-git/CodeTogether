@@ -86,6 +86,8 @@
     [Parameter]
     public required int ServerId { get; set; }
 
+    Guid UserId { get; set; }
+
     const double SendKeypressesDelayMs = 2000;
 
     // TODO: split some of this out into a service
@@ -158,6 +160,8 @@
         sendCodeTimer.Enabled = true;
 
         await LoadNextQuestion();
+
+        UserId = (await userService.GetUserName())?.Id ?? throw new ArgumentNullException("Must be logged in to play a game");
     }
 
 
@@ -183,11 +187,10 @@
 
     private async Task SendKeyPresses()
     {
-        var user = await userService.GetUserName();
-        if (hubConnection is not null && user is not null)
+        if (hubConnection is not null)
         {
             unsentKeyPresses.Add(new KeyPressDTO { StateChange = code, IsEntireState = true });
-            await hubConnection.SendAsync("SendKeyPresses", user.Id, unsentKeyPresses);
+            await hubConnection.SendAsync("SendKeyPresses", UserId, unsentKeyPresses);
             unsentKeyPresses.Clear();
         } else
         {
@@ -247,6 +250,11 @@
 
     private void ReceiveKeyPresses(Guid userId, List<KeyPressDTO> keyPresses)
     {
+        if (userId == UserId)
+        {
+            return;
+        }
+
         Console.WriteLine($"KeyPresses: [{string.Join(", ", keyPresses.Select(k => k.StateChange))}]");
         if (TheirCode.TryGetValue(userId, out var text))
         {

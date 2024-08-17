@@ -1,8 +1,11 @@
 ﻿@inherits LayoutComponentBase
 @using CodeTogether.Client.Services
+@using CodeTogether.Client.Integration 
 @inject UserStateService user
 @inject NavigationManager nav
 @inject HttpClient http
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
 
 <div class="page">
     <main>
@@ -26,13 +29,20 @@
     string usernameText = "Loading...";
 
 
-    // TODO: trigger a rerender of the layout when the user is changed (e.g. when logging in)
-    // maybe add an event on UserStateService and add this components StateHasChanged?
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var username = await user.GetUserName();
-        usernameText = username == null ? "Not logged in" : $"Hello {username}";
-        StateHasChanged();
+        SetUsername(this, new());
+        user.UsernameChanged += SetUsername;
+    }
+
+    void SetUsername(object? sender, EventArgs eventArgs)
+    {
+        Task.Run(async () =>
+        {
+            var userInfo = await user.GetUserName();
+            usernameText = userInfo == null ? "Not logged in" : $"Hello {userInfo.Name}";
+            StateHasChanged();
+        });
     }
 
     void GoHome() => nav.NavigateTo("/");
@@ -40,6 +50,8 @@
     async Task Logout()
     {
         await http.PostAsync("api/account/logout", null);
+        user.ResetCache();
+        SetUsername(this, new ());
         nav.NavigateTo("/login");
     }
 }

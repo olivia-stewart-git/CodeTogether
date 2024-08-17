@@ -32,14 +32,14 @@ public class UserStateService(HttpClient http)
 			{
 				return;
 			}
-
 			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<UserInfoDTO?>>(responseTask =>
 			{
 				var response = responseTask.Result;
 				if (response.IsSuccessStatusCode)
 				{
-					// Second ContinueWith is to cast from Task<string> to Task<string?>
-					return response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					var userInfo = response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					UsernameChanged?.Invoke(this, new());
+					return userInfo;
 				}
 				else
 				{
@@ -58,6 +58,8 @@ public class UserStateService(HttpClient http)
 			userNameTask = null;
 		}
 	}
+
+	public event EventHandler UsernameChanged;
 
 	/// <summary>
 	/// Try perform logon
