@@ -12,6 +12,12 @@
 @inject HttpClient Http
 
 <div class="container-fluid row border">
+    @if (questionDto is not null)
+    {
+        <div class="col">
+            <QuestionView Question="@questionDto"/>
+        </div>
+    }
     <div class="col" style="max-width: calc(100% / 3)">
         <div class="row" style="flex-direction: row-reverse">
             <button class="position-absolute w-auto" style="translate: -12px; z-index: 1">Settings</button>
@@ -26,7 +32,7 @@
                                 Editable
                                 ReadOnly="false"
                                 LineWrapping="false"
-                                MaxHeight="70vh" />
+                                MaxHeight="70vh"/>
         </div>
         <div class="row">
             <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
@@ -36,9 +42,9 @@
             }
         </div>
         <div class="row">
-            @if(submissionResult != null)
+            @if (submissionResult != null)
             {
-
+                <p>@output</p>
             }
         </div>
     </div>
@@ -50,7 +56,7 @@
         <div class="row">
             @if (questionDto is not null)
             {
-                <QuestionView Question="@questionDto" />
+                <QuestionView Question="@questionDto"/>
             }
             else
             {
@@ -72,7 +78,7 @@
                                     ReadOnly="true"
                                     Editable="false"
                                     LineWrapping="true"
-                                    MaxHeight="@maxHeight" />
+                                    MaxHeight="@maxHeight"/>
             </div>
         }
     </div>
@@ -142,8 +148,6 @@
 
     private Dictionary<Guid, SlowlyAppearingText> TheirCode { get; } = new();
     string output = "Output";
-
-    private Dictionary<Guid, CodeContents> TheirCode { get; set; } = new() {{ Guid.Empty, new CodeContents { content = string.Empty }}};
 
     private HubConnection? hubConnection;
 
@@ -218,6 +222,14 @@
                 var result = await response.Content.ReadFromJsonAsync<ExecutionResponseDTO>();
                 if (result is not null)
                 {
+                    output = result.Output;
+                    foreach (var questionDtoTestCase in questionDto.TestCases)
+                    {
+                        if (result.TestResultsDictionary.TryGetValue(questionDtoTestCase.Id, out var value))
+                        {
+                            questionDtoTestCase.Run = value;
+                        }
+                    }
                 }
 
                 submitting = true;
