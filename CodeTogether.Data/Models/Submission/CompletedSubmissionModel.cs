@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Game;
 using CodeTogether.Data.Models.Questions;
@@ -15,6 +16,9 @@ public class CompletedSubmissionModel : IDbModel
 	[ForeignKey(nameof(CSM_EXR_FK))]
 	public required SubmissionResultModel CSM_Result { get; set; }
 	public Guid CSM_EXR_FK { get; set; }
+
+	[MaxLength(100000)]
+	public string CSM_Code { get; set; } = null!;
 
 	public DateTime CSM_CompletedAt { get; set; } = DateTime.Now;
 

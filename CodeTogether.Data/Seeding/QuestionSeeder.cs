@@ -1,7 +1,6 @@
 ﻿using CodeTogether.Data.Models.Factories;
 using CodeTogether.Data.Models.Questions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CodeTogether.Data.Seeding;
 
@@ -105,6 +104,14 @@ public class QuestionSeeder : ISeedStep
 			new ()
 			{
 				TST_Title = "Hello World",
+				TST_Arguments = [],
+				TST_ExpectedResponse = "Hello World!",
+				TST_IsHidden = false,
+				TST_Question = helloWorldQuestion,
+			},
+			new ()
+			{
+				TST_Title = "Hello World2",
 				TST_Arguments = [],
 				TST_ExpectedResponse = "Hello World!",
 				TST_IsHidden = false,

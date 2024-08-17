@@ -44,6 +44,7 @@ public class ExecutionController : Controller
 		var completedSubmission = new CompletedSubmissionModel
 		{
 			CSM_CompletedAt = DateTime.Now,
+			CSM_Code = runCodeRequest.RawCode,
 			CSM_USR_FK = runCodeRequest.UserId,
 			CSM_Result = result,
 			CSM_GM_FK = runCodeRequest.GameId

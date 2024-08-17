@@ -1,4 +1,5 @@
-﻿@using CodeTogether.Client.Integration.Execution
+﻿@using System.Xml
+@using CodeTogether.Client.Integration.Execution
 <h3>QuestionView</h3>
 
 <div class="card">
@@ -8,16 +9,51 @@
     <div class="card-body">
         <p>@Question.Description</p>
     </div>
-    <ul>
-        @foreach (var testCase in Question.TestCases)
+    <div class="accordion" id="accordionTestCases">
+        @for (var index = 0; index < Question.TestCases.Count; index++)
         {
-            <li>
-                <TestCaseView TestCase="@testCase" />
-            </li>
-        })
-    </ul>
+            var header = $"Test Case #{index + 1}";
+            var collapse = $"collapse{index + 1}";
+            var testCase = Question.TestCases[index];
+            <div class="card-header" id=@(() => "heading" + header)>
+                <h2 class="mb-0">
+                    <button class="btn btn-link@(() => activeIndex == index ? "" : " collapsed")"
+                            type="button"
+                            data-toggle="collapse" 
+                            data-target="#@(() => collapse)"
+                            aria-expanded="true" aria-controls="collapseOne"
+                            @onclick="() => ToggleCollapse(index)">
+                        @header
+                    </button>
+                </h2>
+            </div>
+            @if (activeIndex == index)
+            {
+                <div id="@(() => collapse)" class="collapse show" aria-labelledby="@header" data-parent="#accordionTestCases">
+                    <div class="card-body">
+                        <TestView TestCase="@testCase"/>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 </div>
 
 @code {
     [Parameter] public required QuestionDTO Question { get; set; }
+
+    int activeIndex = 0;
+
+    private void ToggleCollapse(int index)
+    {
+        if (activeIndex == index)
+        {
+            activeIndex = -1;
+        }
+        else
+        {
+            activeIndex = index;
+        }
+        StateHasChanged();
+    }
 }

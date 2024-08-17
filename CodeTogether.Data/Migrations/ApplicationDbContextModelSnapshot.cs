@@ -231,7 +231,7 @@ namespace CodeTogether.Data.Migrations
                     b.Property<bool>("TST_IsHidden")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("TST_QuestionQST_PK")
+                    b.Property<Guid>("TST_QST_FK")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TST_Title")
@@ -241,7 +241,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TST_PK");
 
-                    b.HasIndex("TST_QuestionQST_PK");
+                    b.HasIndex("TST_QST_FK");
 
                     b.ToTable("TestCases");
                 });
@@ -356,6 +356,11 @@ namespace CodeTogether.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CSM_Code")
+                        .IsRequired()
+                        .HasMaxLength(100000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CSM_CompletedAt")
                         .HasColumnType("datetime2");
 
@@ -469,7 +474,7 @@ namespace CodeTogether.Data.Migrations
                 {
                     b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "TST_Question")
                         .WithMany("QST_TestCases")
-                        .HasForeignKey("TST_QuestionQST_PK")
+                        .HasForeignKey("TST_QST_FK")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

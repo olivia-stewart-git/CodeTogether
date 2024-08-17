@@ -22,5 +22,8 @@ public class TestCaseModel : IDbModel
 	public required string TST_ExpectedResponse { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]
+	[ForeignKey(nameof(TST_QST_FK))]
 	public required QuestionModel TST_Question { get; set; }
+
+	public Guid TST_QST_FK { get; set; }
 }

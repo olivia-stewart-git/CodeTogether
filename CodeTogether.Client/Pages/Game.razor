@@ -1,5 +1,6 @@
 ﻿@page "/game/{ServerId:int}/{GameId:guid}"
 @*todo: be able to copy urls to join a game*@
+@using System.Net
 @using CodeTogether.Client.Integration.Execution
 @using CodeTogether.Client.Components.Execution;
 @using Microsoft.AspNetCore.SignalR.Client
@@ -54,7 +55,9 @@
                 <button>Run</button>
             </div>
             <div class="row">
-                Run output
+                <p>
+                    @output
+                </p>
             </div>
             <div class="row">
                 <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
@@ -107,6 +110,8 @@
     {
         public required string content;
     }
+
+    string output = "Output";
 
     private Dictionary<Guid, CodeContents> TheirCode { get; set; } = new() {{ Guid.Empty, new CodeContents { content = string.Empty }}};
 
@@ -179,7 +184,17 @@
                 QuestionId = questionDto.Id
             };
             var response = await Http.PostAsJsonAsync<ExecutionRequestDTO>("api/execution/execute", request);
-            submitting = true;
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ExecutionResponseDTO>();
+                if (result is not null)
+                {
+                }
+
+                submitting = true;
+            }
         }
         finally
         {
