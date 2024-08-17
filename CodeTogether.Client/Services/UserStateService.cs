@@ -1,20 +1,18 @@
 ﻿using CodeTogether.Client.Integration;
 using CodeTogether.Client.Integration.Authentication;
+using System.Text.Json;
 using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
 
 namespace CodeTogether.Client.Services;
 
-// TODO: can user AuthenticationStateProvider instead of some of this?
-// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.authorization.authenticationstateprovider?view=aspnetcore-8.0
 public class UserStateService(HttpClient http)
 {
 	// Stores the logged in user as a task to allow multiple components to be awaiting the response
 	// will then be cached as the task is already completed
-	Task<string?>? userNameTask;
+	Task<UserInfoDTO?>? userNameTask;
 	object gettingUsernameLock = new();
 
-	public async Task<string?> GetUserName()
+	public async Task<UserInfoDTO?> GetUserName()
 	{
 		EnsureRequestHasBeenMade();
 		return await userNameTask!;
@@ -35,17 +33,17 @@ public class UserStateService(HttpClient http)
 				return;
 			}
 
-			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<string?>>(responseTask =>
+			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<UserInfoDTO?>>(responseTask =>
 			{
 				var response = responseTask.Result;
 				if (response.IsSuccessStatusCode)
 				{
 					// Second ContinueWith is to cast from Task<string> to Task<string?>
-					return response.Content.ReadAsStringAsync().ContinueWith(c => (string?)c.Result);
+					return response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 				}
 				else
 				{
-					return Task.FromResult<string?>(null);
+					return Task.FromResult<UserInfoDTO?>(null);
 				}
 				// Unwrap() turns a Task<Task<T>> into a Task<T>
 			}).Unwrap();

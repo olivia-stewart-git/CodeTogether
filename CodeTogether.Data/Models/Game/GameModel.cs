@@ -19,9 +19,13 @@ public class GameModel : IDbModel
 
 	public DateTime? GM_StartedAtUtc { get; set; }
 
+	public DateTime? GM_FinishedAtUtc { get; set; }
+
 	public bool GM_Private { get; set; }
 
 	public int GM_MaxPlayers { get; set; } = 2;
+
+	public bool GM_WaitForAll { get; set; } = false;
 
 	[NotMapped]
 	public DateTime LastActionTime => GM_StartedAtUtc.HasValue ? GM_StartedAtUtc.Value : GM_CreateTimeUtc;

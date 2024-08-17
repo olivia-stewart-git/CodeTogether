@@ -2,17 +2,18 @@
 using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Service.Games;
+using CodeTogether.Services.Games;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CodeTogether.Hubs
 {
-	public class LobbyHub(ApplicationDbContext dbContext, ILobbyService lobbyService) : Hub
+	public class LobbyHub(ApplicationDbContext dbContext, ILobbyService lobbyService, IGameService gameService) : Hub
 	{
 		public override async Task OnConnectedAsync()
 		{
-			var game = GetActiveGameForPlayer();
+			var game = gameService.GetActiveGameForUser(dbContext, Context.UserIdentifier, cache: false);
 			if (game != null)
 			{
 				await Groups.AddToGroupAsync(Context.ConnectionId, game.GM_PK.ToString());
@@ -28,7 +29,7 @@ namespace CodeTogether.Hubs
 		// Used for things like configuration changes and triggering the start of the game
 		public async Task UpdateState(SetLobbyConfigurationDTO newState)
 		{
-			var game = GetActiveGameForPlayer();
+			var game = gameService.GetActiveGameForUser(dbContext, Context.UserIdentifier, cache: false);
 			if (game != null)
 			{
 				lobbyService.UpdateConfiguration(newState, game);
@@ -39,19 +40,6 @@ namespace CodeTogether.Hubs
 			{
 				await Clients.Caller.SendAsync("NotInGame");
 			}
-		}
-
-		GameModel? GetActiveGameForPlayer()
-		{
-			var validId = Guid.TryParse(Context.UserIdentifier ?? "", out Guid userId);
-			if (!validId)
-			{
-				return null;
-			}
-
-			var user = dbContext.Users.First(x => x.USR_PK == userId);
-			var player = dbContext.GamePlayers.Include(p => p.GMP_Game).Where(p => p.GMP_PK == user.USR_GMP_FK).FirstOrDefault();
-			return player?.GMP_Game;
 		}
 
 		async Task BroadcastLobbyStateTogroup(Guid gamePk)
