@@ -16,5 +16,5 @@ public class SubmissionResultModel : IDbModel
 	[InverseProperty(nameof(TestRunModel.TCR_SubmissionResult))]
 	public IEnumerable<TestRunModel> EXR_TestRuns { get; set; } = new List<TestRunModel>();
 
-	public Exception? EXR_CompileError { get; set; }
+	public string? EXR_CompileError { get; set; }
 }

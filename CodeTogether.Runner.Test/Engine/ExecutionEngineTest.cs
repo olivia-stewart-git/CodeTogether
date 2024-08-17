@@ -53,7 +53,6 @@ invalid code !!!!!
 			var result = engine.ExecuteAgainstQuestion(question, code);
 			Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Error));
 			Assert.NotNull(result.EXR_CompileError);
-			Assert.That(result.EXR_CompileError.GetType(), Is.EqualTo(typeof(CompilationException)));
 		}
 
 		[Test]

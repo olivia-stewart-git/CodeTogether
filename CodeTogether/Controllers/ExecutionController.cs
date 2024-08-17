@@ -2,12 +2,16 @@
 using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CodeTogether.Controllers;
 
 [Route("api/execution")]
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class ExecutionController : Controller
 {
 	readonly ApplicationDbContext dbContext;
@@ -23,23 +27,26 @@ public class ExecutionController : Controller
 	[Route("execute")]
 	public async Task<IActionResult> RunCode([FromBody] ExecutionRequestDTO runCodeRequest)
 	{
-		var user = User.Identity?.Name;
-		if (string.IsNullOrEmpty(user))
+		if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId))
 		{
 			return BadRequest("User not authenticated");
 		}
 
 		var question = dbContext.Questions.Where(x => x.QST_PK == runCodeRequest.QuestionId)
-			.Include(x => x.QST_TestCases)
-			.Include(x => x.QST_Scaffold)
-			.ThenInclude(x => x.EXE_Parameters)
+			.Include(q => q.QST_TestCases)
+			.Include(q => q.QST_Scaffold)
+			.ThenInclude(s => s.EXE_ReturnType)
+			.Include(q => q.QST_Scaffold)
+			.ThenInclude(s => s.EXE_Parameters)
 			.FirstOrDefault();
 		if (question == null)
 		{
 			return BadRequest("Question not found");
 		}
+		await dbContext.SaveChangesAsync();
 
 		var result = executionService.ExecuteAgainstQuestion(question, runCodeRequest.RawCode);
+		await dbContext.SaveChangesAsync();
 
 		var completedSubmission = new CompletedSubmissionModel
 		{
@@ -57,14 +64,14 @@ public class ExecutionController : Controller
 			State = result.EXR_Status.ToString(),
 			Output = result.EXR_Status switch
 			{
-				ExecutionStatus.Error => result.EXR_CompileError?.Message ?? "Error occurred",
+				ExecutionStatus.Error => result.EXR_CompileError ?? "Error occurred",
 				_ => "Compiled Successfully"
 			},
 			TestResults = result.EXR_TestRuns.Select(x => new TestCaseDto.RunDTO()
 			{
 				Id = x.TCR_Parent.TST_PK,
 				IsPassed = x.TCR_Status == TestCaseStatus.Success,
-				ActualResult = x.TCR_ActualResult + (x.TCR_Exception?.Message ?? string.Empty),
+				ActualResult = x.TCR_ActualResult + (x.TCR_Exception ?? string.Empty),
 			}).ToArray()
 		};
 		return Json(resultDto);

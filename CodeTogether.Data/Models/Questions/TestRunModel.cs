@@ -18,7 +18,7 @@ public class TestRunModel : IDbModel
 	public required string TCR_ActualResult { get; set; }
 
 	[MaxLength(400)] 
-	public Exception? TCR_Exception { get; set; } = null;
+	public string? TCR_Exception { get; set; } = null;
 
 	public required TestCaseModel TCR_Parent { get; set; }
 

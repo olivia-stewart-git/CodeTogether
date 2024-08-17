@@ -44,7 +44,7 @@
         <div class="row">
             @if (submissionResult != null)
             {
-                <p>@output</p>
+                <SubmissionResultView Result="@submissionResult"/>
             }
         </div>
     </div>
@@ -234,6 +234,7 @@
 
                 submitting = true;
             }
+            StateHasChanged();
         }
         finally
         {

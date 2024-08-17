@@ -1,11 +1,14 @@
 using CodeTogether.Client.Integration;
 using CodeTogether.Service.Games;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace CodeTogether.Controllers
 {
 	[Route("api/game")]
+	[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 	public class GameController(ILobbyService lobbyService) : Controller
 	{
 		/// <summary>
