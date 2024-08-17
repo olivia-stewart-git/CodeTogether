@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Client.Integration;
 using CodeTogether.Data.Models.Questions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace CodeTogether.Service.Games
 {
@@ -9,7 +10,7 @@ namespace CodeTogether.Service.Games
 
 		IEnumerable<GameListGameDTO> GetLobbies();
 
-		bool JoinLobby(Guid gameId, Guid userId);
+		void JoinLobby(Guid gameId, Guid userId);
 
 		GameModel UpdateConfiguration(SetLobbyConfigurationDTO newState, GameModel game);
 	}

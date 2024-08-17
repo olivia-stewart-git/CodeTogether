@@ -30,7 +30,13 @@ namespace CodeTogether.Controllers
 		{
 			var userIdString = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			var userId = Guid.Parse(userIdString);
-			lobbyService.JoinLobby(gameId, userId);
+			try
+			{
+				lobbyService.JoinLobby(gameId, userId);
+			} catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 			return Json(new JoinGameResponse() { ServerId = 1});
 		}
 

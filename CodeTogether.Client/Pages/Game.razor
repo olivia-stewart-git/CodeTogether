@@ -1,8 +1,9 @@
 ﻿@page "/game/{ServerId:int}/{GameId:guid}"
 @*todo: be able to copy urls to join a game*@
 @using System.Net
+@using CodeTogether.Client.Integration
 @using CodeTogether.Client.Integration.Execution
-@using CodeTogether.Client.Components.Execution;
+@using CodeTogether.Client.Components.Execution
 @using Microsoft.AspNetCore.SignalR.Client
 @using GaelJ.BlazorCodeMirror6
 @using GaelJ.BlazorCodeMirror6.Models
@@ -10,83 +11,70 @@
 @inject NavigationManager Navigation
 @inject HttpClient Http
 
-<h3>Game</h3>
-<p>Using server @ServerId.ToString() for game @GameId.ToString()</p>
-
-<div class="container border">
-    <div class="row text-center fw-bold">
-        <div class="col">
-            Your Code
+<div class="container-fluid row border">
+    <div class="col" style="max-width: calc(100% / 3)">
+        <div class="row" style="flex-direction: row-reverse">
+            <button class="position-absolute w-auto" style="translate: -12px; z-index: 1">Settings</button>
+            <CodeMirror6Wrapper IsWASM
+                                @bind-Doc="@Code"
+                                Placeholder="Enter your code..."
+                                TabSize="4"
+                                IndentationUnit="4"
+                                Theme="@ThemeMirrorTheme.VSCode"
+                                Language="CodeMirrorLanguage.Csharp"
+                                Setup="@setup"
+                                Editable
+                                ReadOnly="false"
+                                LineWrapping="false"
+                                MaxHeight="70vh" />
         </div>
-        
-        <div class="col">
-            Their Code
-        </div>
-    </div>
-    
-    <div class="row">
-        @if (questionDto is not null)
-        {
-            <QuestionView Question="@questionDto"/>
-        }
-        else
-        {
-            <p>Loading Question...</p>
-        }
-    </div>
-    
-    <div class="row">
-        <div class="col">
-            <div class="row" style="flex-direction: row-reverse">
-                <button class="position-absolute w-auto" style="translate: -12px; z-index: 1">Settings</button>
-                <CodeMirror6Wrapper
-                    IsWASM
-                    @bind-Doc="@Code"
-                    Placeholder="Enter your code..."
-                    TabSize="4"
-                    IndentationUnit="4"
-                    Theme="@ThemeMirrorTheme.VSCode"
-                    Language="CodeMirrorLanguage.Csharp"
-                    Setup="@setup"
-                    Editable
-                    ReadOnly="false"
-                    LineWrapping="false"
-                    MaxHeight="70vh"/>
-                <button>Run</button>
-            </div>
-            <div class="row">
-                <p>
-                    @output
-                </p>
-            </div>
-            <div class="row">
-                <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
-                @if (submitting)
-                {
-                    <div class="spinner-border m-5" role="status">
-                    </div>
-                }
-            </div>
-        </div>
-        
-        <div class="col">
-            @foreach (var codeContents in TheirCode.Values)
+        <div class="row">
+            <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
+            @if (submitting)
             {
-                var maxHeight = $"calc(70vh / {TheirCode.Count})";
-                <div class="row">
-                    <CodeMirror6Wrapper
-                        IsWASM
-                        @bind-Doc="@codeContents.content"
-                        TabSize="4"
-                        Theme="@ThemeMirrorTheme.VSCode"
-                        Language="CodeMirrorLanguage.Csharp"
-                        ReadOnly="true"
-                        Editable="false"
-                        LineWrapping="true"
-                        MaxHeight="@maxHeight"/>
-                </div>
+                <div class="spinner-border m-5" role="status"></div>
             }
         </div>
+        <div class="row">
+            @if(submissionResult != null)
+            {
+
+            }
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="row">
+            Timer
+        </div>
+        <div class="row">
+            @if (questionDto is not null)
+            {
+                <QuestionView Question="@questionDto" />
+            }
+            else
+            {
+                <p>Loading Question...</p>
+            }
+        </div>
+    </div>
+
+    <div class="col">
+        @foreach (var codeContents in TheirCode.Values)
+        {
+            var maxHeight = $"calc(70vh / {TheirCode.Count})";
+            <div class="row">
+                <CodeMirror6Wrapper IsWASM
+                                    @bind-Doc="@codeContents.Code"
+                                    TabSize="4"
+                                    Theme="@ThemeMirrorTheme.VSCode"
+                                    Language="CodeMirrorLanguage.Csharp"
+                                    ReadOnly="true"
+                                    Editable="false"
+                                    LineWrapping="true"
+                                    MaxHeight="@maxHeight" />
+            </div>
+        }
     </div>
 </div>
 
@@ -98,43 +86,78 @@
     [Parameter]
     public required int ServerId { get; set; }
 
-    private string Code { get; set; } = string.Empty;
+    private Guid UserID { get; } = new(); // TODO: get user's actual GUID
+
+    const double SendKeypressesDelayMs = 2000;
+
+    private string code = string.Empty;
+    private string Code
+    {
+        get => code;
+        set
+        {
+            var lengthDifference = code.Length - value.Length;
+            if (lengthDifference == 1)
+            {
+                for (var i = 0; i < value.Length; i++)
+                {
+                    if (code[i] == value[i]) continue;
+                    unsentKeyPresses.Add(new KeyPressDTO { StateChange = "\b", StateChangePosition = i, IsEntireState = false });
+                    code = value;
+                    return;
+                }
+                unsentKeyPresses.Add(new KeyPressDTO { StateChange = "\b", StateChangePosition = code.Length, IsEntireState = false });
+                code = value;
+                return;
+            }
+
+            if (lengthDifference == -1)
+            {
+                for (var i = 0; i < code.Length; i++)
+                {
+                    if (code[i] == value[i]) continue;
+                    unsentKeyPresses.Add(new KeyPressDTO { StateChange = value[i].ToString(), StateChangePosition = i, IsEntireState = false });
+                    code = value;
+                    return;
+                }
+                unsentKeyPresses.Add(new KeyPressDTO { StateChange = value[^1].ToString(), StateChangePosition = code.Length, IsEntireState = false });
+                code = value;
+                return;
+            }
+
+            unsentKeyPresses.Add(new KeyPressDTO { StateChange = value, IsEntireState = true });
+            code = value;
+        }
+    }
+
     QuestionDTO? questionDto;
 
     private readonly CodeMirrorSetup setup = new()
     {
-        BindMode = DocumentBindMode.OnInput
+        BindMode = DocumentBindMode.OnInput,
+        FocusOnCreation = true
     };
 
-    class CodeContents
-    {
-        public required string content;
-    }
+    private readonly List<KeyPressDTO> unsentKeyPresses = [];
 
+    private Dictionary<Guid, SlowlyAppearingText> TheirCode { get; } = new();
     string output = "Output";
 
     private Dictionary<Guid, CodeContents> TheirCode { get; set; } = new() {{ Guid.Empty, new CodeContents { content = string.Empty }}};
 
     private HubConnection? hubConnection;
 
-    private readonly Timer sendCodeTimer = new(2000);
+    private readonly Timer sendCodeTimer = new(SendKeypressesDelayMs);
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/gamehub")).Build();
 
-        hubConnection.On<string>("SetState", theirCode =>
-        {
-            TheirCode[Guid.Empty].content = theirCode;
-            InvokeAsync(StateHasChanged);
-        });
+        hubConnection.On<Guid, List<KeyPressDTO>>("ReceiveKeyPresses", ReceiveKeyPresses);
 
         await hubConnection.StartAsync();
 
-        sendCodeTimer.Elapsed += async (_, _) =>
-        {
-            await SendCode();
-        };
+        sendCodeTimer.Elapsed += async (_, _) => await SendKeyPresses();
         sendCodeTimer.Enabled = true;
 
         await LoadNextQuestion();
@@ -155,15 +178,18 @@
         questionDto = question;
     }
 
-    private async Task SendCode()
+    private async Task SendKeyPresses()
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendMessage", Code);
+            unsentKeyPresses.Add(new KeyPressDTO { StateChange = code, IsEntireState = true });
+            await hubConnection.SendAsync("SendKeyPresses", UserID, unsentKeyPresses);
+            unsentKeyPresses.Clear();
         }
     }
 
     bool submitting;
+    ExecutionResponseDTO? submissionResult;
     async Task Submit()
     {
         if (questionDto == null)
@@ -174,6 +200,7 @@
         {
             return;
         }
+        submitting = true;
 
         try
         {
@@ -199,6 +226,70 @@
         finally
         {
             submitting = false;
+        }
+    }
+
+    private void ReceiveKeyPresses(Guid userId, List<KeyPressDTO> keyPresses)
+    {
+        Console.WriteLine($"KeyPresses: [{string.Join(", ", keyPresses.Select(k => k.StateChange))}]");
+        if (TheirCode.TryGetValue(userId, out var text))
+        {
+            text.SetKeyPresses(keyPresses);
+        }
+        else
+        {
+            TheirCode.Add(userId, new SlowlyAppearingText(keyPresses, this));
+        }
+    }
+
+    private class SlowlyAppearingText
+    {
+        readonly Queue<KeyPressDTO> queue = [];
+        readonly Timer doThingTimer;
+        public string Code { get; set; } = string.Empty;
+
+        public SlowlyAppearingText(List<KeyPressDTO> keyPresses, Game game)
+        {
+            keyPresses.ForEach(k => queue.Enqueue(k));
+            doThingTimer = new Timer(SendKeypressesDelayMs / keyPresses.Count);
+            doThingTimer.Elapsed += (_, _) =>
+            {
+                Console.WriteLine("doThingTimerElapsed");
+                if (queue.Count == 0)
+                {
+                    doThingTimer.Enabled = false;
+                    return;
+                }
+                var keyPress = queue.Dequeue();
+                Console.WriteLine($"Key press: {keyPress.StateChange}");
+                if (keyPress.IsEntireState)
+                {
+                    Code = keyPress.StateChange;
+                }
+                else if (keyPress.StateChange == "\b")
+                {
+                    Code = Code[..keyPress.StateChangePosition] + Code[(keyPress.StateChangePosition + 1)..];
+                }
+                else
+                {
+                    Code = Code[..keyPress.StateChangePosition] + keyPress.StateChange + Code[keyPress.StateChangePosition..];
+                }
+                game.InvokeAsync(game.StateHasChanged);
+            };
+            doThingTimer.Enabled = true;
+        }
+
+        public void SetKeyPresses(List<KeyPressDTO> keyPresses)
+        {
+            if (queue.Count != 0)
+            {
+                Code = queue.Last().StateChange;
+                queue.Clear();
+            }
+
+            keyPresses.ForEach(k => queue.Enqueue(k));
+            doThingTimer.Interval = SendKeypressesDelayMs / queue.Count;
+            doThingTimer.Enabled = true;
         }
     }
 }

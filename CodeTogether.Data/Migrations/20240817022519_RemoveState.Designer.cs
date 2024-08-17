@@ -4,6 +4,7 @@ using CodeTogether.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240817022519_RemoveState")]
+    partial class RemoveState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,7 +231,7 @@ namespace CodeTogether.Data.Migrations
                     b.Property<bool>("TST_IsHidden")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("TST_QST_FK")
+                    b.Property<Guid>("TST_QuestionQST_PK")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TST_Title")
@@ -238,7 +241,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TST_PK");
 
-                    b.HasIndex("TST_QST_FK");
+                    b.HasIndex("TST_QuestionQST_PK");
 
                     b.ToTable("TestCases");
                 });
@@ -353,11 +356,6 @@ namespace CodeTogether.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CSM_Code")
-                        .IsRequired()
-                        .HasMaxLength(100000)
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CSM_CompletedAt")
                         .HasColumnType("datetime2");
 
@@ -471,7 +469,7 @@ namespace CodeTogether.Data.Migrations
                 {
                     b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "TST_Question")
                         .WithMany("QST_TestCases")
-                        .HasForeignKey("TST_QST_FK")
+                        .HasForeignKey("TST_QuestionQST_PK")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

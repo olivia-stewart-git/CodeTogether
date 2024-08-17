@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using CodeTogether.Client.Integration;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CodeTogether.Hubs;
 
 // A SignalR 'Hub' to implement live typing and over server push features
 public class GameHub : Hub
 {
-	public async Task SendMessage(string message)
+	public async Task SendKeyPresses(Guid userId, List<KeyPressDTO> keyPresses)
 	{
-		await Clients.Others.SendAsync("SetState", message);
-	}
-
-	public override async Task OnConnectedAsync()
-	{
-		await Clients.Caller.SendAsync("SetState", "Fake Initial Code State");
+		await Clients.Others.SendAsync("ReceiveKeyPresses", userId, keyPresses);
 	}
 }

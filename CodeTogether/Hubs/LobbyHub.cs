@@ -17,7 +17,7 @@ namespace CodeTogether.Hubs
 			{
 				await Groups.AddToGroupAsync(Context.ConnectionId, game.GM_PK.ToString());
 
-				await BroadcastLobbyStateTogroup(game);
+				await BroadcastLobbyStateTogroup(game.GM_PK);
 			}
 			else
 			{
@@ -33,7 +33,7 @@ namespace CodeTogether.Hubs
 			{
 				lobbyService.UpdateConfiguration(newState, game);
 
-				await BroadcastLobbyStateTogroup(game);
+				await BroadcastLobbyStateTogroup(game.GM_PK);
 			}
 			else
 			{
@@ -49,15 +49,16 @@ namespace CodeTogether.Hubs
 				return null;
 			}
 
-			var games = dbContext.Games.Include(g => g.GamePlayers);
-			var game = dbContext.Games.Where(g => g.GamePlayers.Any(u => u.GMP_USR_FK == userId)).FirstOrDefault();
-			return game;
+			var user = dbContext.Users.First(x => x.USR_PK == userId);
+			var player = dbContext.GamePlayers.Include(p => p.GMP_Game).Where(p => p.GMP_PK == user.USR_GMP_FK).FirstOrDefault();
+			return player?.GMP_Game;
 		}
 
-		async Task BroadcastLobbyStateTogroup(GameModel game)
+		async Task BroadcastLobbyStateTogroup(Guid gamePk)
 		{
+			var game = dbContext.Games.Include(g => g.GamePlayers).ThenInclude(gp => gp.GMP_User).First(g => g.GM_PK == gamePk);
 			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAtUtc, IsPrivate = game.GM_Private };
-			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Select(x => x.GMP_User.USR_UserName) };
+			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Where(x => x.GMP_GM_FK == game.GM_PK).Select(gp => gp.GMP_User.USR_UserName), Name = game.GM_Name };
 
 			await Clients.Group(game.GM_PK.ToString()).SendAsync("StateHasBeenUpdated", state);
 		}
