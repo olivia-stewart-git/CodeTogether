@@ -6,7 +6,7 @@ namespace CodeTogether.Runner.Adaptors.Test;
 
 internal class ClassInstanceSubmissionExecutorTest
 {
-	ScaffoldModel CreateExecutionConfiguration()
+	static ScaffoldModel CreateExecutionConfiguration()
 	{
 		var scaffold = new ScaffoldModel()
 		{
@@ -40,22 +40,27 @@ internal class ClassInstanceSubmissionExecutorTest
 				TST_Title = "test1",
 				TST_Arguments = ["1", "2"],
 				TST_ExpectedResponse = "3",
-				TST_Question = null,
+				// null-forgiving operator fine in test classes
+				TST_Question = null!,
 			},
 			new TestCaseModel()
 			{
 				TST_Title = "test2",
 				TST_Arguments = ["3", "4"],
 				TST_ExpectedResponse = "7",
-				TST_Question = null,
+				// null-forgiving operator fine in test classes
+				TST_Question = null!,
 			},
 		];
 
 		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
 		var result = adaptor.Execute(assembly);
-		Assert.That(result.Select(r => r.TCR_Status), Is.All.EqualTo(TestCaseStatus.Success));
-		Assert.That(result.Count(), Is.EqualTo(2));
+		Assert.Multiple(() =>
+		{
+			Assert.That(result.Select(r => r.TCR_Status), Is.All.EqualTo(TestCaseStatus.Success));
+			Assert.That(result, Has.Count.EqualTo(2));
+		});
     }
 
 	[Test]
@@ -71,20 +76,25 @@ internal class ClassInstanceSubmissionExecutorTest
 				TST_Title = "test1",
 				TST_Arguments = ["1", "2"],
 				TST_ExpectedResponse = "134",
-				TST_Question = null,
+				// null-forgiving operator fine in test classes
+				TST_Question = null!,
 			}
 		];
 
 		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
 		var result = adaptor.Execute(assembly);
-		Assert.That(result.Select(r => r.TCR_Status).First(), Is.EqualTo(TestCaseStatus.Failure));
-		Assert.That(result.Count(), Is.EqualTo(1));
+		Assert.Multiple(() =>
+		{
+			Assert.That(result.Select(r => r.TCR_Status).First(), Is.EqualTo(TestCaseStatus.Failure));
+			Assert.That(result, Has.Count.EqualTo(1));
+		});
 	}
 }
 
 public class TestRunner
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Reflection reasons")]
 	public int DoCalculation(int a, int b)
 	{
 		return a + b;
