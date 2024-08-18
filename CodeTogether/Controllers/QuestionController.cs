@@ -1,10 +1,11 @@
 using CodeTogether.Client.Integration;
 using CodeTogether.Client.Integration.Execution;
 using CodeTogether.Data;
+using CodeTogether.Data.Models.Factories;
+using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Seeding;
 using CodeTogether.Services.Games;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Controllers;
 
@@ -39,6 +40,45 @@ public class QuestionController(ApplicationDbContext dbContext, QuestionService 
 	[Route("create")]
 	public IActionResult CreateQuestion([FromBody] CreateQuestionRequestDTO createRequest)
 	{
+		var typeModelFactory = new CachedCachedTypeModelFactory();
+		var scaffoldModelFactory = new ScaffoldModelFactory(dbContext, typeModelFactory);
+
+		var returnType = GetTypeFromInputString(createRequest.ReturnType);
+		var types = createRequest.Arguments.Select(x => (x.Item1, GetTypeFromInputString(x.Item2))).ToArray();
+
+		var scaffold = scaffoldModelFactory.GetScaffold(types.Select(x => new ParameterInfo(x.Item1, x.Item2)).ToList(), returnType, ExecutionRunnerType.ClassInstance);
+		var questionModel = new QuestionModel
+		{
+			QST_Name = createRequest.Name,
+			QST_Description = createRequest.Description,
+			QST_Scaffold = scaffold
+		};
+		questionModel.QST_TestCases = createRequest.TestCases.Select(x => new TestCaseModel()
+		{
+			TST_Question = questionModel,
+			TST_Title = x.Name,
+			TST_ExpectedResponse = x.ExpectedResponse,
+			TST_Arguments = x.Arguments
+		}).ToList();
+
+		dbContext.Questions.Add(questionModel);
+		dbContext.SaveChanges();
+
+		var loader = new QuestionLoader();
+		loader.SaveQuestion(questionModel);
+
 		return Ok();
+	}
+
+	Type GetTypeFromInputString(string input)
+	{
+		var type = input switch {
+			"int" => typeof(int),
+			"string" => typeof(string),
+			"bool" => typeof(bool),
+			"float" => typeof(float),
+			_ => throw new InvalidOperationException("Invalid type")
+		};
+		return type;
 	}
 }

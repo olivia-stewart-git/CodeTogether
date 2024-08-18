@@ -14,7 +14,7 @@ public interface IScaffoldModelFactory
 	ScaffoldModel GetScaffold(IEnumerable<ParameterInfo> parameters, Type returnType, ExecutionRunnerType executionRunner = ExecutionRunnerType.ClassInstance);
 }
 
-internal class ScaffoldModelFactory : IScaffoldModelFactory
+public class ScaffoldModelFactory : IScaffoldModelFactory
 {
 	public ScaffoldModelFactory(ApplicationDbContext context, ICachedTypeModelFactory typeFactory)
 	{
