@@ -93,6 +93,8 @@ namespace CodeTogether.Service.Games
 		{
 			game.GM_MaxPlayers = newState.MaxPlayers ?? game.GM_MaxPlayers;
 			game.GM_Private = newState.IsPrivate ?? game.GM_Private;
+			game.GM_WaitForAll = newState.WaitForAllToFinish ?? game.GM_WaitForAll;
+			game.GM_QST_FK = newState.QuestionId ?? game.GM_QST_FK;
 
 			if (newState.GoingToStart == true)
 			{

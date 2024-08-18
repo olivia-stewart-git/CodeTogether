@@ -15,6 +15,8 @@ namespace CodeTogether.Client.Integration
 		public bool? IsPrivate { get; set; }
 
 		public bool? WaitForAllToFinish { get; set; }
+
+		public Guid? QuestionId { get; set; }
 	}
 
 	[Serializable]
@@ -26,8 +28,8 @@ namespace CodeTogether.Client.Integration
 
 		public required bool IsPrivate { get; set; }
 
-		public TimeSpan GameLength { get; set; }
+		public required bool WaitForAllToFinish { get; set; }
 
-		public bool WaitForAllToFinish { get; set; }
+		public required QuestionListQuestionDTO Question { get; set; }
 	}
 }

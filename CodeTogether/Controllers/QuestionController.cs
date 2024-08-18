@@ -1,3 +1,4 @@
+using CodeTogether.Client.Integration;
 using CodeTogether.Client.Integration.Execution;
 using CodeTogether.Data;
 using CodeTogether.Services.Games;
@@ -31,6 +32,6 @@ public class QuestionController(ApplicationDbContext dbContext, QuestionService 
 	[Route("list")]
 	public IActionResult AllQuestions()
 	{
-		return Json(dbContext.Questions.Select(x => x.QST_Name));
+		return Json(dbContext.Questions.Select(x => new QuestionListQuestionDTO { Name = x.QST_Name, Id = x.QST_PK }));
 	}
 }

@@ -44,9 +44,21 @@ namespace CodeTogether.Hubs
 
 		async Task BroadcastLobbyStateTogroup(Guid gamePk)
 		{
-			var game = dbContext.Games.Include(g => g.GamePlayers).ThenInclude(gp => gp.GMP_User).First(g => g.GM_PK == gamePk);
-			var config = new LobbyConfigurationDTO { MaxPlayers = game.GM_MaxPlayers, StartingAtUtc = game.GM_StartedAtUtc, IsPrivate = game.GM_Private };
-			var state = new LobbyStateDTO { Configuration = config, Players = game.GamePlayers.Where(x => x.GMP_GM_FK == game.GM_PK).Select(gp => gp.GMP_User.USR_UserName), Name = game.GM_Name };
+			var game = dbContext.Games.Include(x => x.GM_Question).Include(g => g.GamePlayers).ThenInclude(gp => gp.GMP_User).First(g => g.GM_PK == gamePk);
+			var config = new LobbyConfigurationDTO
+			{
+				Question = new QuestionListQuestionDTO { Id = game.GM_QST_FK, Name = game.GM_Question.QST_Name },
+				WaitForAllToFinish = game.GM_WaitForAll,
+				MaxPlayers = game.GM_MaxPlayers,
+				StartingAtUtc = game.GM_StartedAtUtc,
+				IsPrivate = game.GM_Private
+			};
+			var state = new LobbyStateDTO
+			{
+				Configuration = config,
+				Players = game.GamePlayers.Where(x => x.GMP_GM_FK == game.GM_PK).Select(gp => gp.GMP_User.USR_UserName),
+				Name = game.GM_Name
+			};
 
 			await Clients.Group(game.GM_PK.ToString()).SendAsync("StateHasBeenUpdated", state);
 		}
