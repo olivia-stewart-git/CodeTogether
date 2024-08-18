@@ -56,12 +56,16 @@ internal class ScaffoldModelFactory : IScaffoldModelFactory
 	{
 		var parametersString = string.Join(", ", parameters.Select(p => $"{p.Type.GetAliasedName()} {p.Name}"));
 		var scaffoldText = @$"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 public class Problem
 {{
 	public {returnType.GetAliasedName()} Solve({parametersString})
 	{{
-
+		
 	}}
 }}";
 

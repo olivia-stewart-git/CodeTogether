@@ -32,6 +32,7 @@ public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngin
 			.ThenInclude(s => s.EXE_ReturnType)
 			.Include(q => q.QST_Scaffold)
 			.ThenInclude(s => s.EXE_Parameters)
+			.ThenInclude(p => p.TC_Type)
 			.FirstOrDefault();
 		if (question == null)
 		{
