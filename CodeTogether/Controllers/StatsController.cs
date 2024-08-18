@@ -17,9 +17,9 @@ public class StatsController(ApplicationDbContext dbContext) : Controller
 			return Forbid();
 		}
 		var gamesPlayed = dbContext.Games.Include(g => g.GamePlayers).Count(g => g.GamePlayers.Any(gp => gp.GMP_USR_FK == userId));
-		var gamesWithWinners = dbContext.Games.Include(g => g.GM_WinningSubmission).ThenInclude(s => s.SBM_SubmittedBy).ThenInclude(p => p.GMP_User);
-		// have to user ternary because lambdas cant have null propagating operator
-		var gamesWon = gamesWithWinners.Count(g => g.GM_WinningSubmission == null ? false : g.GM_WinningSubmission.SBM_SubmittedBy.GMP_User.USR_PK == userId);
+		var gamesWithWinners = dbContext.Games.Include(g => g.GM_WinningSubmission!).ThenInclude(s => s.SBM_SubmittedBy).ThenInclude(p => p.GMP_User);
+		// have to use manual check because lambdas cant have null propagating operator
+		var gamesWon = gamesWithWinners.Count(g => g.GM_WinningSubmission != null && g.GM_WinningSubmission.SBM_SubmittedBy.GMP_User.USR_PK == userId);
 		return Json(new StatsDTO { GamesPlayed = gamesPlayed, GamesWon = gamesWon });
 	}
 
@@ -31,14 +31,14 @@ public class StatsController(ApplicationDbContext dbContext) : Controller
 			return Forbid();
 		}
 
-		var gamesWithWinners = dbContext.Games.Include(g => g.GamePlayers).Include(g => g.GM_WinningSubmission).ThenInclude(s => s.SBM_SubmittedBy).ThenInclude(p => p.GMP_User);
+		var gamesWithWinners = dbContext.Games.Include(g => g.GamePlayers).Include(g => g.GM_WinningSubmission!).ThenInclude(s => s.SBM_SubmittedBy).ThenInclude(p => p.GMP_User);
 		var gamesPlayed = gamesWithWinners.Where(g => g.GamePlayers.Any(gp => gp.GMP_USR_FK == userId));
 		var relevant = gamesPlayed.OrderBy(gp => gp.GM_FinishedAtUtc).Skip((pageNum - 1) * pageSize).Take(pageSize);
 		return Ok(relevant.Select(g => new GameResultDTO
 		{
 			GameName = g.GM_Name,
 			GameFinishedUtc = g.GM_FinishedAtUtc!.Value,
-			WinnerUsername = g.GM_WinningSubmission.SBM_SubmittedBy.GMP_User.USR_UserName,
+			WinnerUsername = g.GM_WinningSubmission!.SBM_SubmittedBy.GMP_User.USR_UserName,
 			WinnerCode = g.GM_WinningSubmission.SBM_Code,
 			WinnerIsYou = g.GM_WinningSubmission.SBM_SubmittedBy.GMP_USR_FK == userId
 		}));

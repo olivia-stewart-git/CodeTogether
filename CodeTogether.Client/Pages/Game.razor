@@ -1,7 +1,5 @@
 ﻿@page "/game/{ServerId:int}/{GameId:guid}"
 @using System.Net
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization 
 @using Blazored.LocalStorage
 @using CodeTogether.Client.Integration
 @using CodeTogether.Client.Integration.Execution
@@ -13,7 +11,7 @@
 @using Timer = System.Timers.Timer
 @inject NavigationManager Navigation
 @inject HttpClient Http
-@inject UserStateService userService
+@inject UserStateService UserService
 @inject ISyncLocalStorageService LocalStorage
 @implements IDisposable
 
@@ -228,7 +226,7 @@
 
         await LoadNextQuestion();
 
-        UserId = (await userService.GetUserName())?.Id ?? throw new ArgumentNullException("Must be logged in to play a game");
+        UserId = (await UserService.GetUserName())?.Id ?? throw new ArgumentNullException("Must be logged in to play a game");
     }
 
 

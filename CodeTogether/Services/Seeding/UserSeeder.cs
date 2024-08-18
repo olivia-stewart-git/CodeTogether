@@ -5,15 +5,8 @@ using CodeTogether.Services.Authentication;
 
 namespace CodeTogether.Services.Seeding;
 
-public class UserSeeder : ISeedStep
+public class UserSeeder(ApplicationDbContext dbContext) : ISeedStep
 {
-	readonly ApplicationDbContext dbContext;
-
-	public UserSeeder(ApplicationDbContext dbContext)
-	{
-		this.dbContext = dbContext;
-	}
-
 	public int Order => 0;
 	public void Seed(bool initialSeed)
 	{

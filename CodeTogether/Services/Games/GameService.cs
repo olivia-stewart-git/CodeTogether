@@ -8,21 +8,18 @@ namespace CodeTogether.Services.Games
 {
 	public class GameService : IGameService
 	{
-		ConcurrentDictionary<string, GameModel> userToGameCache = new ConcurrentDictionary<string, GameModel>();
+		readonly ConcurrentDictionary<string, GameModel> userToGameCache = new();
 
 		// have to take dbContext as a parameter rather than DI'ing it because this service needs to be singleton to allow caching between signalr requests and ApplicationDbContext is scoped
 		public GameModel GetActiveGameForUser(ApplicationDbContext dbContext, string? userIdString, bool cache = true)
 		{
-			if (userIdString == null)
-			{
-				throw new ArgumentNullException(nameof(userIdString));
-			}
+			ArgumentNullException.ThrowIfNull(userIdString, nameof(userIdString));
 
 			userIdString = userIdString.ToLower();
 
-			if (cache && userToGameCache.ContainsKey(userIdString))
+			if (cache && userToGameCache.TryGetValue(userIdString, out var forUser))
 			{
-				return userToGameCache[userIdString];
+				return forUser;
 			}
 
 			var userId = Guid.Parse(userIdString ?? "");
@@ -30,11 +27,7 @@ namespace CodeTogether.Services.Games
 			var user = dbContext.Users.First(x => x.USR_PK == userId);
 			var player = dbContext.GamePlayers.Include(p => p.GMP_Game).Where(p => p.GMP_PK == user.USR_GMP_FK).FirstOrDefault();
 			var game = player?.GMP_Game;
-			if (game == null)
-			{
-				throw new ArgumentNullException("No active game");
-			}
-			userToGameCache[userIdString] = game;
+			userToGameCache[userIdString!] = game ?? throw new ArgumentException("No active game", nameof(userIdString));
 			return game;
 		}
 
@@ -76,7 +69,7 @@ namespace CodeTogether.Services.Games
 			dbContext.SaveChanges();
 		}
 
-		string IncrementGameName(string oldGameName)
+		static string IncrementGameName(string oldGameName)
 		{
 			var gameNameEnd = oldGameName.Split("-").LastOrDefault();
 			var gameNameExceptEnd = string.Join("-", oldGameName.Split("-").SkipLast(1));
