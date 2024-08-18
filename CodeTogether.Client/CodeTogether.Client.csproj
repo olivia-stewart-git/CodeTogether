@@ -12,14 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Components\GameHistory.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="GaelJ.BlazorCodeMirror6" Version="0.8.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,14 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Components\GameHistory.razor" />
+    <UpToDateCheckInput Remove="Pages\CreateQuestion.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\GameHistory.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Components\GameHistory.razor" />
+    <_ContentIncludedByDefault Remove="Pages\CreateQuestion.razor" />
   </ItemGroup>
 </Project>

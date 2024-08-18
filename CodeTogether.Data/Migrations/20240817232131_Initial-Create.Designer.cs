@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240817022519_RemoveState")]
-    partial class RemoveState
+    [Migration("20240817232131_Initial-Create")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,6 +103,9 @@ namespace CodeTogether.Data.Migrations
                     b.Property<DateTime>("GM_CreateTimeUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("GM_FinishedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("GM_MaxPlayers")
                         .HasColumnType("int");
 
@@ -116,6 +119,9 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<DateTime?>("GM_StartedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("GM_WaitForAll")
+                        .HasColumnType("bit");
 
                     b.HasKey("GM_PK");
 
@@ -231,7 +237,7 @@ namespace CodeTogether.Data.Migrations
                     b.Property<bool>("TST_IsHidden")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("TST_QuestionQST_PK")
+                    b.Property<Guid>("TST_QST_FK")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TST_Title")
@@ -241,7 +247,7 @@ namespace CodeTogether.Data.Migrations
 
                     b.HasKey("TST_PK");
 
-                    b.HasIndex("TST_QuestionQST_PK");
+                    b.HasIndex("TST_QST_FK");
 
                     b.ToTable("TestCases");
                 });
@@ -356,6 +362,11 @@ namespace CodeTogether.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CSM_Code")
+                        .IsRequired()
+                        .HasMaxLength(100000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CSM_CompletedAt")
                         .HasColumnType("datetime2");
 
@@ -469,7 +480,7 @@ namespace CodeTogether.Data.Migrations
                 {
                     b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "TST_Question")
                         .WithMany("QST_TestCases")
-                        .HasForeignKey("TST_QuestionQST_PK")
+                        .HasForeignKey("TST_QST_FK")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

@@ -31,11 +31,9 @@ namespace CodeTogether.Controllers
 		[Route("join")]
 		public IActionResult JoinGame(Guid gameId)
 		{
-			var userIdString = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-			var userId = Guid.Parse(userIdString);
 			try
 			{
-				lobbyService.JoinLobby(gameId, userId);
+				lobbyService.JoinLobby(gameId, UserId);
 			} catch (InvalidOperationException ex)
 			{
 				return BadRequest(ex.Message);
@@ -48,5 +46,13 @@ namespace CodeTogether.Controllers
 		{
 			return Json(lobbyService.GetLobbies());
 		}
+
+		[Route("list-for-user")]
+		public IActionResult ListGameHistory()
+		{
+			return Json(new List<GameHistoryGameDTO>());
+		}
+
+		Guid UserId => Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 	}
 }

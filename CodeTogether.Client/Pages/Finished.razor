@@ -1,0 +1,9 @@
+﻿@page "/finish/{GameId:Guid}"
+
+<h3>Finished @GameId</h3>
+<p>Winner: TODO</p>
+<button>Play again (TODO create another game and redirect all players to it)</button>
+@code {
+    [Parameter]
+    public required Guid GameId { get; set; }
+}

@@ -18,6 +18,8 @@ namespace CodeTogether.Client.Integration
 		public bool? GoingToStart { get; set; }
 
 		public bool? IsPrivate { get; set; }
+
+		public bool? WaitForAllToFinish { get; set; }
 	}
 
 	[Serializable]
@@ -28,5 +30,9 @@ namespace CodeTogether.Client.Integration
 		public required DateTime? StartingAtUtc { get; set; }
 		
 		public required bool IsPrivate { get; set; }
+
+		public TimeSpan GameLength { get; set; }
+
+		public bool WaitForAllToFinish { get; set; }
 	}
 }

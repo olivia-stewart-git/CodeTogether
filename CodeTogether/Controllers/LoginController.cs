@@ -1,4 +1,5 @@
-﻿using CodeTogether.Client.Integration.Authentication;
+﻿using CodeTogether.Client.Integration;
+using CodeTogether.Client.Integration.Authentication;
 using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,7 +24,12 @@ public class LoginController : Controller
 	{
 		// TODO: check that the user actually exists in the database?
 		var name = User.Identity?.Name;
-		return string.IsNullOrEmpty(name) ? BadRequest() : Json(name);
+		var hasValidClaim = Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var userId);
+		if (!hasValidClaim || name is null)
+		{
+			return BadRequest();
+		}
+		return Json(new UserInfoDTO { Name = name, Id = userId });
 	}
 
 	[HttpPost]

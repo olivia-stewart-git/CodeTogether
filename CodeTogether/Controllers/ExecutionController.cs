@@ -2,8 +2,8 @@
 using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+using CodeTogether.Services.Games;
+using Microsoft.AspNet.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -11,18 +11,10 @@ using System.Security.Claims;
 namespace CodeTogether.Controllers;
 
 [Route("api/execution")]
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-public class ExecutionController : Controller
+//[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+[Authorize]
+public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngine executionService, IGameService gameService) : Controller
 {
-	readonly ApplicationDbContext dbContext;
-	readonly IExecutionEngine executionService;
-
-	public ExecutionController(ApplicationDbContext dbContext, IExecutionEngine executionService)
-	{
-		this.dbContext = dbContext;
-		this.executionService = executionService;
-	}
-
 	[HttpPost]
 	[Route("execute")]
 	public async Task<IActionResult> RunCode([FromBody] ExecutionRequestDTO runCodeRequest)
@@ -43,10 +35,8 @@ public class ExecutionController : Controller
 		{
 			return BadRequest("Question not found");
 		}
-		await dbContext.SaveChangesAsync();
 
 		var result = executionService.ExecuteAgainstQuestion(question, runCodeRequest.RawCode);
-		await dbContext.SaveChangesAsync();
 
 		var completedSubmission = new CompletedSubmissionModel
 		{
@@ -57,6 +47,12 @@ public class ExecutionController : Controller
 			CSM_GM_FK = runCodeRequest.GameId
 		};
 		dbContext.CompletedSubmissions.Add(completedSubmission);
+
+		if (completedSubmission.CSM_Result.EXR_Status == ExecutionStatus.Success)
+		{
+			gameService.MarkAsFinished(dbContext, runCodeRequest.GameId);
+		}
+
 		await dbContext.SaveChangesAsync();
 
 		var resultDto = new ExecutionResponseDTO

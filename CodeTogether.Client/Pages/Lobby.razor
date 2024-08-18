@@ -40,7 +40,12 @@ else
             <button @onclick="() => ChangeMaxPlayers(1)">+</button>
         </span>
         <label for="privateSwitch">Private:</label>
-        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate"/>
+        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate" />
+        <label for="waitSwitch">Wait for all players to finish:</label>
+        <input id="waitSwitch" type="checkbox" @onclick="ToggleWaitForAll" checked="@lobbyState.Configuration.WaitForAllToFinish" />
+        <p data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+            ?
+        </p>
     </div>
     <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
     <ul>
@@ -90,7 +95,7 @@ else
             lobbyState = state;
             hasSentChange = false;
             await InvokeAsync(StateHasChanged);
-        }); 
+        });
 
         hubConnection.On("NotInGame", () =>
         {
@@ -123,6 +128,14 @@ else
         if (lobbyState != null)
         {
             await SendLobbyConfiguration(new SetLobbyConfigurationDTO { IsPrivate = !lobbyState.Configuration.IsPrivate });
+        }
+    }
+
+    async Task ToggleWaitForAll()
+    {
+        if (lobbyState != null)
+        {
+            await SendLobbyConfiguration(new SetLobbyConfigurationDTO { WaitForAllToFinish = !lobbyState.Configuration.WaitForAllToFinish});
         }
     }
 

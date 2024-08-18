@@ -100,6 +100,9 @@ namespace CodeTogether.Data.Migrations
                     b.Property<DateTime>("GM_CreateTimeUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("GM_FinishedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("GM_MaxPlayers")
                         .HasColumnType("int");
 
@@ -113,6 +116,9 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<DateTime?>("GM_StartedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("GM_WaitForAll")
+                        .HasColumnType("bit");
 
                     b.HasKey("GM_PK");
 

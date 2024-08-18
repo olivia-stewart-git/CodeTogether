@@ -1,6 +1,7 @@
 ﻿using CodeTogether.Common.Logging;
 using CodeTogether.Data;
 using CodeTogether.Data.Seeding;
+using CodeTogether.Hubs;
 using CodeTogether.Runner.Adaptors;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Service.Games;
@@ -31,6 +32,7 @@ public static class ServiceDependencyExtensions
 		services.AddTransient<IRegistrationService, RegistrationService>();
 		services.AddTransient<IRegisterVerificationService, RegisterVerificationService>();
 		services.AddTransient<ILoginAuthenticationService, LoginAuthenticationService>();
+		services.AddScoped<GameHub>();
 
 		return services;
 	}

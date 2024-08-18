@@ -34,12 +34,10 @@ namespace CodeTogether.Service.Games
 
 		List<GameListGameDTO> GetLobbiesFromDatabase()
 		{
-			var oldGameCutoff = TimeSpan.FromHours(3);
-			var now = DateTime.UtcNow;
 			return dbContext.Games
 				.Include(game => game.GamePlayers)
 				.ToList()
-				.Where(g => !g.GM_Private && (now - g.LastActionTime) < oldGameCutoff)
+				.Where(GameShouldBeShownInGameList)
 				.Select(m => new GameListGameDTO
 				{
 					CreatedAt = m.GM_CreateTimeUtc,
@@ -50,6 +48,17 @@ namespace CodeTogether.Service.Games
 					Playing = m.GM_StartedAtUtc != null,
 				})
 				.ToList();
+		}
+
+		static readonly TimeSpan lobbyGameExpiry = TimeSpan.FromHours(3);
+
+		bool GameShouldBeShownInGameList(GameModel g)
+		{
+			var now = DateTime.UtcNow;
+			return
+				!g.GM_Private
+				&& (now - g.LastActionTime) < lobbyGameExpiry // game was not started and is old
+				&& (g.GM_FinishedAtUtc == null || now < g.GM_FinishedAtUtc); // game is finished
 		}
 
 		public void JoinLobby(Guid gameId, Guid userId)
@@ -86,7 +95,7 @@ namespace CodeTogether.Service.Games
 
 			if (newState.GoingToStart == true)
 			{
-				var countdownLength = TimeSpan.FromSeconds(5);
+				var countdownLength = TimeSpan.FromSeconds(3);
 				game.GM_StartedAtUtc = DateTime.UtcNow + countdownLength;
 				Task.Run(async () =>
 				{

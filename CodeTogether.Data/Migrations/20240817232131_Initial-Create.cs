@@ -17,11 +17,12 @@ namespace CodeTogether.Data.Migrations
                 {
                     GM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GM_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    GM_GameState = table.Column<int>(type: "int", nullable: false),
                     GM_CreateTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     GM_StartedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GM_FinishedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     GM_Private = table.Column<bool>(type: "bit", nullable: false),
-                    GM_MaxPlayers = table.Column<int>(type: "int", nullable: false)
+                    GM_MaxPlayers = table.Column<int>(type: "int", nullable: false),
+                    GM_WaitForAll = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
