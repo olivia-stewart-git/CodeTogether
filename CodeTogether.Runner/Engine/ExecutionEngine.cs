@@ -1,4 +1,6 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Game;
+using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Adaptors;
 
 namespace CodeTogether.Runner.Engine;
@@ -14,8 +16,10 @@ public class ExecutionEngine : IExecutionEngine
 		this.executorFactory = executorFactory;
 	}
 
-	public SubmissionResultModel ExecuteAgainstQuestion(QuestionModel question, string code)
+	public SubmissionModel ExecuteAgainstQuestion(QuestionModel question, string code, GamePlayerModel submitter)
 	{
+		var startTime = DateTime.UtcNow;
+
 		var configuration = question.QST_Scaffold;
 		var compilationName = $"Compilation_{question.QST_Name}{Guid.NewGuid()}";
 		
@@ -29,14 +33,35 @@ public class ExecutionEngine : IExecutionEngine
 		try
 		{
 			var compilation = compilationEngine.CreateCompilation(compilationName, code, typesReferences);
-			return executor.Execute(compilation);
+			var testResults = executor.Execute(compilation);
+
+			var status = testResults.Any(x => x.TCR_Status != TestCaseStatus.Success)
+				? testResults.Any(x => x.TCR_Status == TestCaseStatus.Error) ? ExecutionStatus.Error : ExecutionStatus.Failure
+				: ExecutionStatus.Success;
+
+			var submissionResult = new SubmissionModel
+			{
+				SBM_Status = status,
+				SBM_SubmissionStartTimeUtc = startTime,
+				SBM_SubmissionDuration = DateTime.UtcNow - startTime,
+				SBM_TestRuns = testResults,
+				SBM_Code = code,
+				SBM_SubmittedBy = submitter,
+				SBM_Question = question,
+			};
+			return submissionResult;
 		}
 		catch (CompilationException compilationException)
 		{
-			return new SubmissionResultModel()
+			return new SubmissionModel()
 			{
-				EXR_Status = ExecutionStatus.Error,
-				EXR_CompileError = compilationException.Message,
+				SBM_SubmissionStartTimeUtc = startTime,
+				SBM_SubmissionDuration = DateTime.UtcNow - startTime,
+				SBM_Status = ExecutionStatus.Error,
+				SBM_CompileError = compilationException.Message,
+				SBM_Code = code,
+				SBM_Question = question,
+				SBM_SubmittedBy = submitter,
 			};
 		}
 	}

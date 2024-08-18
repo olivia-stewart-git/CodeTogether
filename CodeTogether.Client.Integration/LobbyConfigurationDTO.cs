@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace CodeTogether.Client.Integration
 {
 	// Message from the client to the server
@@ -28,7 +23,7 @@ namespace CodeTogether.Client.Integration
 		public required int MaxPlayers { get; set; }
 
 		public required DateTime? StartingAtUtc { get; set; }
-		
+
 		public required bool IsPrivate { get; set; }
 
 		public TimeSpan GameLength { get; set; }

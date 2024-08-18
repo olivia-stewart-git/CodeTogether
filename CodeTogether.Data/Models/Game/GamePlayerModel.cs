@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
 // ReSharper disable InconsistentNaming
 
@@ -24,4 +25,7 @@ public class GamePlayerModel : IDbModel
 
 	[MaxLength(int.MaxValue)]
 	public string GMP_MostRecentCode { get; set; } = string.Empty;
+
+	[InverseProperty(nameof(SubmissionModel.SBM_SubmittedBy))]
+	public IEnumerable<SubmissionModel> Submissions { get; set; } = new List<SubmissionModel>();
 }

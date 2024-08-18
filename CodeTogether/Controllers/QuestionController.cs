@@ -1,20 +1,15 @@
 using CodeTogether.Client.Integration.Execution;
 using CodeTogether.Data;
+using CodeTogether.Services.Games;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether.Controllers;
 
 [Route("api/question")]
-public class QuestionController : Controller
+public class QuestionController(ApplicationDbContext dbContext, QuestionService questionService) : Controller
 {
-	readonly ApplicationDbContext dbContext;
-
-	public QuestionController(ApplicationDbContext dbContext)
-	{
-		this.dbContext = dbContext;
-	}
-
 	/// <summary>
 	/// for now just get first question in db
 	/// </summary>
@@ -23,31 +18,19 @@ public class QuestionController : Controller
 	[Route("get/{gameId}")]
 	public IActionResult GetQuestion(Guid gameId)
 	{
-		var question = dbContext.Questions
-			.Take(1)
-			.Include(x => x.QST_Scaffold)
-			.Include(x => x.QST_TestCases)
-			.FirstOrDefault();
+		var questionId = dbContext.Games.Find(gameId)?.GM_QST_FK ?? throw new InvalidOperationException("No game or no question");
 
+		var question = questionService.GetQuestionById(questionId);
 		if (question == null)
 		{
-			return NotFound("No question found");
+			return BadRequest("Question does not exist");
 		}
+		return Json(question);
+	}
 
-		var questionDTO = new QuestionDTO
-		{
-			Id = question.QST_PK,
-			Name = question.QST_Name,
-			Description = question.QST_Description,
-			ScaffoldCode = question.QST_Scaffold.EXE_ScaffoldText,
-			TestCases = question.QST_TestCases.Select(x => new TestCaseDto
-			{
-				Id = x.TST_PK,
-				Name = x.TST_Title,
-				Arguments = x.TST_Arguments,
-				ExpectedResponse = x.TST_ExpectedResponse, 
-			}).ToList()
-		};
-		return Json(questionDTO);
+	[Route("list")]
+	public IActionResult AllQuestions()
+	{
+		return Json(dbContext.Questions.Select(x => x.QST_Name));
 	}
 }

@@ -1,8 +1,10 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Data.Models.Game;
+using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 
 namespace CodeTogether.Runner.Engine;
 
 public interface IExecutionEngine
 {
-	SubmissionResultModel ExecuteAgainstQuestion(QuestionModel question, string code);
+	SubmissionModel ExecuteAgainstQuestion(QuestionModel question, string code, GamePlayerModel submitter);
 }

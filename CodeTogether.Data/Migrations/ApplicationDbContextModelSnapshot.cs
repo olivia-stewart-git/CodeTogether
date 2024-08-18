@@ -100,8 +100,15 @@ namespace CodeTogether.Data.Migrations
                     b.Property<DateTime>("GM_CreateTimeUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("GM_CreatedByName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("GM_FinishedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("GM_GM_NextGame_FK")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("GM_MaxPlayers")
                         .HasColumnType("int");
@@ -114,13 +121,25 @@ namespace CodeTogether.Data.Migrations
                     b.Property<bool>("GM_Private")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("GM_QST_FK")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("GM_StartedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("GM_WaitForAll")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("GM_WinningSubmissionSBM_PK")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("GM_PK");
+
+                    b.HasIndex("GM_GM_NextGame_FK");
+
+                    b.HasIndex("GM_QST_FK");
+
+                    b.HasIndex("GM_WinningSubmissionSBM_PK");
 
                     b.ToTable("Games");
                 });
@@ -270,14 +289,14 @@ namespace CodeTogether.Data.Migrations
                     b.Property<int>("TCR_Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TCR_SubmissionResultEXR_PK")
+                    b.Property<Guid>("TCR_SubmissionResultSBM_PK")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("TCR_PK");
 
                     b.HasIndex("TCR_ParentTST_PK");
 
-                    b.HasIndex("TCR_SubmissionResultEXR_PK");
+                    b.HasIndex("TCR_SubmissionResultSBM_PK");
 
                     b.ToTable("TestRuns");
                 });
@@ -335,73 +354,31 @@ namespace CodeTogether.Data.Migrations
                         .HasMaxLength(2147483647)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SBM_EXR_FK")
+                    b.Property<string>("SBM_CompileError")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SBM_QuestionQST_PK")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SBM_QST_FK")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("SBM_Status")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("SBM_SubmissionTime")
+                    b.Property<TimeSpan>("SBM_SubmissionDuration")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("SBM_SubmissionStartTimeUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SBM_SubmittedByGMP_PK")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("SBM_PK");
 
-                    b.HasIndex("SBM_EXR_FK");
+                    b.HasIndex("SBM_QuestionQST_PK");
 
-                    b.HasIndex("SBM_QST_FK");
+                    b.HasIndex("SBM_SubmittedByGMP_PK");
 
                     b.ToTable("Submissions");
-                });
-
-            modelBuilder.Entity("CodeTogether.Runner.Engine.CompletedSubmissionModel", b =>
-                {
-                    b.Property<Guid>("CSM_PK")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CSM_Code")
-                        .IsRequired()
-                        .HasMaxLength(100000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CSM_CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CSM_EXR_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CSM_GM_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CSM_USR_FK")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CSM_PK");
-
-                    b.HasIndex("CSM_EXR_FK");
-
-                    b.HasIndex("CSM_GM_FK");
-
-                    b.HasIndex("CSM_USR_FK");
-
-                    b.ToTable("CompletedSubmissions");
-                });
-
-            modelBuilder.Entity("CodeTogether.Runner.Engine.SubmissionResultModel", b =>
-                {
-                    b.Property<Guid>("EXR_PK")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EXR_CompileError")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EXR_Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("EXR_PK");
-
-                    b.ToTable("SubmissionResults");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Game.GamePlayerModel", b =>
@@ -430,6 +407,31 @@ namespace CodeTogether.Data.Migrations
                         .HasForeignKey("USR_GMP_FK");
 
                     b.Navigation("USR_CurrentGame");
+                });
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.GameModel", b =>
+                {
+                    b.HasOne("CodeTogether.Data.Models.Questions.GameModel", "GM_NextGame")
+                        .WithMany()
+                        .HasForeignKey("GM_GM_NextGame_FK")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "GM_Question")
+                        .WithMany()
+                        .HasForeignKey("GM_QST_FK")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CodeTogether.Data.Models.Submission.SubmissionModel", "GM_WinningSubmission")
+                        .WithMany()
+                        .HasForeignKey("GM_WinningSubmissionSBM_PK")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("GM_NextGame");
+
+                    b.Navigation("GM_Question");
+
+                    b.Navigation("GM_WinningSubmission");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.ParameterModel", b =>
@@ -492,9 +494,9 @@ namespace CodeTogether.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodeTogether.Runner.Engine.SubmissionResultModel", "TCR_SubmissionResult")
-                        .WithMany("EXR_TestRuns")
-                        .HasForeignKey("TCR_SubmissionResultEXR_PK")
+                    b.HasOne("CodeTogether.Data.Models.Submission.SubmissionModel", "TCR_SubmissionResult")
+                        .WithMany("SBM_TestRuns")
+                        .HasForeignKey("TCR_SubmissionResultSBM_PK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -505,44 +507,26 @@ namespace CodeTogether.Data.Migrations
 
             modelBuilder.Entity("CodeTogether.Data.Models.Submission.SubmissionModel", b =>
                 {
-                    b.HasOne("CodeTogether.Runner.Engine.SubmissionResultModel", "SBM_Execution")
-                        .WithMany()
-                        .HasForeignKey("SBM_EXR_FK");
-
                     b.HasOne("CodeTogether.Data.Models.Questions.QuestionModel", "SBM_Question")
                         .WithMany()
-                        .HasForeignKey("SBM_QST_FK")
+                        .HasForeignKey("SBM_QuestionQST_PK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SBM_Execution");
-
-                    b.Navigation("SBM_Question");
-                });
-
-            modelBuilder.Entity("CodeTogether.Runner.Engine.CompletedSubmissionModel", b =>
-                {
-                    b.HasOne("CodeTogether.Runner.Engine.SubmissionResultModel", "CSM_Result")
-                        .WithMany()
-                        .HasForeignKey("CSM_EXR_FK")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("CodeTogether.Data.Models.Game.GamePlayerModel", "SBM_SubmittedBy")
+                        .WithMany("Submissions")
+                        .HasForeignKey("SBM_SubmittedByGMP_PK")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodeTogether.Data.Models.Questions.GameModel", "CSM_Game")
-                        .WithMany()
-                        .HasForeignKey("CSM_GM_FK")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.Navigation("SBM_Question");
 
-                    b.HasOne("CodeTogether.Data.Models.Game.UserModel", "CSM_User")
-                        .WithMany()
-                        .HasForeignKey("CSM_USR_FK")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.Navigation("SBM_SubmittedBy");
+                });
 
-                    b.Navigation("CSM_Game");
-
-                    b.Navigation("CSM_Result");
-
-                    b.Navigation("CSM_User");
+            modelBuilder.Entity("CodeTogether.Data.Models.Game.GamePlayerModel", b =>
+                {
+                    b.Navigation("Submissions");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Game.UserModel", b =>
@@ -565,9 +549,9 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("EXE_Parameters");
                 });
 
-            modelBuilder.Entity("CodeTogether.Runner.Engine.SubmissionResultModel", b =>
+            modelBuilder.Entity("CodeTogether.Data.Models.Submission.SubmissionModel", b =>
                 {
-                    b.Navigation("EXR_TestRuns");
+                    b.Navigation("SBM_TestRuns");
                 });
 #pragma warning restore 612, 618
         }

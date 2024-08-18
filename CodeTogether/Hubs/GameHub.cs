@@ -2,7 +2,6 @@
 using CodeTogether.Data;
 using CodeTogether.Services.Games;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Owin.Security.Provider;
 
 namespace CodeTogether.Hubs;
 
@@ -14,7 +13,7 @@ public class GameHub(ApplicationDbContext dbContext, IGameService gameService) :
 		var game = gameService.GetActiveGameForUser(dbContext, Context.UserIdentifier, cache: false);
 		if (game.GM_FinishedAtUtc.HasValue && game.GM_FinishedAtUtc.Value > DateTime.UtcNow)
 		{
-			await BroadcastFinishedGame(game.GM_PK);
+			await BroadcastFinishedGame(game.GM_PK, game.GM_GM_NextGame_FK);
 		}
 		else
 		{
@@ -29,12 +28,12 @@ public class GameHub(ApplicationDbContext dbContext, IGameService gameService) :
 
 		if (game.GM_FinishedAtUtc != null && game.GM_FinishedAtUtc < DateTime.UtcNow)
 		{
-			await BroadcastFinishedGame(game.GM_PK);
+			await BroadcastFinishedGame(game.GM_PK, game.GM_GM_NextGame_FK);
 		}
 	}
 
-	public async Task BroadcastFinishedGame(Guid gameId)
+	public async Task BroadcastFinishedGame(Guid gameId, Guid? nextGameId)
 	{
-		await Clients.Group(gameId.ToString()).SendAsync("GameFinished");
+		await Clients.Group(gameId.ToString()).SendAsync("GameFinished", nextGameId);
 	}
 }

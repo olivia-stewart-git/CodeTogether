@@ -12,24 +12,6 @@ namespace CodeTogether.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Games",
-                columns: table => new
-                {
-                    GM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GM_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    GM_CreateTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GM_StartedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GM_FinishedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GM_Private = table.Column<bool>(type: "bit", nullable: false),
-                    GM_MaxPlayers = table.Column<int>(type: "int", nullable: false),
-                    GM_WaitForAll = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Games", x => x.GM_PK);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StmData",
                 columns: table => new
                 {
@@ -40,19 +22,6 @@ namespace CodeTogether.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StmData", x => x.STM_PK);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubmissionResults",
-                columns: table => new
-                {
-                    EXR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EXR_Status = table.Column<int>(type: "int", nullable: false),
-                    EXR_CompileError = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubmissionResults", x => x.EXR_PK);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,32 +106,6 @@ namespace CodeTogether.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Submissions",
-                columns: table => new
-                {
-                    SBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SBM_SubmissionTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SBM_Code = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    SBM_EXR_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SBM_QST_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Submissions", x => x.SBM_PK);
-                    table.ForeignKey(
-                        name: "FK_Submissions_Questions_SBM_QST_FK",
-                        column: x => x.SBM_QST_FK,
-                        principalTable: "Questions",
-                        principalColumn: "QST_PK",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Submissions_SubmissionResults_SBM_EXR_FK",
-                        column: x => x.SBM_EXR_FK,
-                        principalTable: "SubmissionResults",
-                        principalColumn: "EXR_PK");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TestCases",
                 columns: table => new
                 {
@@ -184,60 +127,6 @@ namespace CodeTogether.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestRuns",
-                columns: table => new
-                {
-                    TCR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TCR_Status = table.Column<int>(type: "int", nullable: false),
-                    TCR_ActualResult = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TCR_Exception = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
-                    TCR_ParentTST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TCR_SubmissionResultEXR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestRuns", x => x.TCR_PK);
-                    table.ForeignKey(
-                        name: "FK_TestRuns_SubmissionResults_TCR_SubmissionResultEXR_PK",
-                        column: x => x.TCR_SubmissionResultEXR_PK,
-                        principalTable: "SubmissionResults",
-                        principalColumn: "EXR_PK",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TestRuns_TestCases_TCR_ParentTST_PK",
-                        column: x => x.TCR_ParentTST_PK,
-                        principalTable: "TestCases",
-                        principalColumn: "TST_PK",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CompletedSubmissions",
-                columns: table => new
-                {
-                    CSM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CSM_EXR_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CSM_Code = table.Column<string>(type: "nvarchar(max)", maxLength: 100000, nullable: false),
-                    CSM_CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CSM_GM_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CSM_USR_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompletedSubmissions", x => x.CSM_PK);
-                    table.ForeignKey(
-                        name: "FK_CompletedSubmissions_Games_CSM_GM_FK",
-                        column: x => x.CSM_GM_FK,
-                        principalTable: "Games",
-                        principalColumn: "GM_PK");
-                    table.ForeignKey(
-                        name: "FK_CompletedSubmissions_SubmissionResults_CSM_EXR_FK",
-                        column: x => x.CSM_EXR_FK,
-                        principalTable: "SubmissionResults",
-                        principalColumn: "EXR_PK");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GamePlayers",
                 columns: table => new
                 {
@@ -249,11 +138,36 @@ namespace CodeTogether.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GamePlayers", x => x.GMP_PK);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Submissions",
+                columns: table => new
+                {
+                    SBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SBM_SubmissionStartTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SBM_SubmissionDuration = table.Column<TimeSpan>(type: "time", nullable: false),
+                    SBM_Code = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
+                    SBM_QuestionQST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SBM_SubmittedByGMP_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SBM_Status = table.Column<int>(type: "int", nullable: false),
+                    SBM_CompileError = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Submissions", x => x.SBM_PK);
                     table.ForeignKey(
-                        name: "FK_GamePlayers_Games_GMP_GM_FK",
-                        column: x => x.GMP_GM_FK,
-                        principalTable: "Games",
-                        principalColumn: "GM_PK");
+                        name: "FK_Submissions_GamePlayers_SBM_SubmittedByGMP_PK",
+                        column: x => x.SBM_SubmittedByGMP_PK,
+                        principalTable: "GamePlayers",
+                        principalColumn: "GMP_PK",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Submissions_Questions_SBM_QuestionQST_PK",
+                        column: x => x.SBM_QuestionQST_PK,
+                        principalTable: "Questions",
+                        principalColumn: "QST_PK",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -279,20 +193,70 @@ namespace CodeTogether.Data.Migrations
                         principalColumn: "GMP_PK");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_CompletedSubmissions_CSM_EXR_FK",
-                table: "CompletedSubmissions",
-                column: "CSM_EXR_FK");
+            migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    GM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GM_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    GM_CreateTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GM_StartedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GM_FinishedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GM_Private = table.Column<bool>(type: "bit", nullable: false),
+                    GM_MaxPlayers = table.Column<int>(type: "int", nullable: false),
+                    GM_WaitForAll = table.Column<bool>(type: "bit", nullable: false),
+                    GM_CreatedByName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GM_GM_NextGame_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    GM_WinningSubmissionSBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    GM_QST_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.GM_PK);
+                    table.ForeignKey(
+                        name: "FK_Games_Games_GM_GM_NextGame_FK",
+                        column: x => x.GM_GM_NextGame_FK,
+                        principalTable: "Games",
+                        principalColumn: "GM_PK");
+                    table.ForeignKey(
+                        name: "FK_Games_Questions_GM_QST_FK",
+                        column: x => x.GM_QST_FK,
+                        principalTable: "Questions",
+                        principalColumn: "QST_PK");
+                    table.ForeignKey(
+                        name: "FK_Games_Submissions_GM_WinningSubmissionSBM_PK",
+                        column: x => x.GM_WinningSubmissionSBM_PK,
+                        principalTable: "Submissions",
+                        principalColumn: "SBM_PK");
+                });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_CompletedSubmissions_CSM_GM_FK",
-                table: "CompletedSubmissions",
-                column: "CSM_GM_FK");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CompletedSubmissions_CSM_USR_FK",
-                table: "CompletedSubmissions",
-                column: "CSM_USR_FK");
+            migrationBuilder.CreateTable(
+                name: "TestRuns",
+                columns: table => new
+                {
+                    TCR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TCR_Status = table.Column<int>(type: "int", nullable: false),
+                    TCR_ActualResult = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TCR_Exception = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    TCR_ParentTST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TCR_SubmissionResultSBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestRuns", x => x.TCR_PK);
+                    table.ForeignKey(
+                        name: "FK_TestRuns_Submissions_TCR_SubmissionResultSBM_PK",
+                        column: x => x.TCR_SubmissionResultSBM_PK,
+                        principalTable: "Submissions",
+                        principalColumn: "SBM_PK",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TestRuns_TestCases_TCR_ParentTST_PK",
+                        column: x => x.TCR_ParentTST_PK,
+                        principalTable: "TestCases",
+                        principalColumn: "TST_PK",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GamePlayers_GMP_GM_FK",
@@ -303,6 +267,21 @@ namespace CodeTogether.Data.Migrations
                 name: "IX_GamePlayers_GMP_USR_FK",
                 table: "GamePlayers",
                 column: "GMP_USR_FK");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_GM_GM_NextGame_FK",
+                table: "Games",
+                column: "GM_GM_NextGame_FK");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_GM_QST_FK",
+                table: "Games",
+                column: "GM_QST_FK");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_GM_WinningSubmissionSBM_PK",
+                table: "Games",
+                column: "GM_WinningSubmissionSBM_PK");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Parameters_TC_ScaffoldEXE_PK",
@@ -325,14 +304,14 @@ namespace CodeTogether.Data.Migrations
                 column: "EXE_ReturnTypeOT_PK");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Submissions_SBM_EXR_FK",
+                name: "IX_Submissions_SBM_QuestionQST_PK",
                 table: "Submissions",
-                column: "SBM_EXR_FK");
+                column: "SBM_QuestionQST_PK");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Submissions_SBM_QST_FK",
+                name: "IX_Submissions_SBM_SubmittedByGMP_PK",
                 table: "Submissions",
-                column: "SBM_QST_FK");
+                column: "SBM_SubmittedByGMP_PK");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCases_TST_QST_FK",
@@ -345,9 +324,9 @@ namespace CodeTogether.Data.Migrations
                 column: "TCR_ParentTST_PK");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestRuns_TCR_SubmissionResultEXR_PK",
+                name: "IX_TestRuns_TCR_SubmissionResultSBM_PK",
                 table: "TestRuns",
-                column: "TCR_SubmissionResultEXR_PK");
+                column: "TCR_SubmissionResultSBM_PK");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_USR_GMP_FK",
@@ -355,11 +334,11 @@ namespace CodeTogether.Data.Migrations
                 column: "USR_GMP_FK");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_CompletedSubmissions_Users_CSM_USR_FK",
-                table: "CompletedSubmissions",
-                column: "CSM_USR_FK",
-                principalTable: "Users",
-                principalColumn: "USR_PK");
+                name: "FK_GamePlayers_Games_GMP_GM_FK",
+                table: "GamePlayers",
+                column: "GMP_GM_FK",
+                principalTable: "Games",
+                principalColumn: "GM_PK");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GamePlayers_Users_GMP_USR_FK",
@@ -381,25 +360,22 @@ namespace CodeTogether.Data.Migrations
                 table: "GamePlayers");
 
             migrationBuilder.DropTable(
-                name: "CompletedSubmissions");
-
-            migrationBuilder.DropTable(
                 name: "Parameters");
 
             migrationBuilder.DropTable(
                 name: "StmData");
 
             migrationBuilder.DropTable(
-                name: "Submissions");
-
-            migrationBuilder.DropTable(
                 name: "TestRuns");
 
             migrationBuilder.DropTable(
-                name: "SubmissionResults");
+                name: "TestCases");
 
             migrationBuilder.DropTable(
-                name: "TestCases");
+                name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "Submissions");
 
             migrationBuilder.DropTable(
                 name: "Questions");
@@ -409,9 +385,6 @@ namespace CodeTogether.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Types");
-
-            migrationBuilder.DropTable(
-                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "Users");

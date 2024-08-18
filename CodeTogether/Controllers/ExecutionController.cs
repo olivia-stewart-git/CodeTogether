@@ -3,7 +3,8 @@ using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Runner.Engine;
 using CodeTogether.Services.Games;
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -11,8 +12,7 @@ using System.Security.Claims;
 namespace CodeTogether.Controllers;
 
 [Route("api/execution")]
-//[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-[Authorize]
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngine executionService, IGameService gameService) : Controller
 {
 	[HttpPost]
@@ -23,6 +23,8 @@ public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngin
 		{
 			return BadRequest("User not authenticated");
 		}
+
+		var gamePlayerModel = dbContext.GamePlayers.Where(p => p.GMP_GM_FK == runCodeRequest.GameId && p.GMP_USR_FK == userId).First();
 
 		var question = dbContext.Questions.Where(x => x.QST_PK == runCodeRequest.QuestionId)
 			.Include(q => q.QST_TestCases)
@@ -36,34 +38,25 @@ public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngin
 			return BadRequest("Question not found");
 		}
 
-		var result = executionService.ExecuteAgainstQuestion(question, runCodeRequest.RawCode);
+		var result = executionService.ExecuteAgainstQuestion(question, runCodeRequest.RawCode, gamePlayerModel);
+		dbContext.Add(result);
 
-		var completedSubmission = new CompletedSubmissionModel
+		if (result.SBM_Status == ExecutionStatus.Success)
 		{
-			CSM_CompletedAt = DateTime.Now,
-			CSM_Code = runCodeRequest.RawCode,
-			CSM_USR_FK = userId,
-			CSM_Result = result,
-			CSM_GM_FK = runCodeRequest.GameId
-		};
-		dbContext.CompletedSubmissions.Add(completedSubmission);
-
-		if (completedSubmission.CSM_Result.EXR_Status == ExecutionStatus.Success)
-		{
-			gameService.MarkAsFinished(dbContext, runCodeRequest.GameId);
+			gameService.MarkAsFinished(dbContext, runCodeRequest.GameId, result);
 		}
 
 		await dbContext.SaveChangesAsync();
 
 		var resultDto = new ExecutionResponseDTO
 		{
-			State = result.EXR_Status.ToString(),
-			Output = result.EXR_Status switch
+			State = result.SBM_Status.ToString(),
+			Output = result.SBM_Status switch
 			{
-				ExecutionStatus.Error => result.EXR_CompileError ?? "Error occurred",
+				ExecutionStatus.Error => result.SBM_CompileError ?? "Error occurred",
 				_ => "Compiled Successfully"
 			},
-			TestResults = result.EXR_TestRuns.Select(x => new TestCaseDto.RunDTO()
+			TestResults = result.SBM_TestRuns.Select(x => new TestCaseDto.RunDTO()
 			{
 				Id = x.TCR_Parent.TST_PK,
 				IsPassed = x.TCR_Status == TestCaseStatus.Success,
