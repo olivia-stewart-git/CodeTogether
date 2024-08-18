@@ -1,14 +1,14 @@
 ﻿@implements IDisposable
 @inject HttpClient http
-@inject NavigationManager navigation 
+@inject NavigationManager navigation
 @using CodeTogether.Client.Integration
 @using System.Text.Json
 
 
 <h3>Game List</h3>
 <button @onclick="UpdateGameList">Refresh Now</button>
-<TimedProgressBar StartedAt="@lastPoll" CompletesAt="@nextPoll"/>
-<table class="table">
+<TimedProgressBar StartedAt="@lastPoll" CompletesAt="@nextPoll" />
+<table class="table table-hover">
     <thead>
         <tr>
             <th>Name</th>
@@ -28,7 +28,7 @@
             {
                 <tr @onclick="() => JoinGame(game)" class="@GetRowCssClass(game)">
                     <td>@game.Name</td>
-                    <td>@game.NumPlayers</td>
+                    <td>@game.NumPlayers / @game.MaxPlayers</td>
                     <td>@game.CreatedAt</td>
                     <td>@game.Playing</td>
                 </tr>
@@ -36,6 +36,12 @@
         </tbody>
     }
 </table>
+@if (message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @message
+    </div>
+}
 
 
 @code {
@@ -45,15 +51,18 @@
     DateTime lastPoll;
     DateTime nextPoll;
 
+    string? message;
+
     bool active = true;
 
     protected override void OnInitialized()
     {
         active = true;
+        message = null;
         Task.Run(PollGameList);
     }
 
-    string GetRowCssClass(GameListGameDTO game) => game.Playing ? "" : "joinableRow";
+    string GetRowCssClass(GameListGameDTO game) => (!game.Playing && game.NumPlayers < game.MaxPlayers) ? "joinable-row" : "unjoinable-row";
 
     async Task PollGameList()
     {
@@ -79,7 +88,7 @@
 
     async Task JoinGame(GameListGameDTO game)
     {
-        await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id);
+        message = await GameJoiner.JoinAndNavigateToGame(http, navigation, game.Id);
     }
 
     public void Dispose()

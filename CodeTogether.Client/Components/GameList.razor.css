@@ -2,9 +2,16 @@
 }
 
 
-.joinableRow:hover {
+.joinable-row:hover {
     cursor: pointer;
-    background-color: #aaa;
+}
+
+.unjoinable-row{
+    color: #aaa;
+}
+
+.unjoinable-row:hover {
+    cursor: not-allowed;
 }
 
 tobdy > tr:active {

@@ -1,120 +1,398 @@
 ﻿@page "/game/{ServerId:int}/{GameId:guid}"
-@*todo: be able to copy urls to join a game*@
+@using System.Net
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization 
+@using Blazored.LocalStorage
+@using CodeTogether.Client.Integration
+@using CodeTogether.Client.Integration.Execution
+@using CodeTogether.Client.Services;
+@using CodeTogether.Client.Components.Execution
 @using Microsoft.AspNetCore.SignalR.Client
 @using GaelJ.BlazorCodeMirror6
 @using GaelJ.BlazorCodeMirror6.Models
 @using Timer = System.Timers.Timer
 @inject NavigationManager Navigation
+@inject HttpClient Http
+@inject UserStateService userService
+@inject ISyncLocalStorageService LocalStorage
+@implements IDisposable
 
-<h3>Game</h3>
-<p>Using server @ServerId.ToString() for game @GameId.ToString()</p>
-
-<div class="container border">
-    <div class="row text-center fw-bold">
-        <div class="col">
-            Your Code
+<div class="container-fluid row border">
+    <div class="col" style="max-width: calc(100% / 3)">
+        <div class="row" style="flex-direction: row-reverse">
+            <button class="position-absolute w-auto btn btn-primary" style="translate: -12px; z-index: 1" type="button" @onclick="() => showSettingsModal = true">Settings</button>
+            <CodeMirror6Wrapper IsWASM
+                                @bind-Doc="Code"
+                                Placeholder="Enter your code..."
+                                TabSize="TabSize"
+                                IndentationUnit="TabSize"
+                                Theme="EditorTheme"
+                                Language="CodeMirrorLanguage.Csharp"
+                                Setup="setup"
+                                Editable
+                                ReadOnly="false"
+                                LineWrapping="LineWrapping"
+                                LineNumbers="LineNumbers"
+                                MaxHeight="70vh" />
         </div>
-        
-        <div class="col">
-            Their Code
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col">
-            <div class="row" style="flex-direction: row-reverse">
-                <button class="position-absolute w-auto" style="translate: -12px; z-index: 1">Settings</button>
-                <CodeMirror6Wrapper
-                    IsWASM
-                    @bind-Doc="@Code"
-                    Placeholder="Enter your code..."
-                    TabSize="4"
-                    IndentationUnit="4"
-                    Theme="@ThemeMirrorTheme.VSCode"
-                    Language="CodeMirrorLanguage.Csharp"
-                    Setup="@setup"
-                    Editable
-                    ReadOnly="false"
-                    LineWrapping="false"
-                    MaxHeight="70vh"/>
-                <button>Run</button>
-            </div>
-            <div class="row">
-                Run output
-            </div>
-        </div>
-        
-        <div class="col">
-            @foreach (var codeContents in TheirCode.Values)
+        <div class="row">
+            <button class="btn btn-primary btn-lg" @onclick="Submit">Submit</button>
+            @if (submitting)
             {
-                var maxHeight = $"calc(70vh / {TheirCode.Count})";
-                <div class="row">
-                    <CodeMirror6Wrapper
-                        IsWASM
-                        @bind-Doc="@codeContents.content"
-                        TabSize="4"
-                        Theme="@ThemeMirrorTheme.VSCode"
-                        Language="CodeMirrorLanguage.Csharp"
-                        ReadOnly="true"
-                        Editable="false"
-                        LineWrapping="true"
-                        MaxHeight="@maxHeight"/>
-                </div>
+                <div class="spinner-border m-5" role="status"></div>
+            }
+        </div>
+        <div class="row">
+            @if (submissionResult != null)
+            {
+                <SubmissionResultView Result="@submissionResult" />
             }
         </div>
     </div>
+
+    <div class="col">
+        <div class="row">
+            @if (questionDto is not null)
+            {
+                <QuestionView Question="@questionDto" />
+            }
+            else
+            {
+                <p>Loading Question...</p>
+            }
+        </div>
+    </div>
+
+    <div class="col">
+        @foreach (var codeContents in TheirCode.Values)
+        {
+            var maxHeight = $"calc(70vh / {TheirCode.Count})";
+            <div class="row">
+                <CodeMirror6Wrapper IsWASM
+                                    @bind-Doc="codeContents.Code"
+                                    TabSize="TabSize"
+                                    Theme="EditorTheme"
+                                    Language="CodeMirrorLanguage.Csharp"
+                                    ReadOnly="true"
+                                    Editable="false"
+                                    LineWrapping="true"
+                                    MaxHeight="@maxHeight" />
+            </div>
+        }
+    </div>
+    
+    @if (showSettingsModal)
+    {
+        <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1; background-color: #0000007F">
+            <div class="position-fixed bg-light p-3" style="top: calc(100% / 3); left: calc(100% / 3); width: calc(100% / 3); height: calc(100% / 3)">
+                <h2>Editor Settings</h2>
+                <label for="tabSize">Tab Size</label>
+                <input type="number" id="tabSize" @bind="TabSize" min="1" max="8"/><br/>
+                <label for="theme">Editor Theme</label>
+                <select id="theme" @bind="EditorTheme">
+                    @foreach (var value in (ThemeMirrorTheme[])Enum.GetValues(typeof(ThemeMirrorTheme)))
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </select><br/>
+                <label for="lineWrapping">Line Wrapping</label>
+                <input type="checkbox" id="lineWrapping" @bind="LineWrapping"/><br/>
+                <label for="lineNumbers">Show Line Numbers</label>
+                <input type="checkbox" id="lineNumbers" @bind="LineNumbers"/><br/>
+                <button type="button" class="btn btn-primary" @onclick="() => showSettingsModal = false">Close</button>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-        [Parameter]
-        public required Guid GameId { get; set; }
 
-        [Parameter]
-        public required int ServerId { get; set; }
+    [Parameter]
+    public required Guid GameId { get; set; }
 
-    private string Code { get; set; } = string.Empty;
+    [Parameter]
+    public required int ServerId { get; set; }
+
+    Guid UserId { get; set; }
+
+    const double SendKeypressesDelayMs = 2000;
+
+    private bool showSettingsModal;
+
+    private int TabSize
+    {
+        get
+        {
+            var val = LocalStorage.GetItem<int>("tabSize");
+            return val == 0 ? 4 : val;
+        }
+        set
+        {
+            if (value is >= 1 and <= 9)
+            {
+                LocalStorage.SetItem("tabSize", value);
+            }
+            else
+            {
+                TabSize = 4;
+            }
+        }
+    }
+
+    private ThemeMirrorTheme EditorTheme
+    {
+        get => LocalStorage.GetItem<ThemeMirrorTheme>("editorTheme");
+        set => LocalStorage.SetItem("editorTheme", value);
+    }
+
+    private bool LineWrapping
+    {
+        get => LocalStorage.GetItem<bool>("lineWrapping");
+        set => LocalStorage.SetItem("lineWrapping", value);
+    }
+
+    private bool LineNumbers
+    {
+        get => LocalStorage.GetItem<bool?>("lineNumbers") ?? true;
+        set => LocalStorage.SetItem("lineNumbers", value);
+    }
+
+    // TODO: split some of this out into a service
+    private string code = string.Empty;
+    private string Code
+    {
+        get => code;
+        set
+        {
+            var lengthDifference = code.Length - value.Length;
+            if (lengthDifference == 1)
+            {
+                for (var i = 0; i < value.Length; i++)
+                {
+                    if (code[i] == value[i]) continue;
+                    unsentKeyPresses.Add(new KeyPressDTO { StateChange = "\b", StateChangePosition = i, IsEntireState = false });
+                    code = value;
+                    return;
+                }
+                unsentKeyPresses.Add(new KeyPressDTO { StateChange = "\b", StateChangePosition = code.Length, IsEntireState = false });
+                code = value;
+                return;
+            }
+
+            if (lengthDifference == -1)
+            {
+                for (var i = 0; i < code.Length; i++)
+                {
+                    if (code[i] == value[i]) continue;
+                    unsentKeyPresses.Add(new KeyPressDTO { StateChange = value[i].ToString(), StateChangePosition = i, IsEntireState = false });
+                    code = value;
+                    return;
+                }
+                unsentKeyPresses.Add(new KeyPressDTO { StateChange = value[^1].ToString(), StateChangePosition = code.Length, IsEntireState = false });
+                code = value;
+                return;
+            }
+
+            unsentKeyPresses.Add(new KeyPressDTO { StateChange = value, IsEntireState = true });
+            code = value;
+        }
+    }
+
+    QuestionDTO? questionDto;
 
     private readonly CodeMirrorSetup setup = new()
     {
-        BindMode = DocumentBindMode.OnInput
+        BindMode = DocumentBindMode.OnInput,
+        FocusOnCreation = true
     };
 
-    class CodeContents
-    {
-        public required string content;
-    }
+    private readonly List<KeyPressDTO> unsentKeyPresses = [];
 
-    private Dictionary<Guid, CodeContents> TheirCode { get; set; } = new() {{ Guid.Empty, new CodeContents { content = string.Empty }}};
+    private Dictionary<Guid, SlowlyAppearingText> TheirCode { get; } = new();
 
     private HubConnection? hubConnection;
 
-    private readonly Timer sendCodeTimer = new(2000);
+    private readonly Timer sendCodeTimer = new(SendKeypressesDelayMs);
 
     protected override async Task OnInitializedAsync()
     {
-        
         hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/gamehub")).Build();
 
-        hubConnection.On<string>("SetState", theirCode =>
-        {
-            TheirCode[Guid.Empty].content = theirCode;
-            InvokeAsync(StateHasChanged);
-        });
+        hubConnection.On<Guid, List<KeyPressDTO>>("ReceiveKeyPresses", ReceiveKeyPresses);
+        hubConnection.On<Guid?>("GameFinished", GameFinished);
 
         await hubConnection.StartAsync();
 
-        sendCodeTimer.Elapsed += async (_, _) =>
-        {
-            await SendCode();
-        };
+        sendCodeTimer.Elapsed += async (_, _) => await SendKeyPresses();
         sendCodeTimer.Enabled = true;
+
+        await LoadNextQuestion();
+
+        UserId = (await userService.GetUserName())?.Id ?? throw new ArgumentNullException("Must be logged in to play a game");
     }
 
-    private async Task SendCode()
+
+    private void GameFinished(Guid? nextId)
+    {
+        Console.WriteLine($"Got GameFinished, next:{nextId}");
+        Navigation.NavigateTo($"finish/{GameId}/{nextId}");
+    }
+
+    async Task LoadNextQuestion()
+    {
+        var questionResponse = await Http.GetFromJsonAsync<QuestionDTO>($"api/question/get/{GameId}");
+        if (questionResponse is not null)
+        {
+            LoadQuestion(questionResponse);
+        }
+    }
+
+    void LoadQuestion(QuestionDTO question)
+    {
+        Code = question.ScaffoldCode;
+        questionDto = question;
+    }
+
+    private async Task SendKeyPresses()
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendMessage", Code);
+            unsentKeyPresses.Add(new KeyPressDTO { StateChange = code, IsEntireState = true });
+            await hubConnection.SendAsync("SendKeyPresses", UserId, unsentKeyPresses);
+            unsentKeyPresses.Clear();
+        } else
+        {
+            Console.WriteLine("Game page not configured");
+        }
+    }
+
+    bool submitting;
+    ExecutionResponseDTO? submissionResult;
+    async Task Submit()
+    {
+        if (questionDto == null)
+        {
+            return;
+        }
+        if (submitting)
+        {
+            return;
+        }
+        submitting = true;
+
+        try
+        {
+            var request = new ExecutionRequestDTO
+            {
+                RawCode = Code,
+                GameId = GameId,
+                QuestionId = questionDto.Id
+            };
+            var response = await Http.PostAsJsonAsync<ExecutionRequestDTO>("api/execution/execute", request);
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ExecutionResponseDTO>();
+                if (result is not null)
+                {
+                    submissionResult = result;
+                    foreach (var questionDtoTestCase in questionDto.TestCases)
+                    {
+                        if (result.TestResultsDictionary.TryGetValue(questionDtoTestCase.Id, out var value))
+                        {
+                            questionDtoTestCase.Run = value;
+                        }
+                    }
+                }
+
+                submitting = true;
+            }
+            StateHasChanged();
+        }
+        finally
+        {
+            submitting = false;
+        }
+    }
+
+    private void ReceiveKeyPresses(Guid userId, List<KeyPressDTO> keyPresses)
+    {
+        if (userId == UserId)
+        {
+            return;
+        }
+
+        if (TheirCode.TryGetValue(userId, out var text))
+        {
+            text.SetKeyPresses(keyPresses);
+        }
+        else
+        {
+            TheirCode.Add(userId, new SlowlyAppearingText(keyPresses, this));
+        }
+    }
+
+    public void Dispose()
+    {
+        foreach (var slowAppearingText in TheirCode)
+        {
+            slowAppearingText.Value.Dispose();
+        }
+        sendCodeTimer.Stop();
+    }
+
+    private class SlowlyAppearingText : IDisposable
+    {
+        readonly Queue<KeyPressDTO> queue = [];
+        readonly Timer doThingTimer;
+        public string Code { get; set; } = string.Empty;
+
+        public SlowlyAppearingText(List<KeyPressDTO> keyPresses, Game game)
+        {
+            keyPresses.ForEach(k => queue.Enqueue(k));
+            doThingTimer = new Timer(SendKeypressesDelayMs / keyPresses.Count);
+            doThingTimer.Elapsed += (_, _) =>
+            {
+                if (queue.Count == 0)
+                {
+                    doThingTimer.Enabled = false;
+                    return;
+                }
+                var keyPress = queue.Dequeue();
+                if (keyPress.IsEntireState)
+                {
+                    Code = keyPress.StateChange;
+                }
+                else if (keyPress.StateChange == "\b")
+                {
+                    Code = Code[..keyPress.StateChangePosition] + Code[(keyPress.StateChangePosition + 1)..];
+                }
+                else
+                {
+                    Code = Code[..keyPress.StateChangePosition] + keyPress.StateChange + Code[keyPress.StateChangePosition..];
+                }
+                game.InvokeAsync(game.StateHasChanged);
+            };
+            doThingTimer.Enabled = true;
+        }
+
+        public void SetKeyPresses(List<KeyPressDTO> keyPresses)
+        {
+            if (queue.Count != 0)
+            {
+                Code = queue.Last().StateChange;
+                queue.Clear();
+            }
+
+            keyPresses.ForEach(k => queue.Enqueue(k));
+            doThingTimer.Interval = SendKeypressesDelayMs / queue.Count;
+            doThingTimer.Enabled = true;
+        }
+
+        public void Dispose()
+        {
+            doThingTimer.Stop();
         }
     }
 }

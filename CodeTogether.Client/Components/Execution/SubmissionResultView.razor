@@ -1,0 +1,53 @@
+﻿@using CodeTogether.Client.Integration.Execution;
+
+@*https://getbootstrap.com/docs/4.0/components/collapse/#accordion-example*@
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Compilation Result
+                </button>
+            </h5>
+        </div>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                @Result.Output
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Test Results (@Result.TestResults.Count(t => t.IsPassed) / @Result.TestResults.Length)
+                </button>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+                @foreach (var test in Result.TestResults)
+                {
+                    <div class="card">
+                        <b>Test Name @(test.IsPassed ? "✅" : "❌")</b>
+                        @if (!test.IsPassed)
+                        {
+                            <p>@test.ActualResult</p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public required ExecutionResponseDTO Result { get; set; }
+
+    //[Parameter]
+    //public required IEnumerable<TestCaseDto> Tests { get; set; }
+
+}

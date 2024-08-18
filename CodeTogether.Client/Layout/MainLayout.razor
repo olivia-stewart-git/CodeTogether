@@ -1,17 +1,25 @@
-﻿@inherits LayoutComponentBase
-@using CodeTogether.Client.Services
+﻿@using CodeTogether.Client.Services
+@using CodeTogether.Client.Integration 
+@inherits LayoutComponentBase
 @inject UserStateService user
 @inject NavigationManager nav
+@inject HttpClient http
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
 
 <div class="page">
     <main>
         <div class="top-row px-4">
             <div class="top-row-left">
-                <button class="btn btn-dark btn_padded" @onclick="GoHome">Home</button>
+                <button class="btn btn-dark" @onclick="GoHome">Home</button>
+            </div>
+            <div class="top-row-right btn-group" role="group">
+                <button class="btn btn-secondary" @onclick="GoStats">Your Stats</button>
+                <button class="btn btn-secondary" @onclick="GoQuestionEditor">Question Editor</button>
+                <button class="btn btn-dark" @onclick="Logout">Logout</button>
             </div>
             <div class="top-row-right">
-                <span>@usernameText</span>
-                <button class="btn btn-dark btn_padded" @onclick="Logout">Logout</button>
+                <p>@usernameText</p>
             </div>
         </div>
 
@@ -22,22 +30,34 @@
 </div>
 
 @code {
-    string usernameText = "Loading...";
+    void GoHome() => nav.NavigateTo("/");
+    string usernameText = "Not logged in";
 
+    void GoQuestionEditor() => nav.NavigateTo("/questionEditor");
 
-    // TODO: trigger a rerender of the layout when the user is changed (e.g. when logging in)
-    // maybe add an event on UserStateService and add this components StateHasChanged?
-    protected override async Task OnInitializedAsync()
+    void GoStats() => nav.NavigateTo("/stats");
+
+    protected override void OnInitialized()
     {
-        var username = await user.GetUserName();
-        usernameText = username == null ? "Not logged in" : $"Hello {username}";
-        StateHasChanged();
+        SetUsername(this, new());
+        user.UsernameChanged += SetUsername;
     }
 
-    void GoHome() => nav.NavigateTo("/");
-
-    void Logout()
+    void SetUsername(object? sender, EventArgs eventArgs)
     {
-        throw new NotImplementedException();
+        Task.Run(async () =>
+        {
+            var userInfo = await user.GetUserName();
+            usernameText = userInfo == null ? "Not logged in" : $"Hello {userInfo.Name}";
+            StateHasChanged();
+        });
+    }
+
+    async Task Logout()
+    {
+        await http.PostAsync("api/account/logout", null);
+        user.ResetCache();
+        SetUsername(this, new ());
+        nav.NavigateTo("/login");
     }
 }

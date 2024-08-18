@@ -5,10 +5,10 @@
 @implements IAsyncDisposable
 @inject NavigationManager Navigation
 @inject UserStateService user
+@inject HttpClient http
 
 
 <h2>Lobby</h2>
-<p>Using server @serverId.ToString() for user @gameId.ToString()</p>
 @if (!IsConnected) // Maybe should have a signalr base component wrapper to have this logic?
 {
     <p>Establishing connection</p>
@@ -17,12 +17,19 @@ else if (lobbyState == null)
 {
     <p>Waiting on first response</p>
 }
+else if (errorOccured)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 else
 {
+    <div>In Lobby for game: "@lobbyState.Name"</div>
     <div id="options">
-        @if (hasSentChange) // Used to give feedback of a pending change, should style it like one of those red notification things that phone apps have
+        @if (hasSentChange)
         {
-            <p>o</p>
+            <p>Sending...</p>
         }
         else
         {
@@ -34,7 +41,25 @@ else
             <button @onclick="() => ChangeMaxPlayers(1)">+</button>
         </span>
         <label for="privateSwitch">Private:</label>
-        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate"/>
+        <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate" />
+
+        <label for="waitSwitch">Wait for all players to finish:</label>
+        <input id="waitSwitch" type="checkbox" @onclick="ToggleWaitForAll" checked="@lobbyState.Configuration.WaitForAllToFinish" />
+
+        <label for="questionSelect">Question:</label>
+        @if(Questions == null)
+        {
+            <p>Loading Questions</p>
+        } else
+        {
+            <select id="questionSelect" class="form-select" @bind="SelectedQuestion">
+                @foreach (var question in Questions)
+                {
+                    <option value="@question.Id">@question.Name</option>
+                }
+            </select>
+        }
+        <button @onclick="SetRandomQuestion">Random Question</button>
     </div>
     <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
     <ul>
@@ -55,20 +80,44 @@ else
     public required int serverId { get; set; }
 
     HubConnection hubConnection;
-
     LobbyStateDTO? lobbyState;
 
-    bool hasSentChange = false;
+    Guid? SelectedQuestion
+    {
+        get
+        {
+            return lobbyState?.Configuration.Question.Id;
+        }
+        set {
+            Task.Run(() => SendLobbyConfiguration(new SetLobbyConfigurationDTO { QuestionId = value }));
+        }
+    }
 
+    List<QuestionListQuestionDTO>? Questions;
+
+    void SetRandomQuestion()
+    {
+        SelectedQuestion = Questions?[Random.Shared.Next(Questions.Count)].Id;
+    }
+
+    bool errorOccured;
+    string errorMessage = string.Empty;
+
+    bool hasSentChange;
     bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
     protected override async Task OnInitializedAsync()
     {
+        Questions = null;
+        lobbyState = null;
         var currentUser = await user.GetUserName();
         if (currentUser == null)
         {
-            Navigation.NavigateTo("/");
+            errorOccured = true;
+            errorMessage = "Could not find current user";
+            return;
         }
+
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/api/lobby-hub"))
@@ -76,6 +125,7 @@ else
 
         hubConnection.On<LobbyStateDTO>("StateHasBeenUpdated", async (state) =>
         {
+            Console.WriteLine(state.Configuration.StartingAtUtc);
             lobbyState = state;
             hasSentChange = false;
             await InvokeAsync(StateHasChanged);
@@ -83,12 +133,15 @@ else
 
         hubConnection.On("NotInGame", () =>
         {
+            Console.WriteLine("Not in game");
             Navigation.NavigateTo("/");
         });
 
         await hubConnection.StartAsync();
 
         await hubConnection.SendAsync("RequestState", gameId);
+
+        Questions = await http.GetFromJsonAsync<List<QuestionListQuestionDTO>>("/api/question/list");
     }
 
     async Task ChangeMaxPlayers(int by)
@@ -111,6 +164,14 @@ else
         if (lobbyState != null)
         {
             await SendLobbyConfiguration(new SetLobbyConfigurationDTO { IsPrivate = !lobbyState.Configuration.IsPrivate });
+        }
+    }
+
+    async Task ToggleWaitForAll()
+    {
+        if (lobbyState != null)
+        {
+            await SendLobbyConfiguration(new SetLobbyConfigurationDTO { WaitForAllToFinish = !lobbyState.Configuration.WaitForAllToFinish});
         }
     }
 

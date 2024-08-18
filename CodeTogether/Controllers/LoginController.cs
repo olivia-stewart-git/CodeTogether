@@ -1,11 +1,10 @@
-﻿using CodeTogether.Client.Integration.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using CodeTogether.Client.Integration;
+using CodeTogether.Client.Integration.Authentication;
 using CodeTogether.Services.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CodeTogether.Controllers;
 
@@ -25,7 +24,12 @@ public class LoginController : Controller
 	{
 		// TODO: check that the user actually exists in the database?
 		var name = User.Identity?.Name;
-		return string.IsNullOrEmpty(name) ? BadRequest() : Json(name);
+		var hasValidClaim = Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var userId);
+		if (!hasValidClaim || name is null)
+		{
+			return BadRequest();
+		}
+		return Json(new UserInfoDTO { Name = name, Id = userId });
 	}
 
 	[HttpPost]
@@ -57,14 +61,30 @@ public class LoginController : Controller
 		{
 			IsPersistent = true,
 			ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20),
-			//RedirectUri = "/", // TODO: does this need to be set for expiry?
+			//RedirectUri = "/", //do not redirect if messes things up!1
+			// TODO: work out how to do token refreshes
 		};
 
-		await HttpContext.SignInAsync(
-			CookieAuthenticationDefaults.AuthenticationScheme,
-			new ClaimsPrincipal(claimsIdentity),
-			authProperties);
+		try
+		{
+			await HttpContext.SignInAsync(
+				CookieAuthenticationDefaults.AuthenticationScheme,
+				new ClaimsPrincipal(claimsIdentity),
+				authProperties);
+		}
+		catch (Exception e)
+		{
+			return Json(new LoginResponseDTO() { IsAuthenticated = false, Message = $"Something went wrong attempting to sign in {e.Message}"});
+		}
 
+		return Json(LoginResponseDTO.Success);
+	}
+
+	[HttpPost]
+	[Route("logout")]
+	public async Task<IActionResult> Logout()
+	{
+		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 		return Json(LoginResponseDTO.Success);
 	}
 }

@@ -1,20 +1,18 @@
-﻿using CodeTogether.Client.Integration;
-using CodeTogether.Client.Integration.Authentication;
+﻿using CodeTogether.Client.Integration.Authentication;
+using System.Text.Json;
 using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
+using CodeTogether.Client.Integration;
 
 namespace CodeTogether.Client.Services;
 
-// TODO: can user AuthenticationStateProvider instead of some of this?
-// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.authorization.authenticationstateprovider?view=aspnetcore-8.0
 public class UserStateService(HttpClient http)
 {
 	// Stores the logged in user as a task to allow multiple components to be awaiting the response
 	// will then be cached as the task is already completed
-	Task<string?>? userNameTask;
+	Task<UserInfoDTO?>? userNameTask;
 	object gettingUsernameLock = new();
 
-	public async Task<string?> GetUserName()
+	public async Task<UserInfoDTO?> GetUserName()
 	{
 		EnsureRequestHasBeenMade();
 		return await userNameTask!;
@@ -34,18 +32,18 @@ public class UserStateService(HttpClient http)
 			{
 				return;
 			}
-
-			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<string?>>(responseTask =>
+			userNameTask = http.GetAsync("api/account/user").ContinueWith<Task<UserInfoDTO?>>(responseTask =>
 			{
 				var response = responseTask.Result;
 				if (response.IsSuccessStatusCode)
 				{
-					// Second ContinueWith is to cast from Task<string> to Task<string?>
-					return response.Content.ReadAsStringAsync().ContinueWith(c => (string?)c.Result);
+					var userInfo = response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					UsernameChanged?.Invoke(this, new());
+					return userInfo;
 				}
 				else
 				{
-					return Task.FromResult<string?>(null);
+					return Task.FromResult<UserInfoDTO?>(null);
 				}
 				// Unwrap() turns a Task<Task<T>> into a Task<T>
 			}).Unwrap();
@@ -61,10 +59,28 @@ public class UserStateService(HttpClient http)
 		}
 	}
 
+	public event EventHandler UsernameChanged;
+
+	/// <summary>
+	/// Try perform logon
+	/// </summary>
+	/// <param name="loginModel"></param>
+	/// <returns></returns>
+	/// <exception cref="LoginFailedException"></exception>
 	public async Task LoginAsUser(LoginRequestDTO loginModel)
 	{
 		var response = await http.PostAsJsonAsync("/api/account/login", loginModel);
-		var dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
+		LoginResponseDTO? dtoResponse;
+		try 
+		{
+			response.EnsureSuccessStatusCode();
+			dtoResponse = await response.Content.ReadFromJsonAsync<LoginResponseDTO>();
+		}
+		catch (Exception ex)
+		{
+			throw new LoginFailedException($"Network error: {ex.Message}{Environment.NewLine}{await response.Content.ReadAsStringAsync()}");
+		}
+
 		var loginSuccess = dtoResponse?.IsAuthenticated ?? false;
 		if (!loginSuccess)
 		{
@@ -73,7 +89,7 @@ public class UserStateService(HttpClient http)
 		ResetCache();
 	}
 
-	async public Task RegisterUser(RegisterAccountDTO registration)
+	public async Task RegisterUser(RegisterAccountDTO registration)
 	{
 		var response = await http.PostAsJsonAsync("/api/account/register", registration);
 		if (!response.IsSuccessStatusCode) // Network error

@@ -16,11 +16,14 @@ public class TestCaseModel : IDbModel
 	public required string TST_Title { get; set; }
 
 	[MaxLength(int.MaxValue)]
-	public required string[] TST_Arguments { get; set; }
+	public required List<string> TST_Arguments { get; set; }
 
 	[MaxLength(100)]
 	public required string TST_ExpectedResponse { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]
+	[ForeignKey(nameof(TST_QST_FK))]
 	public required QuestionModel TST_Question { get; set; }
+
+	public Guid TST_QST_FK { get; set; }
 }

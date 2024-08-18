@@ -1,0 +1,138 @@
+﻿@page "/questionEditor"
+@using CodeTogether.Client.Integration.Execution
+
+<div class="card">
+    <div class="card-body" style="margin-left:5px">
+        <h5 class="card-title">Question Editor</h5>
+    
+        <form style="margin-left:5px">
+            <div class="form-group">
+                <label for="questionName">QuestionName</label>
+                <input type="text" class="form-control" id="questionName" aria-describedby="questionHelp">
+                <small id="questionHelp" class="form-text text-muted">Name of the question</small>
+            </div>
+            <div class="form-group">
+                <label for="questionDescription">Description</label>
+                <textarea class="form-control" id="questionDescription" rows="4"></textarea>
+            </div>
+
+            <div class="form-group" style="margin-top:5px">
+                <label>Function Signature</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="returnTypeLabel">Return Type</span>
+                    </div>
+                    <input type="text" class="form-control" id="returnType" @bind=returnType>
+                </div>
+                @for (int i = 0; i < arguments.Count; i++)
+                {
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="argument@(i)label">Argument</span>
+                        </div>
+                        <input type="text" placeholder="arg name" class="form-control" id="argument@(i)" @onchange="(e) => ArgumentNameChanged(e, i)">
+                        <input type="text" placeholder="type" class="form-control" id="argument@(i)" @onchange="(e) => ArgumentTypeChanged(e, i)">
+                    </div>
+                }
+
+                <div class="btn-group mb-3" role="group">
+                    <button type="button" class="btn btn-secondary" @onclick="AddArgument">Add Argument</button>
+                    <button type="button" class="btn btn-secondary" @onclick="RemoveArgument">Remove Argument</button>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top:5px">
+                <label>Test Cases</label>
+
+                @for (int i = 0; i < testCases.Count; i++)
+                {
+                    <div class="form-group">
+                        <label for="test@(i)name">Name</label>
+                        <input type="text" class="form-control" id="test@(i)name" aria-describedby="test@(i)nameHelp">
+                    </div>
+                    <div class="form-group">
+                        <label for="test@(i)description">Description</label>
+                        <textarea class="form-control" id="test@(i)description" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test@(i)expectedValue">Expected Value</label>
+                        <textarea class="form-control" id="test@(i)description" rows="1"></textarea>
+                    </div>
+
+                    @for (int j = 0; j < arguments.Count; j++)
+                    {
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="test@(i)argument@(j)label">Argument</span>
+                            </div>
+                            <input type="text" placeholder="input value" class="form-control" id="test@(i)argument@(j)">
+                        </div>
+                    }
+                }
+                
+                <div class ="form-group">
+                    <div class="btn-group mb-3" role="group">
+                        <button type="button" class="btn btn-secondary" @onclick="AddTestCase">Add</button>
+                        <button type="button" class="btn btn-secondary" @onclick="RemoveTestCase">Remove</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:5px">
+                <button class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+
+    List<TestCaseDto> testCases = new()
+    {
+        new TestCaseDto() { Name = "Test 1", Description = "Test 1 Description", Arguments = new List<string>(), ExpectedResponse = "1" },
+    };
+
+    string returnType = "void";
+    List<(string, string)> arguments = new ();
+
+    void AddArgument()
+    {
+        arguments.Add(($"argument{arguments.Count + 1}", "int"));
+        foreach (var testCaseDto in testCases)
+        {
+            testCaseDto.Arguments.Add("input");
+        }
+        StateHasChanged();
+    }
+
+    void RemoveArgument()
+    {
+        arguments.RemoveAt(arguments.Count - 1);
+        foreach (var testCaseDto in testCases)
+        {
+            testCaseDto.Arguments.RemoveAt(testCaseDto.Arguments.Count - 1);
+        }
+        StateHasChanged();
+    }
+
+    void AddTestCase()
+    {
+        var newTestCase = new TestCaseDto() { Name = $"Test {testCases.Count + 1}", Description = $"Test {testCases.Count + 1} Description", Arguments = arguments.Select((x, i) => $"input {i + 1}").ToList(), ExpectedResponse = "1" };
+        testCases.Add(newTestCase);
+    }
+
+    void RemoveTestCase()
+    {
+        testCases.RemoveAt(testCases.Count - 1);
+    }
+
+    void ArgumentNameChanged (ChangeEventArgs e, int index)
+    {
+        arguments[index] = (e.Value.ToString(), arguments[index].Item2);
+    }
+
+    void ArgumentTypeChanged(ChangeEventArgs e, int index)
+    {
+        arguments[index] = (arguments[index].Item1, e.Value.ToString());
+    }
+}

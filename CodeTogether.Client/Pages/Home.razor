@@ -23,6 +23,7 @@ else
     <GameCreator />
     <GameList />
 }
+<CodeTogether.Client.Components.GameHistory />
 
 @code {
     bool HasLoaded = false;
@@ -30,7 +31,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        username = await user.GetUserName();
+        username = (await user.GetUserName())?.Name;
         HasLoaded = true;
         StateHasChanged();
     }

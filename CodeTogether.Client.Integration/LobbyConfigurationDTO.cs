@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace CodeTogether.Client.Integration
 {
 	// Message from the client to the server
@@ -18,6 +13,10 @@ namespace CodeTogether.Client.Integration
 		public bool? GoingToStart { get; set; }
 
 		public bool? IsPrivate { get; set; }
+
+		public bool? WaitForAllToFinish { get; set; }
+
+		public Guid? QuestionId { get; set; }
 	}
 
 	[Serializable]
@@ -26,7 +25,11 @@ namespace CodeTogether.Client.Integration
 		public required int MaxPlayers { get; set; }
 
 		public required DateTime? StartingAtUtc { get; set; }
-		
+
 		public required bool IsPrivate { get; set; }
+
+		public required bool WaitForAllToFinish { get; set; }
+
+		public required QuestionListQuestionDTO Question { get; set; }
 	}
 }

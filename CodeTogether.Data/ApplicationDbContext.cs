@@ -34,7 +34,7 @@ public class ApplicationDbContext : DbContext
 			.Property(x => x.TST_Arguments)
 			.HasConversion(
 				v => string.Join(',', v),
-				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
+				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
 				stringValueComparer);
 
 		modelBuilder.Entity<UserModel>()
@@ -43,9 +43,6 @@ public class ApplicationDbContext : DbContext
 				v => string.Join(',', v),
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
 				stringValueComparer);
-
-		modelBuilder.HasJsonConversion<SubmissionResultModel, Exception>(x => x.EXR_CompileError)
-					.HasJsonConversion<TestRunModel, Exception>(x => x.TCR_Exception);
 	}
 
 	#region Models
@@ -62,7 +59,6 @@ public class ApplicationDbContext : DbContext
 	public virtual DbSet<ParameterModel> Parameters { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
-	public virtual DbSet<SubmissionResultModel> SubmissionResults { get; set; }
 
 	public virtual DbSet<GameModel> Games { get; set; }
 	public virtual DbSet<UserModel> Users { get; set; }

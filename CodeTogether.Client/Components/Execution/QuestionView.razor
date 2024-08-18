@@ -1,0 +1,59 @@
+﻿@using System.Xml
+@using CodeTogether.Client.Integration.Execution
+@using CodeTogether.Client.Components.Execution
+<div class="card">
+    <div class="card-header">
+        <h4>@Question.Name</h4>
+    </div>
+    <div class="card-body">
+        <p>@Question.Description</p>
+    </div>
+    <div class="accordion" id="accordionTestCases">
+        @for (int index = 0; index < Question.TestCases.Count; index++)
+        {
+            int indexCopy = index;
+            var header = $"Test Case #{index + 1}";
+            var collapse = $"collapse{index + 1}";
+            var testCase = Question.TestCases[index];
+            <div class="card-header" id=@(() => "heading" + header)>
+                <h2 class="mb-0">
+                    <button class="btn btn-link@(() => activeIndex == indexCopy ? "" : " collapsed")"
+                            type="button"
+                            data-toggle="collapse" 
+                            data-target="#@(() => collapse)"
+                            aria-expanded="true" aria-controls="collapseOne"
+                            @onclick="() => ToggleCollapse(indexCopy)">
+                        @header
+                    </button>
+                </h2>
+            </div>
+            @if (activeIndex == index)
+            {
+                <div id="@(() => collapse)" class="collapse show" aria-labelledby="@header" data-parent="#accordionTestCases">
+                    <div class="card-body">
+                        <TestView TestCase="@testCase"/>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public required QuestionDTO Question { get; set; }
+
+    int activeIndex = 0;
+
+    private void ToggleCollapse(int index)
+    {
+        if (activeIndex == index)
+        {
+            activeIndex = -1;
+        }
+        else
+        {
+            activeIndex = index;
+        }
+        StateHasChanged();
+    }
+}

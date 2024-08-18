@@ -21,5 +21,5 @@ public class QuestionModel : IDbModel
 	public required ScaffoldModel QST_Scaffold { get; set; }
 
 	[InverseProperty(nameof(TestCaseModel.TST_Question))]
-	public IEnumerable<TestCaseModel> QST_TestCases { get; set; } = [];
+	public IEnumerable<TestCaseModel> QST_TestCases { get; set; } = new List<TestCaseModel>();
 }

@@ -1,5 +1,8 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Common;
+using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Engine;
+using Microsoft.CodeAnalysis;
 using System.Reflection;
 using TestCaseStatus = CodeTogether.Data.Models.Questions.TestCaseStatus;
 
@@ -18,17 +21,16 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 
 	public abstract object? GetExecutionResult(Assembly targetAssembly, object[] testCaseArguments);
 
-	public SubmissionResultModel Execute(Assembly targetAssembly)
+	public List<TestRunModel> Execute(Assembly targetAssembly)
 	{
 		List<TestRunModel> testRuns = [];
-		var submissionResult = new SubmissionResultModel { EXR_Status = ExecutionStatus.InProgress };
 		foreach (var testCaseModel in testCases)
 		{
 			try
 			{
 				var arguments = GetTestCaseArguments(testCaseModel);
 				var result = GetExecutionResult(targetAssembly, arguments);
-				var testRun = AssertTestCase(testCaseModel, result, submissionResult);
+				var testRun = AssertTestCase(testCaseModel, result);
 				testRuns.Add(testRun);
 			}
 			catch (ExecutionRuntimeException ex)
@@ -36,34 +38,27 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				testRuns.Add(new TestRunModel()
 				{
 					TCR_ActualResult = string.Empty,
-					TCR_Exception = ex,
+					TCR_Exception = ex.GetFullMessage(),
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
-					TCR_SubmissionResult = submissionResult,
                 });
 			}
 		}
 
-		var status = testRuns.Any(x => x.TCR_Status != TestCaseStatus.Success)
-			? testRuns.Any(x => x.TCR_Status == TestCaseStatus.Error) ? ExecutionStatus.Error : ExecutionStatus.Failure
-			: ExecutionStatus.Success;
-
-		submissionResult.EXR_TestRuns = testRuns;
-		submissionResult.EXR_Status = status;
-		return submissionResult;
+		return testRuns;
 	}
 
 	object[] GetTestCaseArguments(TestCaseModel testCase)
 	{
 		var scaffoldParameters = scaffold.EXE_Parameters.ToList();
 
-		if (scaffoldParameters.Count != testCase.TST_Arguments.Length)
+		if (scaffoldParameters.Count != testCase.TST_Arguments.Count)
 		{
 			throw new InvalidOperationException("MissMatch between expected number of arguments from scaffold and actual number in test case");
 		}
 
 		List<object> arguments = [];
-		for (int i = 0; i < testCase.TST_Arguments.Length; i++)
+		for (int i = 0; i < testCase.TST_Arguments.Count; i++)
 		{
 			var targetType = scaffoldParameters[i];
 			var targetObject = testCase.TST_Arguments[i];
@@ -74,7 +69,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 		return arguments.ToArray();
 	}
 
-	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? actualResult, SubmissionResultModel submissionResult)
+	public virtual TestRunModel AssertTestCase(TestCaseModel testCase, object? actualResult)
 	{
 		var expectedType = scaffold.EXE_ReturnType?.OT_Type;
 		if (expectedType == null)
@@ -84,8 +79,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				TCR_ActualResult = string.Empty,
 				TCR_Status = TestCaseStatus.Error,
 				TCR_Parent = testCase,
-				TCR_SubmissionResult = submissionResult,
-				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}"),
+				TCR_Exception = new ExecutionRuntimeException($"Null return type for test case {testCase.TST_Title}").Message,
             };
 		}
 
@@ -101,7 +95,6 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 			TCR_ActualResult = actualResult.ToString() ?? string.Empty,
 			TCR_Status = status,
 			TCR_Parent = testCase,
-			TCR_SubmissionResult = submissionResult,
         };
     }
 }
