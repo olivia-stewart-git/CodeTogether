@@ -1,8 +1,11 @@
 ﻿@using CodeTogether.Client.Services
+@using CodeTogether.Client.Integration 
 @inherits LayoutComponentBase
 @inject UserStateService user
 @inject NavigationManager nav
 @inject HttpClient http
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
 
 <div class="page">
     <main>
@@ -27,9 +30,29 @@
 
     void GoQuestionEditor() => nav.NavigateTo("/questionEditor");
 
+    protected override void OnInitialized()
+    {
+        SetUsername(this, new());
+        user.UsernameChanged += SetUsername;
+    }
+
+    void SetUsername(object? sender, EventArgs eventArgs)
+    {
+        Task.Run(async () =>
+        {
+            var userInfo = await user.GetUserName();
+            usernameText = userInfo == null ? "Not logged in" : $"Hello {userInfo.Name}";
+            StateHasChanged();
+        });
+    }
+
+    void GoHome() => nav.NavigateTo("/");
+
     async Task Logout()
     {
         await http.PostAsync("api/account/logout", null);
+        user.ResetCache();
+        SetUsername(this, new ());
         nav.NavigateTo("/login");
     }
 }

@@ -24,16 +24,12 @@ public class LoginController : Controller
 	{
 		// TODO: check that the user actually exists in the database?
 		var name = User.Identity?.Name;
-		var nameClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-		if (nameClaim == null)
+		var hasValidClaim = Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var userId);
+		if (!hasValidClaim || name is null)
 		{
 			return BadRequest();
 		}
-		if (!Guid.TryParse(nameClaim.Value, out var userId))
-		{
-			return BadRequest();
-		}
-		return string.IsNullOrEmpty(name) ? BadRequest() : Json(new UserInfoDTO { Name = name, Id = userId });
+		return Json(new UserInfoDTO { Name = name, Id = userId });
 	}
 
 	[HttpPost]

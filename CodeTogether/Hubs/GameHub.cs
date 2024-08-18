@@ -25,7 +25,7 @@ public class GameHub(ApplicationDbContext dbContext, IGameService gameService) :
 	public async Task SendKeyPresses(Guid userId, List<KeyPressDTO> keyPresses)
 	{
 		var game = gameService.GetActiveGameForUser(dbContext, Context.UserIdentifier, cache: true);
-		await Clients.Group(game.GM_PK.ToString()).SendAsync("ReceiveKeyPresses", userId, keyPresses);
+		await Clients.OthersInGroup(game.GM_PK.ToString()).SendAsync("ReceiveKeyPresses", userId, keyPresses);
 
 		if (game.GM_FinishedAtUtc != null && game.GM_FinishedAtUtc < DateTime.UtcNow)
 		{

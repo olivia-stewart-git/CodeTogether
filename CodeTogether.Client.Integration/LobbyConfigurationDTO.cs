@@ -19,9 +19,7 @@ namespace CodeTogether.Client.Integration
 
 		public bool? IsPrivate { get; set; }
 
-		public TimeSpan? GameLength { get; set; }
-
-		public bool? StartAfterSubmission { get; set; }
+		public bool? WaitForAllToFinish { get; set; }
 	}
 
 	[Serializable]
@@ -35,6 +33,6 @@ namespace CodeTogether.Client.Integration
 
 		public TimeSpan GameLength { get; set; }
 
-		public bool StartAfterSubmission { get; set; }
+		public bool WaitForAllToFinish { get; set; }
 	}
 }
