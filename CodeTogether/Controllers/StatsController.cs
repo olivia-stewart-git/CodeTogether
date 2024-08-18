@@ -33,7 +33,7 @@ public class StatsController(ApplicationDbContext dbContext) : Controller
 		}
 		// null-dereference operator fine for statements translated to sql https://stackoverflow.com/a/77874658
 		var gamesWithWinners = dbContext.Games.Include(g => g.GamePlayers).Include(g => g.GM_WinningSubmission).ThenInclude(s => s!.SBM_SubmittedBy).ThenInclude(p => p.GMP_User);
-		var gamesPlayed = gamesWithWinners.Where(g => g.GamePlayers.Any(gp => gp.GMP_USR_FK == userId));
+		var gamesPlayed = gamesWithWinners.Where(g => g.GamePlayers.Any(gp => gp.GMP_USR_FK == userId) && g.GM_FinishedAtUtc != null && g.GM_WinningSubmission != null);
 		var relevant = gamesPlayed.OrderBy(gp => gp.GM_FinishedAtUtc).Skip((pageNum - 1) * pageSize).Take(pageSize);
 		return Ok(relevant.Select(g => new GameResultDTO
 		{
