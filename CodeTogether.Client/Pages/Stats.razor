@@ -1,30 +1,45 @@
 ﻿@page "/stats"
-@using System.Formats.Asn1
 @using System.Text.Json
+@using Blazored.LocalStorage
 @using CodeTogether.Client.Integration
 @using GaelJ.BlazorCodeMirror6
-@using Microsoft.AspNetCore.WebUtilities
-@inject HttpClient Http;
+@using GaelJ.BlazorCodeMirror6.Models
+@inject HttpClient Http
+@inject ISyncLocalStorageService LocalStorage
 
 <h1>Your statistics</h1><br/>
 @if (stats is not null)
 {
-    <div>
-        Games won: @stats.GamesWon<br />
-        Games played: @stats.GamesPlayed<br />
-        Win rate: @GetWinRate()<br />
+    <div class="container-fluid">
+        <div class="col">Games Won<br/>@stats.GamesWon/@stats.GamesPlayed</div>
+        <div class="col">Win Rate<br/>@GetWinRate()</div>
     </div>
 }
-@if (statsLoadError)
+else if (!statsLoadError)
+{
+    <div>
+        Loading...
+    </div>
+}
+else
 {
     <div>
         Error loading stats. Please try again later.<br/>
     </div>
 }
 <h1>Your games:</h1><br />
+<div class="btn-group w-100">
+    <button type="button" class="btn btn-primary flex-grow-0" @onclick="async () => await UpdatePageValues(pageNum - 1, pageSize)">&lt;</button>
+    <label for="pageNum">Page: </label>
+    <input type="number" value="@pageNum" min="1" @oninput="async e => await UpdatePageValues(NumberInputToString(e.Value!), pageSize)" id="pageNum" style="max-width: 50px; -webkit-appearance: none; -moz-appearance: textfield"/>
+    <button type="button" class="btn btn-primary flex-grow-0" @onclick="async () => await UpdatePageValues(pageNum + 1, pageSize)">&gt;</button>
+    <div style="flex-grow: 1"></div>
+    <label for="pageSize">Games per page: </label>
+    <input type="number" value="@pageSize" min="1" max="100" id="pageSize" @oninput="async e => await UpdatePageValues(pageNum, NumberInputToString(e.Value!))" />
+</div>
 @if (games is not null)
 {
-    <table>
+    <table class="w-100">
         <thead>
         <tr>
             <th>
@@ -55,32 +70,59 @@
                     @game.WinnerUsername
                 </td>
                 <td>
-                    <CodeMirror6Wrapper></CodeMirror6Wrapper>
+                    <CodeMirror6Wrapper IsWASM
+                                        Doc="@game.WinnerCode"
+                                        TabSize="TabSize"
+                                        Theme="EditorTheme"
+                                        Language="CodeMirrorLanguage.Csharp"
+                                        ReadOnly="true"
+                                        Editable="false"
+                                        LineWrapping="LineWrapping"
+                                        LineNumbers="LineNumbers"
+                                        MaxHeight="200px"
+                        ></CodeMirror6Wrapper>
                 </td>
             </tr>
         }
         </tbody>
     </table>
 }
-@if (gamesLoadError)
+else if (!gamesLoadError)
 {
     <div>
-        Error loading games. Please try again later.<br/>
+        Loading...
+    </div>
+}
+else
+{
+    <div>
+        Error loading your games. Please try again later.<br/>
     </div>
 }
 
 @code {
-    [Parameter]
-    [SupplyParameterFromQuery(Name = "pageNum")]
-    public int? PageNumParam { get; set; }
+    private int pageNum = 1;
+    private int pageSize = 5;
 
-    private int PageNum => PageNumParam ?? 1;
+    private int TabSize => LocalStorage.GetItem<int?>("tabSize") ?? 4;
+    private ThemeMirrorTheme EditorTheme => LocalStorage.GetItem<ThemeMirrorTheme?>("editorTheme") ?? ThemeMirrorTheme.Default;
+    private bool LineWrapping => LocalStorage.GetItem<bool?>("lineWrapping") ?? true;
+    private bool LineNumbers => LocalStorage.GetItem<bool?>("lineNumbers") ?? false;
 
-    [Parameter]
-    [SupplyParameterFromQuery(Name = "pageSize")]
-    public int? PageSizeParam { get; set; }
+    private async Task UpdatePageValues(int newPageNum, int newPageSize)
+    {
+        if (newPageNum >= 1)
+        {
+            pageNum = newPageNum;
+        }
 
-    private int PageSize => PageSizeParam ?? 5;
+        if (newPageSize is >= 1 and <= 100)
+        {
+            pageSize = newPageSize;
+        }
+
+        await PopulateGames();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,18 +147,7 @@
 
     private async Task PopulateGames()
     {
-        var queryParams = string.Empty;
-        if (PageNumParam is not null)
-        {
-            queryParams += "?pageNum=" + PageNum;
-        }
-
-        if (PageSizeParam is not null)
-        {
-            queryParams += (queryParams.Length == 0 ? '?' : '&') + "pageSize=" + PageSize;
-        }
-
-        var result = await Http.GetAsync("api/stats/games" + queryParams);
+        var result = await Http.GetAsync($"api/stats/games?pageNum={pageNum}&pageSize={pageSize}");
         if (result.IsSuccessStatusCode)
         {
             games = JsonSerializer.Deserialize<List<GameResultDTO>>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions
@@ -137,6 +168,13 @@
     private static string GetWinnerStyle(bool winnerIsYou) => winnerIsYou ?
         "background-color: lightgreen" :
         "background-color: lightcoral";
+
+    private static int NumberInputToString(object value)
+    {
+        var strVal = (string)value;
+        if (string.IsNullOrEmpty(strVal)) strVal = "0";
+        return int.Parse(strVal);
+    }
 
     private StatsDTO? stats;
     private List<GameResultDTO>? games;
