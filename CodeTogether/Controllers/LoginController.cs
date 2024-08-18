@@ -24,7 +24,15 @@ public class LoginController : Controller
 	{
 		// TODO: check that the user actually exists in the database?
 		var name = User.Identity?.Name;
-		var userId = Guid.Parse(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		var nameClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (nameClaim == null)
+		{
+			return BadRequest();
+		}
+		if (!Guid.TryParse(nameClaim.Value, out var userId))
+		{
+			return BadRequest();
+		}
 		return string.IsNullOrEmpty(name) ? BadRequest() : Json(new UserInfoDTO { Name = name, Id = userId });
 	}
 

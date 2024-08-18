@@ -41,10 +41,8 @@ public class UserStateService(HttpClient http)
 					// Second ContinueWith is to cast from Task<string> to Task<string?>
 					return response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 				}
-				else
-				{
-					return Task.FromResult<UserInfoDTO?>(null);
-				}
+
+				return Task.FromResult<UserInfoDTO?>(null);
 				// Unwrap() turns a Task<Task<T>> into a Task<T>
 			}).Unwrap();
 		}
