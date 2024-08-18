@@ -1,6 +1,6 @@
-﻿@inherits LayoutComponentBase
-@using CodeTogether.Client.Services
+﻿@using CodeTogether.Client.Services
 @using CodeTogether.Client.Integration 
+@inherits LayoutComponentBase
 @inject UserStateService user
 @inject NavigationManager nav
 @inject HttpClient http
@@ -13,8 +13,8 @@
             <div class="top-row-left">
                 <button class="btn btn-dark" @onclick="GoHome">Home</button>
             </div>
-            <div class="top-row-right">
-                <span>@usernameText</span>
+            <div class="top-row-right btn-group" role="group">
+                <button class="btn btn-secondary" @onclick="GoQuestionEditor">Question Editor</button>
                 <button class="btn btn-dark" @onclick="Logout">Logout</button>
             </div>
         </div>
@@ -26,8 +26,9 @@
 </div>
 
 @code {
-    string usernameText = "Loading...";
+    void GoHome() => nav.NavigateTo("/");
 
+    void GoQuestionEditor() => nav.NavigateTo("/questionEditor");
 
     protected override void OnInitialized()
     {

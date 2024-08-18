@@ -21,4 +21,12 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\CreateQuestion.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\CreateQuestion.razor" />
+  </ItemGroup>
 </Project>

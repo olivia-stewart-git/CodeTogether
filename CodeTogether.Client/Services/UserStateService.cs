@@ -41,10 +41,8 @@ public class UserStateService(HttpClient http)
 					UsernameChanged?.Invoke(this, new());
 					return userInfo;
 				}
-				else
-				{
-					return Task.FromResult<UserInfoDTO?>(null);
-				}
+
+				return Task.FromResult<UserInfoDTO?>(null);
 				// Unwrap() turns a Task<Task<T>> into a Task<T>
 			}).Unwrap();
 		}
