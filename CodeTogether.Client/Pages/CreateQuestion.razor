@@ -34,9 +34,50 @@
                         <input type="text" placeholder="type" class="form-control" id="argument@(i)" @onchange="(e) => ArgumentTypeChanged(e, i)">
                     </div>
                 }
-                <button type="button" class="btn btn-secondary btn-block" @onclick="AddArgument">Add Argument</button>
-            </div>
 
+                <div class="btn-group mb-3" role="group">
+                    <button type="button" class="btn btn-secondary" @onclick="AddArgument">Add Argument</button>
+                    <button type="button" class="btn btn-secondary" @onclick="RemoveArgument">Remove Argument</button>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top:5px">
+                <label>Test Cases</label>
+
+                @for (int i = 0; i < testCases.Count; i++)
+                {
+                    <div class="form-group">
+                        <label for="test@(i)name">Name</label>
+                        <input type="text" class="form-control" id="test@(i)name" aria-describedby="test@(i)nameHelp">
+                    </div>
+                    <div class="form-group">
+                        <label for="test@(i)description">Description</label>
+                        <textarea class="form-control" id="test@(i)description" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test@(i)expectedValue">Expected Value</label>
+                        <textarea class="form-control" id="test@(i)description" rows="1"></textarea>
+                    </div>
+
+                    @for (int j = 0; j < arguments.Count; j++)
+                    {
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="test@(i)argument@(j)label">Argument</span>
+                            </div>
+                            <input type="text" placeholder="input value" class="form-control" id="test@(i)argument@(j)">
+                        </div>
+                    }
+                }
+                
+                <div class ="form-group">
+                    <div class="btn-group mb-3" role="group">
+                        <button type="button" class="btn btn-secondary" @onclick="AddTestCase">Add</button>
+                        <button type="button" class="btn btn-secondary" @onclick="RemoveTestCase">Remove</button>
+                    </div>
+                </div>
+            </div>
             <div class="form-group" style="margin-top:5px">
                 <button class="btn btn-primary">Create</button>
             </div>
@@ -45,7 +86,11 @@
 </div>
 
 @code {
-    List<TestCaseDto> testCases = new List<TestCaseDto>();
+
+    List<TestCaseDto> testCases = new()
+    {
+        new TestCaseDto() { Name = "Test 1", Description = "Test 1 Description", Arguments = new List<string>(), ExpectedResponse = "1" },
+    };
 
     string returnType = "void";
     List<(string, string)> arguments = new ();
@@ -53,7 +98,32 @@
     void AddArgument()
     {
         arguments.Add(($"argument{arguments.Count + 1}", "int"));
+        foreach (var testCaseDto in testCases)
+        {
+            testCaseDto.Arguments.Add("input");
+        }
         StateHasChanged();
+    }
+
+    void RemoveArgument()
+    {
+        arguments.RemoveAt(arguments.Count - 1);
+        foreach (var testCaseDto in testCases)
+        {
+            testCaseDto.Arguments.RemoveAt(testCaseDto.Arguments.Count - 1);
+        }
+        StateHasChanged();
+    }
+
+    void AddTestCase()
+    {
+        var newTestCase = new TestCaseDto() { Name = $"Test {testCases.Count + 1}", Description = $"Test {testCases.Count + 1} Description", Arguments = arguments.Select((x, i) => $"input {i + 1}").ToList(), ExpectedResponse = "1" };
+        testCases.Add(newTestCase);
+    }
+
+    void RemoveTestCase()
+    {
+        testCases.RemoveAt(testCases.Count - 1);
     }
 
     void ArgumentNameChanged (ChangeEventArgs e, int index)
