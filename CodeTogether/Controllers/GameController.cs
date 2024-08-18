@@ -60,13 +60,17 @@ namespace CodeTogether.Controllers
 		public IActionResult GetGameFinishedInformation(Guid gameId)
 		{
 			var games = dbContext.Games
-				.Include(g => g.GM_WinningSubmission!)
-				.ThenInclude(s => s.SBM_SubmittedBy)
-				.ThenInclude(p => p.GMP_User)
-				.Include(g => g.GamePlayers);
+				.Include(g => g.GM_WinningSubmission)
+				// Null silence is safe because its sql not .net
+				.ThenInclude(s => s!.SBM_SubmittedBy)
+				.ThenInclude(p => p.GMP_User);
 			var game = games.First(x => x.GM_PK == gameId);
 			// TODO: maybe have a GameResultModel?
-			var winnerName = game.GM_WinningSubmission!.SBM_SubmittedBy.GMP_User.USR_UserName;
+			if (game.GM_WinningSubmission == null)
+			{
+				return BadRequest("Should only request state of finished games");
+			}
+			var winnerName = game.GM_WinningSubmission.SBM_SubmittedBy.GMP_User.USR_UserName;
 			var winnerCode = game.GM_WinningSubmission.SBM_Code;
 			var players = game.GamePlayers;
 			var question = questionService.GetQuestionById(game.GM_QST_FK) ?? throw new InvalidOperationException("Should have a question when finishing a game");

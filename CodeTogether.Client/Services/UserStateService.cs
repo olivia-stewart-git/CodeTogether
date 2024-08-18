@@ -59,7 +59,7 @@ public class UserStateService(HttpClient http)
 		}
 	}
 
-	public event EventHandler UsernameChanged;
+	public event EventHandler? UsernameChanged;
 
 	/// <summary>
 	/// Try perform logon

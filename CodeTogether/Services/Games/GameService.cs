@@ -13,9 +13,12 @@ namespace CodeTogether.Services.Games
 		// have to take dbContext as a parameter rather than DI'ing it because this service needs to be singleton to allow caching between signalr requests and ApplicationDbContext is scoped
 		public GameModel GetActiveGameForUser(ApplicationDbContext dbContext, string? userIdString, bool cache = true)
 		{
-			ArgumentNullException.ThrowIfNull(userIdString, nameof(userIdString));
+			userIdString = userIdString?.ToLower();
+			if (userIdString == null)
+			{
+				throw new ArgumentNullException(nameof(userIdString));
+			}
 
-			userIdString = userIdString.ToLower();
 
 			if (cache && userToGameCache.TryGetValue(userIdString, out var forUser))
 			{
@@ -27,7 +30,12 @@ namespace CodeTogether.Services.Games
 			var user = dbContext.Users.First(x => x.USR_PK == userId);
 			var player = dbContext.GamePlayers.Include(p => p.GMP_Game).Where(p => p.GMP_PK == user.USR_GMP_FK).FirstOrDefault();
 			var game = player?.GMP_Game;
-			userToGameCache[userIdString!] = game ?? throw new ArgumentException("No active game", nameof(userIdString));
+			if (game == null)
+			{
+				throw new ArgumentNullException("No active game");
+			}
+			// Safe to ignore nullable warning beacuse it has already been checked, I think the analyser is just confused by the .ToLower()
+			userToGameCache[userIdString!] = game;
 			return game;
 		}
 

@@ -21,7 +21,7 @@ public class CompilationEngine : ICompilationEngine
 
 		// This will prevent some malicous stuff being used, however things like System.IO.File.ReadAll are actually in the System.Runtime.dll assembly not the io one
 		// so there is no way to prevent calling it.
-		var references = allReferences.Where(r => !Regex.IsMatch(r.Display, ExcludeAssemblyStringsPattern));
+		var references = allReferences.Where(r => !Regex.IsMatch(r.Display ?? "", ExcludeAssemblyStringsPattern));
 
 		var tree = SyntaxFactory.ParseSyntaxTree(sourceCode.Trim());
 		var compilation = CSharpCompilation.Create(assemblyName + ".dll")
