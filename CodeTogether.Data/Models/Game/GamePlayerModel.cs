@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Questions;
@@ -22,9 +23,6 @@ public class GamePlayerModel : IDbModel
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public UserModel GMP_User { get; set; } = null!;
 	public Guid GMP_USR_FK { get; set; }
-
-	[MaxLength(int.MaxValue)]
-	public string GMP_MostRecentCode { get; set; } = string.Empty;
 
 	[InverseProperty(nameof(SubmissionModel.SBM_SubmittedBy))]
 	public IEnumerable<SubmissionModel> Submissions { get; set; } = new List<SubmissionModel>();

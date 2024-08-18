@@ -31,11 +31,6 @@ namespace CodeTogether.Data.Migrations
                     b.Property<Guid>("GMP_GM_FK")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("GMP_MostRecentCode")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("GMP_USR_FK")
                         .HasColumnType("uniqueidentifier");
 
@@ -127,9 +122,13 @@ namespace CodeTogether.Data.Migrations
                     b.Property<DateTime?>("GM_StartedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("GM_USR_FKWinner")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("GM_WaitForAll")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<Guid?>("GM_WinningSubmissionSBM_PK")
                         .HasColumnType("uniqueidentifier");
 
@@ -140,6 +139,15 @@ namespace CodeTogether.Data.Migrations
                     b.HasIndex("GM_QST_FK");
 
                     b.HasIndex("GM_WinningSubmissionSBM_PK");
+=======
+                    b.Property<string>("GM_WinnerCode")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GM_PK");
+
+                    b.HasIndex("GM_USR_FKWinner");
+>>>>>>> d964b19f1340cae6d11d6c39238fe73932fc2d28
 
                     b.ToTable("Games");
                 });
@@ -411,6 +419,7 @@ namespace CodeTogether.Data.Migrations
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.GameModel", b =>
                 {
+<<<<<<< HEAD
                     b.HasOne("CodeTogether.Data.Models.Questions.GameModel", "GM_NextGame")
                         .WithMany()
                         .HasForeignKey("GM_GM_NextGame_FK")
@@ -432,6 +441,13 @@ namespace CodeTogether.Data.Migrations
                     b.Navigation("GM_Question");
 
                     b.Navigation("GM_WinningSubmission");
+=======
+                    b.HasOne("CodeTogether.Data.Models.Game.UserModel", "GM_Winner")
+                        .WithMany()
+                        .HasForeignKey("GM_USR_FKWinner");
+
+                    b.Navigation("GM_Winner");
+>>>>>>> d964b19f1340cae6d11d6c39238fe73932fc2d28
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.ParameterModel", b =>
