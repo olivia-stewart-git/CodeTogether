@@ -2,7 +2,7 @@
 using CodeTogether.Data.Models.Questions;
 using Newtonsoft.Json;
 
-namespace CodeTogether.Services;
+namespace CodeTogether.Data.Seeding;
 
 public class QuestionLoader
 {

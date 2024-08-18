@@ -25,6 +25,8 @@ public class QuestionSeeder : ISeedStep
 
 		SeedSimpleAdd();
 		SeedHelloWorld();
+
+		SeedFromQuestionFiles();
 	}
 
 	public void ClearQuestionsAndSubmissions()
@@ -121,6 +123,17 @@ public class QuestionSeeder : ISeedStep
 
 
 		dbContext.Questions.Add(helloWorldQuestion);
+		dbContext.SaveChanges();
+	}
+
+	void SeedFromQuestionFiles()
+	{
+		var loader = new QuestionLoader();
+		var questions = loader.LoadQuestions();
+		foreach (var question in questions)
+		{
+			dbContext.Questions.Add(question);
+		}
 		dbContext.SaveChanges();
 	}
 }
