@@ -13,12 +13,12 @@ namespace CodeTogether.Services.Games
 		// have to take dbContext as a parameter rather than DI'ing it because this service needs to be singleton to allow caching between signalr requests and ApplicationDbContext is scoped
 		public GameModel GetActiveGameForUser(ApplicationDbContext dbContext, string? userIdString, bool cache = true)
 		{
+			userIdString = userIdString?.ToLower();
 			if (userIdString == null)
 			{
 				throw new ArgumentNullException(nameof(userIdString));
 			}
 
-			userIdString = userIdString.ToLower();
 
 			if (cache && userToGameCache.ContainsKey(userIdString))
 			{
@@ -34,7 +34,8 @@ namespace CodeTogether.Services.Games
 			{
 				throw new ArgumentNullException("No active game");
 			}
-			userToGameCache[userIdString] = game;
+			// Safe to ignore nullable warning beacuse it has already been checked, I think the analyser is just confused by the .ToLower()
+			userToGameCache[userIdString!] = game;
 			return game;
 		}
 

@@ -79,7 +79,7 @@ else
     [Parameter]
     public required int serverId { get; set; }
 
-    HubConnection hubConnection;
+    HubConnection? hubConnection;
     LobbyStateDTO? lobbyState;
 
     Guid? SelectedQuestion
@@ -182,8 +182,11 @@ else
 
     async Task SendLobbyConfiguration(SetLobbyConfigurationDTO config)
     {
-        hasSentChange = true;
-        await hubConnection.SendAsync("UpdateState", config);
+        if (hubConnection != null)
+        {
+            hasSentChange = true;
+            await hubConnection.SendAsync("UpdateState", config);
+        }
     }
 
     void GoToGame()
