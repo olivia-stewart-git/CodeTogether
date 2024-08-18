@@ -1,0 +1,16 @@
+﻿@page "/stats"
+@inject HttpClient Http;
+
+Your statistics<br />
+Games won: 0<br />
+Games played: 0<br />
+Win rate: 100%<br />
+Your games:<br />
+(List 10 games, use pagination)
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine(await Http.GetAsync("/api/stats/stats"));
+    }
+}
