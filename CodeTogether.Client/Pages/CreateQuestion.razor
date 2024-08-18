@@ -1,5 +1,6 @@
 ﻿@page "/questionEditor"
 @using CodeTogether.Client.Integration.Execution
+@inject HttpClient Http
 
 <div class="card">
     <div class="card-body" style="margin-left:5px">
@@ -8,12 +9,12 @@
         <form style="margin-left:5px">
             <div class="form-group">
                 <label for="questionName">QuestionName</label>
-                <input type="text" class="form-control" id="questionName" aria-describedby="questionHelp">
+                <input type="text" class="form-control" id="questionName" aria-describedby="questionHelp" @bind="questionName">
                 <small id="questionHelp" class="form-text text-muted">Name of the question</small>
             </div>
             <div class="form-group">
                 <label for="questionDescription">Description</label>
-                <textarea class="form-control" id="questionDescription" rows="4"></textarea>
+                <textarea class="form-control" id="questionDescription" @bind="questionDescription" rows="4"></textarea>
             </div>
 
             <div class="form-group" style="margin-top:5px">
@@ -79,8 +80,19 @@
                 </div>
             </div>
             <div class="form-group" style="margin-top:5px">
-                <button class="btn btn-primary">Create</button>
+                <button class="btn btn-primary" @onclick="RequestCreateQuestion">Create</button>
+                @if (awaitingResponse)
+                {
+                    <div class="spinner-border mg-3" role="status">
+                    </div>
+                }
             </div>
+            @if (!string.IsNullOrWhiteSpace(response))
+            {
+                <div class="alert alert-@(() => isSuccessResponse ? "success" : "danger")" role="alert">
+                    @response
+                </div>
+            }
         </form>
     </div>
 </div>
@@ -92,8 +104,15 @@
         new TestCaseDto() { Name = "Test 1", Description = "Test 1 Description", Arguments = new List<string>(), ExpectedResponse = "1" },
     };
 
+    string questionName = string.Empty;
+    string questionDescription = string.Empty;
+
     string returnType = "void";
     List<(string, string)> arguments = new();
+
+    string? response;
+    bool isSuccessResponse;
+    bool awaitingResponse;
 
     void AddArgument()
     {
@@ -134,5 +153,42 @@
     void ArgumentTypeChanged(ChangeEventArgs e, int index)
     {
         arguments[index] = (arguments[index].Item1 ?? "", e.Value?.ToString() ?? "");
+    }
+
+    async Task RequestCreateQuestion()
+    {
+        awaitingResponse = true;
+        var createQuestionRequest = new CreateQuestionRequestDTO()
+        {
+            Name = questionName,
+            Description = questionDescription,
+            Arguments = arguments,
+            ReturnType = returnType,
+            TestCases = testCases
+        };
+
+        try
+        {
+            var httpResponse = await Http.PostAsJsonAsync<CreateQuestionRequestDTO>("api/question/create", createQuestionRequest);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                this.response = "Question created successfully";
+                isSuccessResponse = true;
+            }
+            else
+            {
+                this.response = $"Failed to create question {await httpResponse.Content.ReadAsStringAsync()}";
+                isSuccessResponse = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            this.response = $"Failed to create question {ex.Message}";
+            isSuccessResponse = false;
+        }
+        finally
+        {
+            awaitingResponse = false;
+        }
     }
 }

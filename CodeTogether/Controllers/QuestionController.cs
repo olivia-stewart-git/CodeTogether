@@ -34,4 +34,11 @@ public class QuestionController(ApplicationDbContext dbContext, QuestionService 
 	{
 		return Json(dbContext.Questions.Select(x => new QuestionListQuestionDTO { Name = x.QST_Name, Id = x.QST_PK }));
 	}
+
+	[HttpPost]
+	[Route("create")]
+	public IActionResult CreateQuestion([FromBody] CreateQuestionRequestDTO createRequest)
+	{
+		return Ok();
+	}
 }
