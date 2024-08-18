@@ -59,8 +59,6 @@ public class ApplicationDbContext : DbContext
 	public virtual DbSet<ParameterModel> Parameters { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
-	public virtual DbSet<SubmissionResultModel> SubmissionResults { get; set; }
-	public virtual DbSet<CompletedSubmissionModel> CompletedSubmissions { get; set; }
 
 	public virtual DbSet<GameModel> Games { get; set; }
 	public virtual DbSet<UserModel> Users { get; set; }

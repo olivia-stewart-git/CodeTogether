@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
 // ReSharper disable InconsistentNaming
 
@@ -21,4 +23,7 @@ public class GamePlayerModel : IDbModel
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public UserModel GMP_User { get; set; } = null!;
 	public Guid GMP_USR_FK { get; set; }
+
+	[InverseProperty(nameof(SubmissionModel.SBM_SubmittedBy))]
+	public IEnumerable<SubmissionModel> Submissions { get; set; } = new List<SubmissionModel>();
 }

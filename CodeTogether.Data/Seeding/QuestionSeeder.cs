@@ -30,7 +30,6 @@ public class QuestionSeeder : ISeedStep
 	public void ClearQuestionsAndSubmissions()
 	{
 		dbContext.Submissions.ExecuteDelete();
-		dbContext.SubmissionResults.ExecuteDelete();
 		dbContext.TestRuns.ExecuteDelete();
 		dbContext.TestCases.ExecuteDelete();
 		dbContext.Questions.ExecuteDelete();
