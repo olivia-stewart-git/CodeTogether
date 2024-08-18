@@ -321,7 +321,6 @@
             return;
         }
 
-        Console.WriteLine($"KeyPresses: [{string.Join(", ", keyPresses.Select(k => k.StateChange))}]");
         if (TheirCode.TryGetValue(userId, out var text))
         {
             text.SetKeyPresses(keyPresses);
@@ -344,14 +343,12 @@
             doThingTimer = new Timer(SendKeypressesDelayMs / keyPresses.Count);
             doThingTimer.Elapsed += (_, _) =>
             {
-                Console.WriteLine("doThingTimerElapsed");
                 if (queue.Count == 0)
                 {
                     doThingTimer.Enabled = false;
                     return;
                 }
                 var keyPress = queue.Dequeue();
-                Console.WriteLine($"Key press: {keyPress.StateChange}");
                 if (keyPress.IsEntireState)
                 {
                     Code = keyPress.StateChange;
