@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CodeTogether.Data.DataAccess;
 using CodeTogether.Runner.Engine;
+using CodeTogether.Data.Models.Game;
 
 namespace CodeTogether.Data.Models.Submission;
 
@@ -12,16 +13,21 @@ public class SubmissionModel : IDbModel
 {
 	public Guid SBM_PK { get; set; } = Guid.NewGuid();
 
-	public DateTime SBM_SubmissionTime { get; set; } = DateTime.Now;
+	public required DateTime SBM_SubmissionStartTimeUtc { get; set; } = DateTime.UtcNow;
+
+	public required TimeSpan SBM_SubmissionDuration { get; set; }
 
 	[MaxLength(int.MaxValue)]
 	public required string SBM_Code { get; set; } = string.Empty;
 
-	[ForeignKey(nameof(SBM_EXR_FK))]
-	public SubmissionResultModel? SBM_Execution { get; set; }
-	public Guid? SBM_EXR_FK { get; set; }
+	public required QuestionModel SBM_Question { get; set; } = null!;
 
-    [ForeignKey(nameof(SBM_QST_FK))]
-	public required QuestionModel SBM_Question { get; set; }
-	public Guid SBM_QST_FK { get; set; }
+	public required GamePlayerModel SBM_SubmittedBy { get; set; }
+
+	public required ExecutionStatus SBM_Status { get; set; } = ExecutionStatus.InProgress;
+
+	public string? SBM_CompileError { get; set; }
+
+	[InverseProperty(nameof(TestRunModel.TCR_SubmissionResult))]
+	public IEnumerable<TestRunModel> SBM_TestRuns { get; set; } = new List<TestRunModel>();
 }

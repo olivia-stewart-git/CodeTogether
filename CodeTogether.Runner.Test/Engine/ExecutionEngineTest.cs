@@ -50,9 +50,9 @@ invalid code !!!!!
 			};
 			question.QST_TestCases = testCases;
 
-			var result = engine.ExecuteAgainstQuestion(question, code);
-			Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Error));
-			Assert.NotNull(result.EXR_CompileError);
+			var result = engine.ExecuteAgainstQuestion(question, code, null!);
+			Assert.That(result.SBM_Status, Is.EqualTo(ExecutionStatus.Error));
+			Assert.NotNull(result.SBM_CompileError);
 		}
 
 		[Test]
@@ -108,9 +108,9 @@ public class TestClass
 				}
 			};
 
-			var result = engine.ExecuteAgainstQuestion(question, code);
-			Assert.That(result.EXR_CompileError, Is.EqualTo(null));
-			Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
+			var result = engine.ExecuteAgainstQuestion(question, code, null!);
+			Assert.That(result.SBM_CompileError, Is.EqualTo(null));
+			Assert.That(result.SBM_Status, Is.EqualTo(ExecutionStatus.Success));
 		}
 
 		[TestCase("3", ExecutionStatus.Success, "3")]
@@ -167,9 +167,9 @@ public class TestClass
 				}
 			};
 
-			var result = engine.ExecuteAgainstQuestion(question, code);
-			Assert.That(result.EXR_Status, Is.EqualTo(expectedStatus));
-			Assert.That(result.EXR_TestRuns.First().TCR_ActualResult, Is.EqualTo(expectedActualResult));
+			var result = engine.ExecuteAgainstQuestion(question, code, null!);
+			Assert.That(result.SBM_Status, Is.EqualTo(expectedStatus));
+			Assert.That(result.SBM_TestRuns.First().TCR_ActualResult, Is.EqualTo(expectedActualResult));
 		}
 	}
 }

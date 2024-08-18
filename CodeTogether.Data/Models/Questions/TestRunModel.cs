@@ -22,5 +22,5 @@ public class TestRunModel : IDbModel
 
 	public required TestCaseModel TCR_Parent { get; set; }
 
-    public required SubmissionResultModel TCR_SubmissionResult { get; set; }
+    public SubmissionModel TCR_SubmissionResult { get; set; } = null!;
 }

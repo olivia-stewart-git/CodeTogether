@@ -1,9 +1,39 @@
-﻿@page "/finish/{GameId:Guid}"
+﻿@page "/finish/{GameId:guid}/{NextGameId:guid}"
+@using CodeTogether.Client.Integration
+@using System.Text.Json
+@using CodeTogether.Client.Components.Execution 
+@inject HttpClient http
+@inject NavigationManager nav
 
-<h3>Finished @GameId</h3>
-<p>Winner: TODO</p>
-<button>Play again (TODO create another game and redirect all players to it)</button>
+@if (GameInfo == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h2>Finished @GameInfo.GameName</h2>
+    <h3>Winner: @GameInfo.WinnerName</h3>
+    <p>With code:</p>
+    <p>@GameInfo.WinnerCode</p>
+    <QuestionView  Question="GameInfo.Question"/>
+}
+<button @onclick="GoToNextGame">Go Next</button>
 @code {
     [Parameter]
     public required Guid GameId { get; set; }
+
+    [Parameter]
+    public required Guid NextGameId { get; set; }
+
+    public GameWinInfoDTO? GameInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        GameInfo = await http.GetFromJsonAsync<GameWinInfoDTO>($"/api/game/info?gameId={GameId}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    async Task GoToNextGame()
+    {
+        await GameJoiner.JoinAndNavigateToGame(http, nav, NextGameId);
+    }
 }

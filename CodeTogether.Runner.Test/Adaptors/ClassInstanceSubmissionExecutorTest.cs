@@ -54,8 +54,8 @@ internal class ClassInstanceSubmissionExecutorTest
 		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
 		var result = adaptor.Execute(assembly);
-		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Success));
-		Assert.That(result.EXR_TestRuns.Count(), Is.EqualTo(2));
+		Assert.That(result.Select(r => r.TCR_Status), Is.All.EqualTo(TestCaseStatus.Success));
+		Assert.That(result.Count(), Is.EqualTo(2));
     }
 
 	[Test]
@@ -78,8 +78,8 @@ internal class ClassInstanceSubmissionExecutorTest
 		var adaptor = new ClassInstanceSubmissionExecutor(executionConfiguration, testCases);
 
 		var result = adaptor.Execute(assembly);
-		Assert.That(result.EXR_Status, Is.EqualTo(ExecutionStatus.Failure));
-		Assert.That(result.EXR_TestRuns.Count(), Is.EqualTo(1));
+		Assert.That(result.Select(r => r.TCR_Status).First(), Is.EqualTo(TestCaseStatus.Failure));
+		Assert.That(result.Count(), Is.EqualTo(1));
 	}
 }
 

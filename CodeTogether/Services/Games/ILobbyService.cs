@@ -6,7 +6,7 @@ namespace CodeTogether.Service.Games
 {
 	public interface ILobbyService
 	{
-		Guid CreateLobby(string lobbyName);
+		Guid CreateLobby(string lobbyName, string creatorName);
 
 		IEnumerable<GameListGameDTO> GetLobbies();
 
