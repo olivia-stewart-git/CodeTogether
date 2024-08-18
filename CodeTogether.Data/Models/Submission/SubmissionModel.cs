@@ -15,6 +15,7 @@ public class SubmissionModel : IDbModel
 
 	public required DateTime SBM_SubmissionStartTimeUtc { get; set; } = DateTime.UtcNow;
 
+	// Duration that the tests took to run
 	public required TimeSpan SBM_SubmissionDuration { get; set; }
 
 	[MaxLength(int.MaxValue)]

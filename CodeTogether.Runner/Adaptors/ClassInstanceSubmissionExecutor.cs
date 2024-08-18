@@ -37,7 +37,7 @@ public class ClassInstanceSubmissionExecutor : TestRunnerSubmissionExecutor
 		}
 		catch (Exception ex)
 		{
-			throw new ExecutionRuntimeException("Exception occurred running test", ex);
+			throw new ExecutionRuntimeException("Exception occurred when running test", ex);
 		}
     }
 }

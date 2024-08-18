@@ -1,4 +1,5 @@
-﻿using CodeTogether.Data.Models.Questions;
+﻿using CodeTogether.Common;
+using CodeTogether.Data.Models.Questions;
 using CodeTogether.Data.Models.Submission;
 using CodeTogether.Runner.Engine;
 using Microsoft.CodeAnalysis;
@@ -37,7 +38,7 @@ public abstract class TestRunnerSubmissionExecutor : ISubmissionExecutor
 				testRuns.Add(new TestRunModel()
 				{
 					TCR_ActualResult = string.Empty,
-					TCR_Exception = ex.Message,
+					TCR_Exception = ex.GetFullMessage(),
 					TCR_Status = TestCaseStatus.Error,
 					TCR_Parent = testCaseModel,
                 });

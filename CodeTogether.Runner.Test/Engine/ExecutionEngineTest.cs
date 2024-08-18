@@ -51,7 +51,7 @@ invalid code !!!!!
 			question.QST_TestCases = testCases;
 
 			var result = engine.ExecuteAgainstQuestion(question, code, null!);
-			Assert.That(result.SBM_Status, Is.EqualTo(ExecutionStatus.Error));
+			Assert.That(result.SBM_Status, Is.EqualTo(ExecutionStatus.CompileError));
 			Assert.NotNull(result.SBM_CompileError);
 		}
 

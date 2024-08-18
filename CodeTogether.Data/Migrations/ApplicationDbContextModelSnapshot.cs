@@ -271,12 +271,12 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("TCR_ActualResult")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TCR_Exception")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TCR_ParentTST_PK")
                         .HasColumnType("uniqueidentifier");

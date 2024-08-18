@@ -18,7 +18,6 @@ public class ExecutionEngine : IExecutionEngine
 
 	public SubmissionModel ExecuteAgainstQuestion(QuestionModel question, string code, GamePlayerModel submitter)
 	{
-		var startTime = DateTime.UtcNow;
 
 		var configuration = question.QST_Scaffold;
 		var compilationName = $"Compilation_{question.QST_Name}{Guid.NewGuid()}";
@@ -33,17 +32,32 @@ public class ExecutionEngine : IExecutionEngine
 		try
 		{
 			var compilation = compilationEngine.CreateCompilation(compilationName, code, typesReferences);
-			var testResults = executor.Execute(compilation);
 
-			var status = testResults.Any(x => x.TCR_Status != TestCaseStatus.Success)
-				? testResults.Any(x => x.TCR_Status == TestCaseStatus.Error) ? ExecutionStatus.Error : ExecutionStatus.Failure
-				: ExecutionStatus.Success;
+			var startTime = DateTime.UtcNow;
+			var task = Task.Run(() => executor.Execute(compilation));
+			if (!task.Wait(TimeSpan.FromSeconds(1)))
+			{
+				return new SubmissionModel()
+				{
+					SBM_Status = ExecutionStatus.Timeout,
+					SBM_SubmissionStartTimeUtc = startTime,
+					SBM_SubmissionDuration = DateTime.UtcNow - startTime,
+					SBM_Code = code,
+					SBM_Question = question,
+					SBM_SubmittedBy = submitter,
+				};
+			}
+			var testResults = task.Result;
+			var testsDuration = DateTime.UtcNow - startTime;
+
+			var allSuccess = !testResults.Any(x => x.TCR_Status != TestCaseStatus.Success);
+			var status = allSuccess ? ExecutionStatus.Success : ExecutionStatus.Failure;
 
 			var submissionResult = new SubmissionModel
 			{
 				SBM_Status = status,
 				SBM_SubmissionStartTimeUtc = startTime,
-				SBM_SubmissionDuration = DateTime.UtcNow - startTime,
+				SBM_SubmissionDuration = testsDuration,
 				SBM_TestRuns = testResults,
 				SBM_Code = code,
 				SBM_SubmittedBy = submitter,
@@ -55,9 +69,9 @@ public class ExecutionEngine : IExecutionEngine
 		{
 			return new SubmissionModel()
 			{
-				SBM_SubmissionStartTimeUtc = startTime,
-				SBM_SubmissionDuration = DateTime.UtcNow - startTime,
-				SBM_Status = ExecutionStatus.Error,
+				SBM_Status = ExecutionStatus.CompileError,
+				SBM_SubmissionStartTimeUtc = DateTime.UtcNow,
+				SBM_SubmissionDuration = TimeSpan.Zero,
 				SBM_CompileError = compilationException.Message,
 				SBM_Code = code,
 				SBM_Question = question,

@@ -14,10 +14,10 @@ public class TestRunModel : IDbModel
 
 	public required TestCaseStatus TCR_Status { get; set; }
 
-	[MaxLength(50)]
+	[MaxLength(int.MaxValue)]
 	public required string TCR_ActualResult { get; set; }
 
-	[MaxLength(400)] 
+	[MaxLength(int.MaxValue)] 
 	public string? TCR_Exception { get; set; } = null;
 
 	public required TestCaseModel TCR_Parent { get; set; }

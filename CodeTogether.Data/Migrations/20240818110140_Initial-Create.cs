@@ -235,8 +235,8 @@ namespace CodeTogether.Data.Migrations
                 {
                     TCR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TCR_Status = table.Column<int>(type: "int", nullable: false),
-                    TCR_ActualResult = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TCR_Exception = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    TCR_ActualResult = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
+                    TCR_Exception = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: true),
                     TCR_ParentTST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TCR_SubmissionResultSBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },

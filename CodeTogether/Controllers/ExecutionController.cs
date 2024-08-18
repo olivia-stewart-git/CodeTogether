@@ -53,7 +53,8 @@ public class ExecutionController(ApplicationDbContext dbContext, IExecutionEngin
 			State = result.SBM_Status.ToString(),
 			Output = result.SBM_Status switch
 			{
-				ExecutionStatus.Error => result.SBM_CompileError ?? "Error occurred",
+				ExecutionStatus.CompileError => result.SBM_CompileError ?? "Error occurred",
+				ExecutionStatus.Timeout => "Tests timed out",
 				_ => "Compiled Successfully"
 			},
 			TestResults = result.SBM_TestRuns.Select(x => new TestCaseDto.RunDTO()
