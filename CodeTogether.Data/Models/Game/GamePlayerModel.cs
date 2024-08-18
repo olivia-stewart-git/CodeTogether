@@ -21,7 +21,4 @@ public class GamePlayerModel : IDbModel
 	[DeleteBehavior(DeleteBehavior.NoAction)]
 	public UserModel GMP_User { get; set; } = null!;
 	public Guid GMP_USR_FK { get; set; }
-
-	[MaxLength(int.MaxValue)]
-	public string GMP_MostRecentCode { get; set; } = string.Empty;
 }

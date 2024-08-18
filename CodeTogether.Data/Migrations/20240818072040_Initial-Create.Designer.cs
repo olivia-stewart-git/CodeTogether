@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240817232131_Initial-Create")]
+    [Migration("20240818072040_Initial-Create")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,11 +33,6 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<Guid>("GMP_GM_FK")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("GMP_MostRecentCode")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("GMP_USR_FK")
                         .HasColumnType("uniqueidentifier");
@@ -120,10 +115,19 @@ namespace CodeTogether.Data.Migrations
                     b.Property<DateTime?>("GM_StartedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("GM_USR_FKWinner")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("GM_WaitForAll")
                         .HasColumnType("bit");
 
+                    b.Property<string>("GM_WinnerCode")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("GM_PK");
+
+                    b.HasIndex("GM_USR_FKWinner");
 
                     b.ToTable("Games");
                 });
@@ -433,6 +437,15 @@ namespace CodeTogether.Data.Migrations
                         .HasForeignKey("USR_GMP_FK");
 
                     b.Navigation("USR_CurrentGame");
+                });
+
+            modelBuilder.Entity("CodeTogether.Data.Models.Questions.GameModel", b =>
+                {
+                    b.HasOne("CodeTogether.Data.Models.Game.UserModel", "GM_Winner")
+                        .WithMany()
+                        .HasForeignKey("GM_USR_FKWinner");
+
+                    b.Navigation("GM_Winner");
                 });
 
             modelBuilder.Entity("CodeTogether.Data.Models.Questions.ParameterModel", b =>

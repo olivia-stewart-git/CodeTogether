@@ -1,16 +1,145 @@
 ﻿@page "/stats"
+@using System.Formats.Asn1
+@using System.Text.Json
+@using CodeTogether.Client.Integration
+@using GaelJ.BlazorCodeMirror6
+@using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http;
 
-Your statistics<br />
-Games won: 0<br />
-Games played: 0<br />
-Win rate: 100%<br />
-Your games:<br />
-(List 10 games, use pagination)
+<h1>Your statistics</h1><br/>
+@if (stats is not null)
+{
+    <div>
+        Games won: @stats.GamesWon<br />
+        Games played: @stats.GamesPlayed<br />
+        Win rate: @GetWinRate()<br />
+    </div>
+}
+@if (statsLoadError)
+{
+    <div>
+        Error loading stats. Please try again later.<br/>
+    </div>
+}
+<h1>Your games:</h1><br />
+@if (games is not null)
+{
+    <table>
+        <thead>
+        <tr>
+            <th>
+                Game
+            </th>
+            <th>
+                Finished
+            </th>
+            <th>
+                Winner
+            </th>
+            <th>
+                Winner's Code
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var game in games.OrderBy(g => g.GameFinishedUtc))
+        {
+            <tr>
+                <td>
+                    @game.GameName
+                </td>
+                <td>
+                    @game.GameFinishedUtc
+                </td>
+                <td style="@GetWinnerStyle(game.WinnerIsYou)">
+                    @game.WinnerUsername
+                </td>
+                <td>
+                    <CodeMirror6Wrapper></CodeMirror6Wrapper>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+@if (gamesLoadError)
+{
+    <div>
+        Error loading games. Please try again later.<br/>
+    </div>
+}
 
 @code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "pageNum")]
+    public int? PageNumParam { get; set; }
+
+    private int PageNum => PageNumParam ?? 1;
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "pageSize")]
+    public int? PageSizeParam { get; set; }
+
+    private int PageSize => PageSizeParam ?? 5;
+
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine(await Http.GetAsync("/api/stats/stats"));
+        await Task.WhenAll(PopulateStats(), PopulateGames());
     }
+
+    private async Task PopulateStats()
+    {
+        var result = await Http.GetAsync("/api/stats/stats");
+        if (result.IsSuccessStatusCode)
+        {
+            stats = JsonSerializer.Deserialize<StatsDTO>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+        else
+        {
+            statsLoadError = true;
+        }
+    }
+
+    private async Task PopulateGames()
+    {
+        var queryParams = string.Empty;
+        if (PageNumParam is not null)
+        {
+            queryParams += "?pageNum=" + PageNum;
+        }
+
+        if (PageSizeParam is not null)
+        {
+            queryParams += (queryParams.Length == 0 ? '?' : '&') + "pageSize=" + PageSize;
+        }
+
+        var result = await Http.GetAsync("api/stats/games" + queryParams);
+        if (result.IsSuccessStatusCode)
+        {
+            games = JsonSerializer.Deserialize<List<GameResultDTO>>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+        else
+        {
+            gamesLoadError = true;
+        }
+    }
+
+    private string GetWinRate() => stats!.GamesPlayed == 0 ?
+        "N/A" :
+        Math.Round(stats.GamesWon / (decimal)stats.GamesPlayed * 100, 2, MidpointRounding.AwayFromZero) + "%";
+
+    private static string GetWinnerStyle(bool winnerIsYou) => winnerIsYou ?
+        "background-color: lightgreen" :
+        "background-color: lightcoral";
+
+    private StatsDTO? stats;
+    private List<GameResultDTO>? games;
+    private bool statsLoadError;
+    private bool gamesLoadError;
 }

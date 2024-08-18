@@ -13,7 +13,7 @@ namespace CodeTogether.Client.Components
 			if (response.IsSuccessStatusCode)
 			{
 				var responseString = await response.Content.ReadAsStringAsync();
-				var gameDetails = JsonSerializer.Deserialize<JoinGameResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				var gameDetails = JsonSerializer.Deserialize<JoinGameResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
 				navigation.NavigateTo($"lobby/{gameDetails.ServerId}/{gameId}");
 				return "";
 			}
