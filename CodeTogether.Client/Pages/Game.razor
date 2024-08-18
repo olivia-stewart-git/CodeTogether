@@ -221,12 +221,12 @@
 
         await hubConnection.StartAsync();
 
-        sendCodeTimer.Elapsed += async (_, _) => await SendKeyPresses();
-        sendCodeTimer.Enabled = true;
-
         await LoadNextQuestion();
 
-        UserId = (await UserService.GetUserName())?.Id ?? throw new ArgumentNullException("Must be logged in to play a game");
+        UserId = (await UserService.GetUserName())?.Id ?? throw new InvalidOperationException("Must be logged in to play a game");
+
+        sendCodeTimer.Elapsed += async (_, _) => await SendKeyPresses();
+        sendCodeTimer.Enabled = true;
     }
 
 
