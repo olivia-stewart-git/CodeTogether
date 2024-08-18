@@ -23,12 +23,13 @@ public class QuestionSeeder : ISeedStep
 	{
 		ClearQuestionsAndSubmissions();
 
-		SeedSimpleAdd();
-		SeedHelloWorld();
 		SeedTwoSum();
 		SeedPalindrome();
 		SeedPrefix();
 		SeedParens();
+		SeedGreatestLetter();
+		SeedDigitSum();
+		SeedPivotNumber();
 
 		SeedFromQuestionFiles();
 	}
@@ -42,92 +43,6 @@ public class QuestionSeeder : ISeedStep
 		dbContext.Scaffolds.ExecuteDelete();
 		dbContext.Parameters.ExecuteDelete();
 		dbContext.Types.ExecuteDelete();
-	}
-
-	// TODO: read questions to seed from json file
-	void SeedSimpleAdd()
-	{
-		ParameterInfo[] parameters =
-		[
-			new ParameterInfo("a", typeof(int)),
-			new ParameterInfo("b", typeof(int)),
-		];
-
-		var scaffold = scaffoldModelFactory.GetScaffold(parameters, typeof(int));
-
-		var simpleAddQuestion = new QuestionModel()
-		{
-			QST_Name = "Simple Add",
-			QST_Description = "Return the result of adding both arguments together",
-			QST_Scaffold = scaffold,
-		};
-
-		simpleAddQuestion.QST_TestCases = new TestCaseModel[]
-		{
-			new ()
-			{
-				TST_Title = "Add to Three",
-				TST_Arguments = ["1","2"],
-				TST_ExpectedResponse = "3",
-				TST_IsHidden = false,
-				TST_Question = simpleAddQuestion,
-			},
-			new ()
-			{
-				TST_Title = "Add Big",
-				TST_Arguments = ["111","2320"],
-				TST_ExpectedResponse = "2431",
-				TST_IsHidden = false,
-				TST_Question = simpleAddQuestion,
-			},
-			new ()
-			{
-				TST_Title = "Add Negative",
-				TST_Arguments = ["-3","5"],
-				TST_ExpectedResponse = "2",
-				TST_IsHidden = false,
-				TST_Question = simpleAddQuestion,
-			},
-		};
-
-		dbContext.Questions.Add(simpleAddQuestion);
-		dbContext.SaveChanges();
-	}
-
-	void SeedHelloWorld()
-	{
-		var scaffold = scaffoldModelFactory.GetScaffold(Array.Empty<ParameterInfo>(), typeof(string));
-
-		var helloWorldQuestion = new QuestionModel()
-		{
-			QST_Name = "Hello World",
-			QST_Description = "Return the string \"Hello World!\", you can do that can't you?",
-			QST_Scaffold = scaffold,
-		};
-
-		helloWorldQuestion.QST_TestCases = new TestCaseModel[]
-		{
-			new ()
-			{
-				TST_Title = "Hello World",
-				TST_Arguments = [],
-				TST_ExpectedResponse = "Hello World!",
-				TST_IsHidden = false,
-				TST_Question = helloWorldQuestion,
-			},
-			new ()
-			{
-				TST_Title = "Hello World2",
-				TST_Arguments = [],
-				TST_ExpectedResponse = "Hello World!",
-				TST_IsHidden = false,
-				TST_Question = helloWorldQuestion,
-			},
-		};
-
-
-		dbContext.Questions.Add(helloWorldQuestion);
-		dbContext.SaveChanges();
 	}
 
 	void SeedTwoSum()
@@ -152,7 +67,7 @@ public class QuestionSeeder : ISeedStep
 		for (int i = 0; i < size; i++)
 		{
 			// over 2 to avoid overflows
-			// relying on hope that there is only once answer
+			// relying on the ostrich algorithm to ensure there is only once answer
 			nums.Add(Random.Shared.Next(int.MinValue / 2, int.MaxValue / 2));
 		}
 
@@ -396,6 +311,196 @@ public class QuestionSeeder : ISeedStep
 				TST_Title = "Empty",
 				TST_Arguments = ["((((((((([[[[[[[[)))))))))"],
 				TST_ExpectedResponse = "false",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+		};
+
+		dbContext.Questions.Add(question);
+		dbContext.SaveChanges();
+	}
+
+	void SeedGreatestLetter()
+	{
+		ParameterInfo[] parameters =
+		[
+			new ParameterInfo("s", typeof(string)),
+		];
+
+		var scaffold = scaffoldModelFactory.GetScaffold(parameters, typeof(char));
+
+		var question = new QuestionModel()
+		{
+			QST_Name = "Greatest Letter",
+			QST_Description = @"Given a string of English letters s, return the greatest English letter which occurs as both a lowercase and uppercase letter in s. The returned letter should be in uppercase. If no such letter exists, return a space.
+
+An English letter b is greater than another letter a if b appears after a in the English alphabet.",
+			QST_Scaffold = scaffold,
+		};
+
+		question.QST_TestCases = new TestCaseModel[]
+		{
+			new ()
+			{
+				TST_Title = "T is greater than O",
+				TST_Arguments = ["COdeZTogether"],
+				TST_ExpectedResponse = "T",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "None",
+				TST_Arguments = ["codetogether"],
+				TST_ExpectedResponse = " ",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "",
+				TST_Arguments = ["asdfjklAsdfjlASDFJKLzxcvbnm"],
+				TST_ExpectedResponse = "Z",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "Empty",
+				TST_Arguments = ["abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGzzzzABCDEFGABCDEFGabcdefgYyzz"],
+				TST_ExpectedResponse = "Y",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+		};
+
+		dbContext.Questions.Add(question);
+		dbContext.SaveChanges();
+	}
+
+	void SeedPivotNumber()
+	{
+		ParameterInfo[] parameters =
+		[
+			new ParameterInfo("n", typeof(int)),
+		];
+
+		var scaffold = scaffoldModelFactory.GetScaffold(parameters, typeof(int));
+
+		var question = new QuestionModel()
+		{
+			QST_Name = "Pivot Number",
+			QST_Description = @"Given a positive integer n, find the pivot integer x such that The sum of all elements between 1 and x inclusively equals the sum of all elements between x and n inclusively.
+Return the pivot integer x. If no such integer exists, return -1. It is guaranteed that there will be at most one pivot index for the given input.",
+			QST_Scaffold = scaffold,
+		};
+
+		question.QST_TestCases = new TestCaseModel[]
+		{
+			new ()
+			{
+				TST_Title = "Eight",
+				TST_Arguments = ["8"],
+				TST_ExpectedResponse = "6",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "One",
+				TST_Arguments = ["1"],
+				TST_ExpectedResponse = "1",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "None",
+				TST_Arguments = ["4"],
+				TST_ExpectedResponse = "-1",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "",
+				TST_Arguments = ["49"],
+				TST_ExpectedResponse = "35",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "",
+				TST_Arguments = ["20"],
+				TST_ExpectedResponse = "-1",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+		};
+
+		dbContext.Questions.Add(question);
+		dbContext.SaveChanges();
+	}
+
+	void SeedDigitSum()
+	{
+		ParameterInfo[] parameters =
+		[
+			new ParameterInfo("n", typeof(int)),
+		];
+
+		var scaffold = scaffoldModelFactory.GetScaffold(parameters, typeof(int));
+
+		var question = new QuestionModel()
+		{
+			QST_Name = "Alternative Digit Sum",
+			QST_Description = @"You are given a positive integer n. Each digit of n has a sign according to the following rules:
+The most significant digit is assigned a positive sign.
+Each other digit has an opposite sign to its adjacent digits.
+Return the sum of all digits.",
+			QST_Scaffold = scaffold,
+		};
+
+		question.QST_TestCases = new TestCaseModel[]
+		{
+			new ()
+			{
+				TST_Title = "521",
+				TST_Arguments = ["521"],
+				TST_ExpectedResponse = "4",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "111",
+				TST_Arguments = ["111"],
+				TST_ExpectedResponse = "1",
+				TST_IsHidden = false,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "886996",
+				TST_Arguments = ["886996"],
+				TST_ExpectedResponse = "0",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "",
+				TST_Arguments = ["123456"],
+				TST_ExpectedResponse = "-3",
+				TST_IsHidden = true,
+				TST_Question = question,
+			},
+			new ()
+			{
+				TST_Title = "",
+				TST_Arguments = ["90909"],
+				TST_ExpectedResponse = "27",
 				TST_IsHidden = true,
 				TST_Question = question,
 			},

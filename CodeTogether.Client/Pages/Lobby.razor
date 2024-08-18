@@ -40,17 +40,19 @@ else
             <button @onclick="() => ChangeMaxPlayers(-1)">-</button>
             <button @onclick="() => ChangeMaxPlayers(1)">+</button>
         </span>
+        <br />
         <label for="privateSwitch">Private:</label>
         <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate" />
-
+        <br />
         <label for="waitSwitch">Wait for all players to finish:</label>
         <input id="waitSwitch" type="checkbox" @onclick="ToggleWaitForAll" checked="@lobbyState.Configuration.WaitForAllToFinish" />
-
+        <br />
         <label for="questionSelect">Question:</label>
-        @if(Questions == null)
+        @if (Questions == null)
         {
             <p>Loading Questions</p>
-        } else
+        }
+        else
         {
             <select id="questionSelect" class="form-select" @bind="SelectedQuestion">
                 @foreach (var question in Questions)
