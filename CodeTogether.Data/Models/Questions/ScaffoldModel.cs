@@ -11,13 +11,12 @@ public class ScaffoldModel : IDbModel
 {
 	public Guid EXE_PK { get; set; } = Guid.NewGuid();
 
-	[MaxLength(50)] 
+	[MaxLength(1000)] 
 	public required string EXE_ScaffoldName { get; set; }
 
 	[MaxLength(int.MaxValue)]
 	public required string EXE_ScaffoldText { get; set; }
 
-	[MaxLength(50)]
 	public required ExecutionRunnerType EXE_ExecutionRunnerName { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]

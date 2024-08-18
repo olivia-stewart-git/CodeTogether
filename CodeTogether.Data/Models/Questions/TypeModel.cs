@@ -20,10 +20,10 @@ public class TypeModel : IDbModel
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
 
-	[MaxLength(100)]
+	[MaxLength(500)]
 	public required string OT_AssemblyName { get; set; }
 
-	[MaxLength(100)]
+	[MaxLength(1000)]
 	public required string OT_TypeName { get; set; }
 
 	[NotMapped]

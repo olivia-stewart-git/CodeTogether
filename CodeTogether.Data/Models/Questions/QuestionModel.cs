@@ -11,11 +11,11 @@ public class QuestionModel : IDbModel
 	public Guid QST_PK { get; set; } = Guid.NewGuid();
 
 	[Required]
-	[MaxLength(20)]
+	[MaxLength(100)]
 	public required string QST_Name { get; set; }
 
 	[Required]
-	[MaxLength(300)]
+	[MaxLength(int.MaxValue)]
 	public required string QST_Description { get; set; }
 
 	public required ScaffoldModel QST_Scaffold { get; set; }

@@ -12,13 +12,13 @@ public class TestCaseModel : IDbModel
 
 	public bool TST_IsHidden { get; set; }
 
-	[MaxLength(30)]
+	[MaxLength(50)]
 	public required string TST_Title { get; set; }
 
 	[MaxLength(int.MaxValue)]
 	public required List<string> TST_Arguments { get; set; }
 
-	[MaxLength(100)]
+	[MaxLength(200)]
 	public required string TST_ExpectedResponse { get; set; }
 
 	[DeleteBehavior(DeleteBehavior.NoAction)]

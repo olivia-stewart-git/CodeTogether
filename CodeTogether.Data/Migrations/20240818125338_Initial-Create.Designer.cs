@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeTogether.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240818110140_Initial-Create")]
+    [Migration("20240818125338_Initial-Create")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -150,8 +150,8 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("TC_Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("TC_Position")
                         .HasColumnType("int");
@@ -179,13 +179,13 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("QST_Description")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QST_Name")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("QST_ScaffoldEXE_PK")
                         .HasColumnType("uniqueidentifier");
@@ -209,7 +209,6 @@ namespace CodeTogether.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("EXE_ExecutionRunnerName")
-                        .HasMaxLength(50)
                         .HasColumnType("int");
 
                     b.Property<Guid>("EXE_ReturnTypeOT_PK")
@@ -217,8 +216,8 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("EXE_ScaffoldName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("EXE_ScaffoldText")
                         .IsRequired()
@@ -240,13 +239,13 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("TST_Arguments")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TST_ExpectedResponse")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("TST_IsHidden")
                         .HasColumnType("bit");
@@ -256,8 +255,8 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("TST_Title")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("TST_PK");
 
@@ -307,13 +306,13 @@ namespace CodeTogether.Data.Migrations
 
                     b.Property<string>("OT_AssemblyName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("OT_TypeName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.HasKey("OT_PK");
 

@@ -29,8 +29,8 @@ namespace CodeTogether.Data.Migrations
                 columns: table => new
                 {
                     OT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OT_AssemblyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    OT_TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    OT_AssemblyName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    OT_TypeName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,9 +42,9 @@ namespace CodeTogether.Data.Migrations
                 columns: table => new
                 {
                     EXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EXE_ScaffoldName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EXE_ScaffoldName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     EXE_ScaffoldText = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    EXE_ExecutionRunnerName = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    EXE_ExecutionRunnerName = table.Column<int>(type: "int", nullable: false),
                     EXE_ReturnTypeOT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EXE_ExecutionRunnerArgument = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
@@ -63,7 +63,7 @@ namespace CodeTogether.Data.Migrations
                 columns: table => new
                 {
                     TC_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TC_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TC_Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     TC_TypeOT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TC_Position = table.Column<int>(type: "int", nullable: false),
                     TC_ScaffoldEXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -90,8 +90,8 @@ namespace CodeTogether.Data.Migrations
                 columns: table => new
                 {
                     QST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QST_Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    QST_Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    QST_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    QST_Description = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
                     QST_ScaffoldEXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -111,9 +111,9 @@ namespace CodeTogether.Data.Migrations
                 {
                     TST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TST_IsHidden = table.Column<bool>(type: "bit", nullable: false),
-                    TST_Title = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    TST_Arguments = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TST_ExpectedResponse = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TST_Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TST_Arguments = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
+                    TST_ExpectedResponse = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     TST_QST_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
