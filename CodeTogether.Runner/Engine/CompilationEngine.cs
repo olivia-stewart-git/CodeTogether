@@ -2,26 +2,33 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CodeTogether.Runner.Engine;
 
 public class CompilationEngine : ICompilationEngine
 {
+	const string ExcludeAssemblyStringsPattern = @"\.(Net|IO|Win32|Data|Diagnostics|Reflection|RunTime|Security|Web|AppContext)";
 	public Assembly CreateCompilation(string assemblyName, string sourceCode, IEnumerable<Type>? referenceTypes = null)
 	{
-		var references = ((IEnumerable<MetadataReference>)Net80.References.All).ToHashSet();
-		// TODO: don't reinclude system types?
+		var allReferences = ((IEnumerable<MetadataReference>)Net80.References.All).ToHashSet();
 		foreach (var referenceType in (referenceTypes ?? Array.Empty<Type>()).ToHashSet() )
 		{
-			references.AddAssembly(referenceType);
+			allReferences.AddAssembly(referenceType);
 		}
+
+		// This will prevent some malicous stuff being used, however things like System.IO.File.ReadAll are actually in the System.Runtime.dll assembly not the io one
+		// so there is no way to prevent calling it.
+		var references = allReferences.Where(r => !Regex.IsMatch(r.Display ?? "", ExcludeAssemblyStringsPattern));
 
 		var tree = SyntaxFactory.ParseSyntaxTree(sourceCode.Trim());
 		var compilation = CSharpCompilation.Create(assemblyName + ".dll")
 			.WithOptions(
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-					optimizationLevel: OptimizationLevel.Release))
+					optimizationLevel: OptimizationLevel.Release)
+				{  })
 			.WithReferences(references)
 			.AddSyntaxTrees(tree);
 
@@ -44,7 +51,9 @@ public class CompilationEngine : ICompilationEngine
 				throw new CompilationException(errorMessage);
 			}
 		}
-
-		return Assembly.Load(codeStream.ToArray());
+		// new context prevents using the assemblies that the main application has loaded
+		var loadContext = new AssemblyLoadContext("userLoadContext", true);
+		codeStream.Position = 0;
+		return loadContext.LoadFromStream(codeStream);
 	}
 }

@@ -5,6 +5,7 @@
 @implements IAsyncDisposable
 @inject NavigationManager Navigation
 @inject UserStateService user
+@inject HttpClient http
 
 
 <h2>Lobby</h2>
@@ -41,11 +42,24 @@ else
         </span>
         <label for="privateSwitch">Private:</label>
         <input id="privateSwitch" type="checkbox" @onclick="TogglePrivate" checked="@lobbyState.Configuration.IsPrivate" />
+
         <label for="waitSwitch">Wait for all players to finish:</label>
         <input id="waitSwitch" type="checkbox" @onclick="ToggleWaitForAll" checked="@lobbyState.Configuration.WaitForAllToFinish" />
-        <p data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-            ?
-        </p>
+
+        <label for="questionSelect">Question:</label>
+        @if(Questions == null)
+        {
+            <p>Loading Questions</p>
+        } else
+        {
+            <select id="questionSelect" class="form-select" @bind="SelectedQuestion">
+                @foreach (var question in Questions)
+                {
+                    <option value="@question.Id">@question.Name</option>
+                }
+            </select>
+        }
+        <button @onclick="SetRandomQuestion">Random Question</button>
     </div>
     <h4>Players @lobbyState.Players.Count() / @lobbyState.Configuration.MaxPlayers</h4>
     <ul>
@@ -65,8 +79,26 @@ else
     [Parameter]
     public required int serverId { get; set; }
 
-    HubConnection hubConnection;
+    HubConnection? hubConnection;
     LobbyStateDTO? lobbyState;
+
+    Guid? SelectedQuestion
+    {
+        get
+        {
+            return lobbyState?.Configuration.Question.Id;
+        }
+        set {
+            Task.Run(() => SendLobbyConfiguration(new SetLobbyConfigurationDTO { QuestionId = value }));
+        }
+    }
+
+    List<QuestionListQuestionDTO>? Questions;
+
+    void SetRandomQuestion()
+    {
+        SelectedQuestion = Questions?[Random.Shared.Next(Questions.Count)].Id;
+    }
 
     bool errorOccured;
     string errorMessage = string.Empty;
@@ -76,6 +108,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Questions = null;
         lobbyState = null;
         var currentUser = await user.GetUserName();
         if (currentUser == null)
@@ -84,6 +117,7 @@ else
             errorMessage = "Could not find current user";
             return;
         }
+
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/api/lobby-hub"))
@@ -106,6 +140,8 @@ else
         await hubConnection.StartAsync();
 
         await hubConnection.SendAsync("RequestState", gameId);
+
+        Questions = await http.GetFromJsonAsync<List<QuestionListQuestionDTO>>("/api/question/list");
     }
 
     async Task ChangeMaxPlayers(int by)
@@ -146,8 +182,11 @@ else
 
     async Task SendLobbyConfiguration(SetLobbyConfigurationDTO config)
     {
-        hasSentChange = true;
-        await hubConnection.SendAsync("UpdateState", config);
+        if (hubConnection != null)
+        {
+            hasSentChange = true;
+            await hubConnection.SendAsync("UpdateState", config);
+        }
     }
 
     void GoToGame()

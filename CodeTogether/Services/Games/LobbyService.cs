@@ -9,9 +9,9 @@ namespace CodeTogether.Service.Games
 {
 	public class LobbyService(ApplicationDbContext dbContext) : ILobbyService
 	{
-		public Guid CreateLobby(string lobbyName)
+		public Guid CreateLobby(string lobbyName, string creatorName)
 		{
-			var game = new GameModel() { GM_Name = lobbyName };
+			var game = new GameModel() { GM_Name = lobbyName, GM_CreatedByName = creatorName, GM_Question = dbContext.Questions.First()};
 			dbContext.Games.Add(game);
 			dbContext.SaveChanges();
 			return game.GM_PK;
@@ -41,6 +41,7 @@ namespace CodeTogether.Service.Games
 				.Select(m => new GameListGameDTO
 				{
 					CreatedAt = m.GM_CreateTimeUtc,
+					CreatedBy = m.GM_CreatedByName,
 					Name = m.GM_Name,
 					Id = m.GM_PK,
 					NumPlayers = m.GamePlayers.Count(),
@@ -92,6 +93,8 @@ namespace CodeTogether.Service.Games
 		{
 			game.GM_MaxPlayers = newState.MaxPlayers ?? game.GM_MaxPlayers;
 			game.GM_Private = newState.IsPrivate ?? game.GM_Private;
+			game.GM_WaitForAll = newState.WaitForAllToFinish ?? game.GM_WaitForAll;
+			game.GM_QST_FK = newState.QuestionId ?? game.GM_QST_FK;
 
 			if (newState.GoingToStart == true)
 			{

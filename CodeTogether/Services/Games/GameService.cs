@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Data;
 using CodeTogether.Data.Models.Questions;
+using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 
@@ -7,21 +8,21 @@ namespace CodeTogether.Services.Games
 {
 	public class GameService : IGameService
 	{
-		ConcurrentDictionary<string, GameModel> userToGameCache = new ConcurrentDictionary<string, GameModel>();
+		readonly ConcurrentDictionary<string, GameModel> userToGameCache = new();
 
-		// have to take dbContext as a parameter rather than DI'ing it because this service needs to be scoped to allow caching between signalr requests and ApplicationDbContext is scoped
+		// have to take dbContext as a parameter rather than DI'ing it because this service needs to be singleton to allow caching between signalr requests and ApplicationDbContext is scoped
 		public GameModel GetActiveGameForUser(ApplicationDbContext dbContext, string? userIdString, bool cache = true)
 		{
+			userIdString = userIdString?.ToLower();
 			if (userIdString == null)
 			{
 				throw new ArgumentNullException(nameof(userIdString));
 			}
 
-			userIdString = userIdString.ToLower();
 
-			if (cache && userToGameCache.ContainsKey(userIdString))
+			if (cache && userToGameCache.TryGetValue(userIdString, out var forUser))
 			{
-				return userToGameCache[userIdString];
+				return forUser;
 			}
 
 			var userId = Guid.Parse(userIdString ?? "");
@@ -33,23 +34,55 @@ namespace CodeTogether.Services.Games
 			{
 				throw new ArgumentNullException("No active game");
 			}
-			userToGameCache[userIdString] = game;
+			// Safe to ignore nullable warning beacuse it has already been checked, I think the analyser is just confused by the .ToLower()
+			userToGameCache[userIdString!] = game;
 			return game;
 		}
 
-		void RemoveFromCacche(Guid userId) => userToGameCache.Remove(userId.ToString().ToLower(), out _);
+		void RemoveFromCache(Guid userId) => userToGameCache.Remove(userId.ToString().ToLower(), out _);
 
-		public void MarkAsFinished(ApplicationDbContext dbContext, Guid gameId)
+		public void MarkAsFinished(ApplicationDbContext dbContext, Guid gameId, SubmissionModel fromSubmission)
 		{
 			// Work around for not being able to broadcast a signalr message from controller (this is apparently possible but wasn't working)
-			// so instead just make it so the next key update for that game will realise the game is over and broadcast it from there.
+			// so instead just make it so the next key update for that game will refresh the game and realize the game is over and broadcast it from there.
 			var userIds = dbContext.GamePlayers.Where(p => p.GMP_GM_FK == gameId).Select(p => p.GMP_USR_FK);
 			foreach (var userId in userIds)
 			{
-				RemoveFromCacche(userId);
+				RemoveFromCache(userId);
 			}
-			dbContext.Games.First(g => g.GM_PK == gameId).GM_FinishedAtUtc = DateTime.UtcNow;
+			var game = dbContext.Games.First(g => g.GM_PK == gameId);
+			if (game.GM_WinningSubmission == null)
+			{
+				game.GM_FinishedAtUtc = DateTime.UtcNow;
+				game.GM_WinningSubmission = fromSubmission;
+			}
 			dbContext.SaveChanges();
+
+
+			var nextGame = new GameModel
+			{
+				GM_CreatedByName = game.GM_CreatedByName,
+				GM_Name = IncrementGameName(game.GM_Name),
+				GM_CreateTimeUtc = DateTime.UtcNow,
+				GM_MaxPlayers = game.GM_MaxPlayers,
+				GM_Private = game.GM_Private,
+				GM_WaitForAll = game.GM_WaitForAll,
+				GM_Question = dbContext.Questions.First()
+			};
+
+			dbContext.Games.Add(nextGame);
+			dbContext.SaveChanges();
+			game.GM_NextGame = nextGame;
+
+			dbContext.SaveChanges();
+		}
+
+		static string IncrementGameName(string oldGameName)
+		{
+			var gameNameEnd = oldGameName.Split("-").LastOrDefault();
+			var gameNameExceptEnd = string.Join("-", oldGameName.Split("-").SkipLast(1));
+			var alreadyHadNumber = int.TryParse(gameNameEnd, out int gameNumber);
+			return alreadyHadNumber ? $"{gameNameExceptEnd}-{gameNumber + 1}" : $"{oldGameName}-2";
 		}
 	}
 }

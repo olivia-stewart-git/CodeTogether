@@ -23,11 +23,8 @@ namespace CodeTogether.Data.Seeding
 				.ToList();
 			var columns = tables.SelectMany(t => t.GetProperties().Select(c => t.Name + c.Name + c.Attributes.ToString()));
 			var columnsString = string.Join("", columns);
-			using (var algo = SHA256.Create())
-			{
-				var digest = algo.ComputeHash(Encoding.UTF8.GetBytes(columnsString));
-				return Convert.ToBase64String(digest);
-			}
+			var digest = SHA256.HashData(Encoding.UTF8.GetBytes(columnsString));
+			return Convert.ToBase64String(digest);
 		}
 
 		public static void CheckSchemaVersion()

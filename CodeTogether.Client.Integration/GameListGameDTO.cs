@@ -9,4 +9,5 @@ public class GameListGameDTO
 	public required int MaxPlayers { get; set; }
 	public required bool Playing { get; set; }
 	public required DateTime CreatedAt { get; set; }
+	public required string CreatedBy { get; set; }
 }

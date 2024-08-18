@@ -5,17 +5,8 @@ using CodeTogether.Data.Models.Game;
 
 namespace CodeTogether.Services.Authentication;
 
-public class RegistrationService : IRegistrationService
+public class RegistrationService(ICryptographyService cryptographyService, ApplicationDbContext dbContext) : IRegistrationService
 {
-	readonly ICryptographyService cryptographyService;
-	readonly ApplicationDbContext dbContext;
-
-	public RegistrationService(ICryptographyService cryptographyService, ApplicationDbContext dbContext)
-	{
-		this.cryptographyService = cryptographyService;
-		this.dbContext = dbContext;
-	}
-
 	public Task<RegistrationState> RegisterUser(RegisterAccountDTO registrationRequest)
 	{
 		var hash = cryptographyService.HashString(registrationRequest.Password, out var salt);

@@ -1,7 +1,7 @@
-﻿using CodeTogether.Client.Integration;
-using CodeTogether.Client.Integration.Authentication;
+﻿using CodeTogether.Client.Integration.Authentication;
 using System.Text.Json;
 using System.Net.Http.Json;
+using CodeTogether.Client.Integration;
 
 namespace CodeTogether.Client.Services;
 
@@ -41,8 +41,10 @@ public class UserStateService(HttpClient http)
 					UsernameChanged?.Invoke(this, new());
 					return userInfo;
 				}
-
-				return Task.FromResult<UserInfoDTO?>(null);
+				else
+				{
+					return Task.FromResult<UserInfoDTO?>(null);
+				}
 				// Unwrap() turns a Task<Task<T>> into a Task<T>
 			}).Unwrap();
 		}
@@ -57,7 +59,7 @@ public class UserStateService(HttpClient http)
 		}
 	}
 
-	public event EventHandler UsernameChanged;
+	public event EventHandler? UsernameChanged;
 
 	/// <summary>
 	/// Try perform logon

@@ -1,8 +1,7 @@
 ﻿@page "/"
-@using CodeTogether.Client.Components
 @using CodeTogether.Client.Services
-@inject UserStateService user
-@inject NavigationManager navigation
+@inject UserStateService User
+@inject NavigationManager Navigation
 
 <PageTitle>Home</PageTitle>
 
@@ -23,7 +22,6 @@ else
     <GameCreator />
     <GameList />
 }
-<CodeTogether.Client.Components.GameHistory />
 
 @code {
     bool HasLoaded = false;
@@ -31,7 +29,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        username = (await user.GetUserName())?.Name;
+        username = (await User.GetUserName())?.Name;
         HasLoaded = true;
         StateHasChanged();
     }

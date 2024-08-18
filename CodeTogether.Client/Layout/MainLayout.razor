@@ -14,6 +14,7 @@
                 <button class="btn btn-dark" @onclick="GoHome">Home</button>
             </div>
             <div class="top-row-right btn-group" role="group">
+                <button class="btn btn-secondary" @onclick="GoStats">Your Stats</button>
                 <button class="btn btn-secondary" @onclick="GoQuestionEditor">Question Editor</button>
                 <button class="btn btn-dark" @onclick="Logout">Logout</button>
             </div>
@@ -33,6 +34,8 @@
     string usernameText = "Not logged in";
 
     void GoQuestionEditor() => nav.NavigateTo("/questionEditor");
+
+    void GoStats() => nav.NavigateTo("/stats");
 
     protected override void OnInitialized()
     {

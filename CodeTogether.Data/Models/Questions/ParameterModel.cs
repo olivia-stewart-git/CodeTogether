@@ -10,7 +10,7 @@ public class ParameterModel : IDbModel
 {
 	public Guid TC_PK { get; set; } = Guid.NewGuid();
 
-	[MaxLength(100)]
+	[MaxLength(30)]
 	public required string TC_Name { get; set; }
 
 	public required TypeModel TC_Type { get; set; }

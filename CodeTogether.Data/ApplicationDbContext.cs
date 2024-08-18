@@ -14,7 +14,7 @@ public class ApplicationDbContext : DbContext
 {
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new IOException("Assembly directory not found, application startup failed");
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
 			.AddJsonFile("appsettings.json");
@@ -26,7 +26,7 @@ public class ApplicationDbContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		var stringValueComparer = new ValueComparer<IEnumerable<string>>(
-			(c1, c2) => c1.SequenceEqual(c2),
+			(c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
 			c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
 			c => c);
 
@@ -59,8 +59,6 @@ public class ApplicationDbContext : DbContext
 	public virtual DbSet<ParameterModel> Parameters { get; set; }
 
 	public virtual DbSet<SubmissionModel> Submissions { get; set; }
-	public virtual DbSet<SubmissionResultModel> SubmissionResults { get; set; }
-	public virtual DbSet<CompletedSubmissionModel> CompletedSubmissions { get; set; }
 
 	public virtual DbSet<GameModel> Games { get; set; }
 	public virtual DbSet<UserModel> Users { get; set; }

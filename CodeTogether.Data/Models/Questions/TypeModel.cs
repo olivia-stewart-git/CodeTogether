@@ -13,17 +13,17 @@ public class TypeModel : IDbModel
     {
 	    return new TypeModel()
 	    {
-		    OT_AssemblyName = type.Assembly.FullName, 
-		    OT_TypeName = type.FullName
-	    };
+		    OT_AssemblyName = type.Assembly.FullName ?? throw new InvalidOperationException("Invalid Type used, some types can't be used e.g. generics and arrays"),
+		    OT_TypeName = type.FullName ?? throw new InvalidOperationException("Invalid Type used, some types can't be used e.g. generics and arrays"),
+		};
     }
 
 	public Guid OT_PK { get; set; } = Guid.NewGuid();
 
-	[MaxLength(100)]
+	[MaxLength(500)]
 	public required string OT_AssemblyName { get; set; }
 
-	[MaxLength(100)]
+	[MaxLength(1000)]
 	public required string OT_TypeName { get; set; }
 
 	[NotMapped]

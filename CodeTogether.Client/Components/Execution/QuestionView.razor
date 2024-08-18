@@ -9,19 +9,20 @@
         <p>@Question.Description</p>
     </div>
     <div class="accordion" id="accordionTestCases">
-        @for (var index = 0; index < Question.TestCases.Count; index++)
+        @for (int index = 0; index < Question.TestCases.Count; index++)
         {
+            int indexCopy = index;
             var header = $"Test Case #{index + 1}";
             var collapse = $"collapse{index + 1}";
             var testCase = Question.TestCases[index];
             <div class="card-header" id=@(() => "heading" + header)>
                 <h2 class="mb-0">
-                    <button class="btn btn-link@(() => activeIndex == index ? "" : " collapsed")"
+                    <button class="btn btn-link@(() => activeIndex == indexCopy ? "" : " collapsed")"
                             type="button"
                             data-toggle="collapse" 
                             data-target="#@(() => collapse)"
                             aria-expanded="true" aria-controls="collapseOne"
-                            @onclick="() => ToggleCollapse(index)">
+                            @onclick="() => ToggleCollapse(indexCopy)">
                         @header
                     </button>
                 </h2>

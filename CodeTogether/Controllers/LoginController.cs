@@ -9,15 +9,8 @@ using System.Security.Claims;
 namespace CodeTogether.Controllers;
 
 [Route("api/account")]
-public class LoginController : Controller
+public class LoginController(ILoginAuthenticationService loginAuthenticationService) : Controller
 {
-	readonly ILoginAuthenticationService loginAuthenticationService;
-
-	public LoginController(ILoginAuthenticationService loginAuthenticationService)
-	{
-		this.loginAuthenticationService = loginAuthenticationService;
-	}
-
 	[HttpGet]
 	[Route("user")]
 	public IActionResult GetUser()

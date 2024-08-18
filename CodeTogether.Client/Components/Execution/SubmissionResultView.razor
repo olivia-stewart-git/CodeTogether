@@ -26,10 +26,16 @@
         </div>
         <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
             <div class="card-body">
-                @*@foreach (var test in Result.TestResults)
+                @foreach (var test in Result.TestResults)
                 {
-                    <TestView TestCase="@test" />
-                }*@
+                    <div class="card">
+                        <b>Test Name @(test.IsPassed ? "✅" : "❌")</b>
+                        @if (!test.IsPassed)
+                        {
+                            <p>@test.ActualResult</p>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

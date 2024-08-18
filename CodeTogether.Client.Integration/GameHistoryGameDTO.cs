@@ -1,5 +1,4 @@
-﻿
-namespace CodeTogether.Client.Integration;
+﻿namespace CodeTogether.Client.Integration;
 public class GameHistoryGameDTO
 {
 }
