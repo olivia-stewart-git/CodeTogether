@@ -17,6 +17,7 @@ Main project structure:
 In production, instances of the backend will be hosted in 1 or more azure windows VM's (sticky-ly routed to by an api gateway).
 To start, the frontend will be served by the backend but because it is a seperate project it can be statically hosted in a CDN later.
 
+![Schema](schema.png)
 
 # Setup
 Set startup project to CodeTogether.Deployment and run to setup the database, the run CodeTogether to get the main app
@@ -29,12 +30,16 @@ To add a new migrations do `dotnet ef migrations add {migration name}` in the Co
 
 # Deployment
 
-The deployment is a manual process as follows:
+The deployment is a the process as follows:
 - Download build artifacts from the most recent build action and scp them to the app server (e.g. `scp -i ~/azure_vms.pem build-artifact.zip azureuser@{IP ADDRESS}:~/build-artifact.zip`)
-- Kill existing process (`ps -e | grep CodeTogether`, `kill {pid from prev cmd}`) and unzip binaries
-- Update appsettings.json with the sql server connection string, a copy of the prod db appsettings should be kept seperate from the source code so it can just be copied.
-- Run `./CodeTogether.Deployment Seedonly` to migrate and seed the database
-- Run application in background with `nohup ./CodeTogether > ~/logs/out.log 2> ~/logs/err.log &`
+- Run the deploy.sh script on the srever which will do the following
+	- Unzip build-artifact and move to correct location
+	- Kill existing process (`ps -e | grep CodeTogether`, `kill {pid from prev cmd}`) and unzip binaries
+	- Update appsettings.json with the sql server connection string, a copy of the prod db appsettings should be kept seperate from the source code so it can just be copied.
+	- Run `./CodeTogether.Deployment Seedonly` to migrate and seed the database
+	- Run application in background with `nohup ./CodeTogether > ~/logs/out.log 2> ~/logs/err.log &`
+
+Can view the logs with `tail -f ~/logs/out.log`
 
 The azure database does not allowing dropping the database because it is managed from the portal so the database schema changes will be managed with normal ef core migrations.
 The migrations will be applied with the CodeTogether.Deployment executable (`./CodeTogether SeedOnly`) along with seeding.
