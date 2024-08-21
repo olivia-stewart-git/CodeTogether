@@ -14,39 +14,36 @@ public interface IScaffoldModelFactory
 	ScaffoldModel GetScaffold(IEnumerable<ParameterInfo> parameters, Type returnType, ExecutionRunnerType executionRunner = ExecutionRunnerType.ClassInstance);
 }
 
-public class ScaffoldModelFactory : IScaffoldModelFactory
+public class ScaffoldModelFactory(ApplicationDbContext context, ICachedTypeModelFactory typeFactory) : IScaffoldModelFactory
 {
-	public ScaffoldModelFactory(ApplicationDbContext context, ICachedTypeModelFactory typeFactory)
-	{
-		this.context = context;
-		this.typeFactory = typeFactory;
-		foreach (var scaffold in context.Scaffolds)
-		{
-			scaffoldNameCache.Add(scaffold.EXE_ScaffoldName, scaffold);
-		}
-	}
-
-	Dictionary<string, ScaffoldModel> scaffoldNameCache = new();
-	ApplicationDbContext context;
-	ICachedTypeModelFactory typeFactory;
+	Dictionary<string, ScaffoldModel>? scaffoldNameCache;
 
 	public ScaffoldModel GetScaffold(IEnumerable<ParameterInfo> parameters, Type returnType, ExecutionRunnerType executionRunner)
 	{
+		if (scaffoldNameCache == null)
+		{
+			scaffoldNameCache = new();
+			foreach (var existingScaffold in context.Scaffolds)
+			{
+				scaffoldNameCache.Add(existingScaffold.EXE_ScaffoldName, existingScaffold);
+			}
+		}
+
 		var key = GenerateNameKey(parameters, returnType, executionRunner);
 		if (scaffoldNameCache.ContainsKey(key))
 		{
 			return scaffoldNameCache[key];
 		}
 
-		var scaffold = executionRunner switch
+		var resultScaffold = executionRunner switch
 		{
 			ExecutionRunnerType.ClassInstance => GetExecutionRunnerScaffold(parameters, returnType),
 			_ => throw new NotImplementedException(),
 		};
 
-		scaffoldNameCache[key] = scaffold;
+		scaffoldNameCache[key] = resultScaffold;
 
-		return scaffold;
+		return resultScaffold;
 	}
 
 	string GenerateNameKey(IEnumerable<ParameterInfo> parameters, Type returnType, ExecutionRunnerType executionRunner)
