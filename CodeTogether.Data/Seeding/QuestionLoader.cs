@@ -6,7 +6,7 @@ namespace CodeTogether.Data.Seeding;
 
 public class QuestionLoader
 {
-	public static string QuestionDirectory => Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.FullName, "QuestionFiles");
+	public static string QuestionDirectory => Path.Combine(Assembly.GetExecutingAssembly().Location, "QuestionFiles");
 
 	public void SaveQuestion(QuestionModel question)
 	{
@@ -17,7 +17,16 @@ public class QuestionLoader
 
 	public IEnumerable<QuestionModel> LoadQuestions()
 	{
-		var questionFiles = Directory.GetFiles(QuestionDirectory, "*.json");
+		string[] questionFiles = new string[] { }; ;
+		try
+		{
+			questionFiles = Directory.GetFiles(QuestionDirectory, "*.json");
+		}
+		catch (DirectoryNotFoundException)
+		{
+			Directory.CreateDirectory(QuestionDirectory);
+		}
+
 		return questionFiles
 			.Where(x => x.EndsWith("_question.json", StringComparison.Ordinal))
 			.Select(LoadQuestionFromFile)
