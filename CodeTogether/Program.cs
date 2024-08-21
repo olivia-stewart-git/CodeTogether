@@ -42,6 +42,8 @@ public class Program
 				options.AccessDeniedPath = "/Forbidden/";
 			});
 
+		builder.WebHost.UseStaticWebAssets();
+
 
 		var app = builder.Build();
 
