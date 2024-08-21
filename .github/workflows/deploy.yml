@@ -1,7 +1,5 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET Build and Test
+name: .NET Publish
 
 on:
   push:
@@ -23,12 +21,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet publish
     - name: Upload Bin
       uses: actions/upload-artifact@v4
       with:
         name: build-artifact
-        path: Bin/
+        path: Bin/publish
         overwrite: true
