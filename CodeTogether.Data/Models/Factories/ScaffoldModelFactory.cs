@@ -38,11 +38,15 @@ public class ScaffoldModelFactory : IScaffoldModelFactory
 			return scaffoldNameCache[key];
 		}
 
-		return executionRunner switch
+		var scaffold = executionRunner switch
 		{
 			ExecutionRunnerType.ClassInstance => GetExecutionRunnerScaffold(parameters, returnType),
 			_ => throw new NotImplementedException(),
 		};
+
+		scaffoldNameCache[key] = scaffold;
+
+		return scaffold;
 	}
 
 	string GenerateNameKey(IEnumerable<ParameterInfo> parameters, Type returnType, ExecutionRunnerType executionRunner)
