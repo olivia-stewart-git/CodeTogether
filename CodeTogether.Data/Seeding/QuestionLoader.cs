@@ -6,7 +6,7 @@ namespace CodeTogether.Data.Seeding;
 
 public class QuestionLoader
 {
-	public static string QuestionDirectory => Path.Combine(Assembly.GetExecutingAssembly().Location, "QuestionFiles");
+	public static string QuestionDirectory => Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName ?? "./", "QuestionFiles");
 
 	public void SaveQuestion(QuestionModel question)
 	{
