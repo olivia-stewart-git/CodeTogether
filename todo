@@ -1,0 +1,6 @@
+get running
+fix bugs and polish
+change to sql migrations
+containerize
+change to postgres & compose
+deploy to cloudflare vps

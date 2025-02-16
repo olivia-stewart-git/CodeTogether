@@ -15,9 +15,9 @@ namespace CodeTogether.Data.Migrations
                 name: "StmData",
                 columns: table => new
                 {
-                    STM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    STM_Key = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    STM_Value = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    STM_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    STM_Key = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    STM_Value = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,9 +28,9 @@ namespace CodeTogether.Data.Migrations
                 name: "Types",
                 columns: table => new
                 {
-                    OT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OT_AssemblyName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    OT_TypeName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                    OT_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    OT_AssemblyName = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    OT_TypeName = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,12 +41,12 @@ namespace CodeTogether.Data.Migrations
                 name: "Scaffolds",
                 columns: table => new
                 {
-                    EXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EXE_ScaffoldName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    EXE_ScaffoldText = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    EXE_ExecutionRunnerName = table.Column<int>(type: "int", nullable: false),
-                    EXE_ReturnTypeOT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EXE_ExecutionRunnerArgument = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    EXE_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    EXE_ScaffoldName = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    EXE_ScaffoldText = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    EXE_ExecutionRunnerName = table.Column<int>(type: "integer", nullable: false),
+                    EXE_ReturnTypeOT_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    EXE_ExecutionRunnerArgument = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,11 +62,11 @@ namespace CodeTogether.Data.Migrations
                 name: "Parameters",
                 columns: table => new
                 {
-                    TC_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TC_Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    TC_TypeOT_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TC_Position = table.Column<int>(type: "int", nullable: false),
-                    TC_ScaffoldEXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TC_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    TC_Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    TC_TypeOT_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    TC_Position = table.Column<int>(type: "integer", nullable: false),
+                    TC_ScaffoldEXE_PK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,10 +89,10 @@ namespace CodeTogether.Data.Migrations
                 name: "Questions",
                 columns: table => new
                 {
-                    QST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QST_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    QST_Description = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    QST_ScaffoldEXE_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    QST_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    QST_Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    QST_Description = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    QST_ScaffoldEXE_PK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,12 +109,12 @@ namespace CodeTogether.Data.Migrations
                 name: "TestCases",
                 columns: table => new
                 {
-                    TST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TST_IsHidden = table.Column<bool>(type: "bit", nullable: false),
-                    TST_Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TST_Arguments = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    TST_ExpectedResponse = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    TST_QST_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TST_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    TST_IsHidden = table.Column<bool>(type: "boolean", nullable: false),
+                    TST_Title = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    TST_Arguments = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    TST_ExpectedResponse = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    TST_QST_FK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,9 +130,9 @@ namespace CodeTogether.Data.Migrations
                 name: "GamePlayers",
                 columns: table => new
                 {
-                    GMP_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GMP_GM_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GMP_USR_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    GMP_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    GMP_GM_FK = table.Column<Guid>(type: "uuid", nullable: false),
+                    GMP_USR_FK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,14 +143,14 @@ namespace CodeTogether.Data.Migrations
                 name: "Submissions",
                 columns: table => new
                 {
-                    SBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SBM_SubmissionStartTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SBM_SubmissionDuration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    SBM_Code = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    SBM_QuestionQST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SBM_SubmittedByGMP_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SBM_Status = table.Column<int>(type: "int", nullable: false),
-                    SBM_CompileError = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SBM_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    SBM_SubmissionStartTimeUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SBM_SubmissionDuration = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    SBM_Code = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    SBM_QuestionQST_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    SBM_SubmittedByGMP_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    SBM_Status = table.Column<int>(type: "integer", nullable: false),
+                    SBM_CompileError = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -173,14 +173,14 @@ namespace CodeTogether.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    USR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    USR_Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    USR_UserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    USR_PasswordHash = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    USR_PasswordSalt = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    USR_CheckPoints = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    USR_LastHeardFromAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    USR_GMP_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    USR_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    USR_Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    USR_UserName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    USR_PasswordHash = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    USR_PasswordSalt = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    USR_CheckPoints = table.Column<string>(type: "text", nullable: false),
+                    USR_LastHeardFromAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    USR_GMP_FK = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -196,18 +196,18 @@ namespace CodeTogether.Data.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    GM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GM_Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    GM_CreateTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GM_StartedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GM_FinishedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GM_Private = table.Column<bool>(type: "bit", nullable: false),
-                    GM_MaxPlayers = table.Column<int>(type: "int", nullable: false),
-                    GM_WaitForAll = table.Column<bool>(type: "bit", nullable: false),
-                    GM_CreatedByName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GM_GM_NextGame_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    GM_WinningSubmissionSBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    GM_QST_FK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    GM_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    GM_Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    GM_CreateTimeUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GM_StartedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GM_FinishedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GM_Private = table.Column<bool>(type: "boolean", nullable: false),
+                    GM_MaxPlayers = table.Column<int>(type: "integer", nullable: false),
+                    GM_WaitForAll = table.Column<bool>(type: "boolean", nullable: false),
+                    GM_CreatedByName = table.Column<string>(type: "text", nullable: false),
+                    GM_GM_NextGame_FK = table.Column<Guid>(type: "uuid", nullable: true),
+                    GM_WinningSubmissionSBM_PK = table.Column<Guid>(type: "uuid", nullable: true),
+                    GM_QST_FK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,12 +233,12 @@ namespace CodeTogether.Data.Migrations
                 name: "TestRuns",
                 columns: table => new
                 {
-                    TCR_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TCR_Status = table.Column<int>(type: "int", nullable: false),
-                    TCR_ActualResult = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    TCR_Exception = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: true),
-                    TCR_ParentTST_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TCR_SubmissionResultSBM_PK = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TCR_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    TCR_Status = table.Column<int>(type: "integer", nullable: false),
+                    TCR_ActualResult = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    TCR_Exception = table.Column<string>(type: "text", maxLength: 2147483647, nullable: true),
+                    TCR_ParentTST_PK = table.Column<Guid>(type: "uuid", nullable: false),
+                    TCR_SubmissionResultSBM_PK = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

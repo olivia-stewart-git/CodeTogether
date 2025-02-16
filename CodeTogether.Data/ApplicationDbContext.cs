@@ -2,7 +2,6 @@
 using CodeTogether.Data.Models.Game;
 using CodeTogether.Data.Models.Questions;
 using CodeTogether.Data.Models.Submission;
-using CodeTogether.Runner.Engine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +19,7 @@ public class ApplicationDbContext : DbContext
 			.AddJsonFile("appsettings.json");
 		var configuration = builder.Build();
 		var connectionString = configuration.GetConnectionString("MainDb");
-		optionsBuilder.UseSqlServer(connectionString);
+		optionsBuilder.UseNpgsql(connectionString);
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
