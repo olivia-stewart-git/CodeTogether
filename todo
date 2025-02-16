@@ -1,6 +1,11 @@
 get running
+change to postgres
+containerize deployment
 fix bugs and polish
-change to sql migrations
-containerize
-change to postgres & compose
+migrations approach
 deploy to cloudflare vps
+    - buy domain
+    - flyio vps
+    - nginx
+    - CD
+containerize development
