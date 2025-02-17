@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:latest
@@ -13,6 +11,8 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - mynetwork
+    ports:
+      - "5432:5432"
 
   app:
     image: code-together-app
@@ -21,7 +21,8 @@ services:
     depends_on:
       - db
     environment:
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Username=myuser;Password=mypassword;Database=mydatabase"
+      ConnectionStrings__MainDb: "Server=db;Port=5432;Username=myuser;Password=mypassword;Database=mydatabase"
+      # "Server=127.0.0.1;Port=5432;Database=postgres;User Id=postgres;Password=password;"
     networks:
       - mynetwork
     ports:
