@@ -16,7 +16,8 @@ public class ApplicationDbContext : DbContext
 		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new IOException("Assembly directory not found, application startup failed");
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
-			.AddJsonFile("appsettings.json");
+			.AddJsonFile("appsettings.json")
+			.AddEnvironmentVariables();
 		var configuration = builder.Build();
 		var connectionString = configuration.GetConnectionString("MainDb");
 		optionsBuilder.UseNpgsql(connectionString);

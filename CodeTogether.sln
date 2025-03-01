@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		deploy_commands.txt = deploy_commands.txt
 		README.md = README.md
+		Dockerfile = Dockerfile
+		docker-compose.yaml = docker-compose.yaml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether", "CodeTogether\CodeTogether.csproj", "{BCFF53BE-BC94-41BF-9C59-2177547303BF}"

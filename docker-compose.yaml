@@ -15,7 +15,8 @@ services:
       - "5432:5432"
 
   app:
-    image: code-together-app
+    build:
+      context: .
     container_name: code-together-app
     restart: always
     depends_on:

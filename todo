@@ -1,11 +1,12 @@
 get running
-change to postgres
-containerize deployment
+
+dev
+- dev container & EnsureCreate() in debug builds
+- production compose & migrations setup
+
 fix bugs and polish
-migrations approach
 deploy to cloudflare vps
-    - buy domain
+    x buy domain
     - flyio vps
     - nginx
     - CD
-containerize development
