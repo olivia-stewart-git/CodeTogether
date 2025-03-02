@@ -23,7 +23,6 @@ services:
       - db
     environment:
       ConnectionStrings__MainDb: "Server=db;Port=5432;Username=myuser;Password=mypassword;Database=mydatabase"
-      # "Server=127.0.0.1;Port=5432;Database=postgres;User Id=postgres;Password=password;"
     networks:
       - mynetwork
     ports:

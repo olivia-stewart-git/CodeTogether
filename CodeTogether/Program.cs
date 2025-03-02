@@ -11,8 +11,6 @@ public class Program
 {
 	public static void Main(string[] args)
 	{
-		SchemaVersionSeeder.CheckSchemaVersion();
-
 		var builder = WebApplication.CreateBuilder(args);
 
 		builder.Services.RegisterServices();
@@ -79,6 +77,14 @@ public class Program
 		app.MapHub<LobbyHub>("/api/lobby-hub");
 		app.MapHub<GameHub>("/gamehub");
 
+		CheckSchemaVersion(app);
 		app.Run();
+	}
+
+	static void CheckSchemaVersion(WebApplication app){
+		Console.WriteLine($"Env {app.Environment.EnvironmentName}, is_dev={app.Environment.IsDevelopment()}");
+		using var scope = app.Services.CreateScope();
+		var versionChecker = scope.ServiceProvider.GetRequiredService<SchemaVersionSeeder>();
+		versionChecker.CheckSchemaVersion(fixIfOutdated: app.Environment.IsDevelopment());
 	}
 }

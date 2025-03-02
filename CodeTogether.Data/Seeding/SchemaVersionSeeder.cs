@@ -1,5 +1,6 @@
 ﻿using CodeTogether.Data.DataAccess;
 using CodeTogether.Data.Models;
+using Npgsql;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -11,12 +12,12 @@ namespace CodeTogether.Data.Seeding
 
 		public void Seed(bool initalSeed)
 		{
-			var schemaHash = GetSchemaVersionHash();
+			var schemaHash = GetSchemaVersionHashFromModel();
 			dbContext.StmData.Add(new StmDataModel { STM_Key = StmDataModel.Constants.SchemaVersion, STM_Value = schemaHash});
 			dbContext.SaveChanges();
 		}
 
-		static string GetSchemaVersionHash()
+		static string GetSchemaVersionHashFromModel()
 		{
 			var tables = typeof(IDbModel).Assembly.GetTypes()
 				.Where(t => typeof(IDbModel).IsAssignableFrom(t) && t is { IsClass: true, IsAbstract: false })
@@ -26,19 +27,31 @@ namespace CodeTogether.Data.Seeding
 			var digest = SHA256.HashData(Encoding.UTF8.GetBytes(columnsString));
 			return Convert.ToBase64String(digest);
 		}
-
-		public static void CheckSchemaVersion()
-		{
-			using var dbContext = new ApplicationDbContext();
-			var expectedSchemaVersionHash = GetSchemaVersionHash();
-			var actualSchemaVersionHash = dbContext.StmData.FirstOrDefault(x => x.STM_Key == StmDataModel.Constants.SchemaVersion)?.STM_Value;
-			if (actualSchemaVersionHash == null)
-			{
-				return;
+		
+		string? GetSchemaHashFromDatabase(){
+			try{
+				return dbContext.StmData.FirstOrDefault(x => x.STM_Key == StmDataModel.Constants.SchemaVersion)?.STM_Value;
+			} catch (PostgresException ex) when (ex.Message.Contains("does not exist")){
+				return null;
 			}
-			if (expectedSchemaVersionHash != actualSchemaVersionHash)
+		}
+
+		public void CheckSchemaVersion(bool fixIfOutdated)
+		{
+			var expectedSchemaVersionHash = GetSchemaVersionHashFromModel();
+			var actualSchemaVersionHash = GetSchemaHashFromDatabase();
+			
+			var isOutdated = expectedSchemaVersionHash != actualSchemaVersionHash;
+			if (isOutdated)
 			{
-				throw new InvalidOperationException("Schema in database is outdated from schema in code, create a migration and then run CodeTogether.Deployment to update");
+				if (!fixIfOutdated){
+					throw new InvalidOperationException("Schema in database is outdated from schema in code, create a migration and then run CodeTogether.Deployment to update");
+				}
+				Console.WriteLine("Schema was outdated, recreating database");
+				dbContext.Database.EnsureDeleted();
+				Console.WriteLine("Database deleted");
+				dbContext.Database.EnsureCreated();
+				Console.WriteLine("Database recreated");
 			}
 		}
 	}

@@ -2,7 +2,7 @@ get running
 
 dev
 - dev container & EnsureCreate() in debug builds
-- production compose & migrations setup
+- production compose & migrations setup (how to initialize?)
 
 fix bugs and polish
 deploy to cloudflare vps

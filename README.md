@@ -30,9 +30,16 @@ To add a new migrations do `dotnet ef migrations add {migration name}` in the Co
 
 # Deployment
 
-`docker build -t code-together-app -f .\Dockerfile .`
+~~`docker build -t code-together-app -f .\Dockerfile .`~~
 
 `docker-compose up -d`
+
+OR
+
+~~`export DOTNET_ENVIRONMENT=Development`~~
+`docker run -p 5432:5432 -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase -v db-data:/var/lib/postgresql/data postgres`
++
+`dotnet run --environment Development`
 
 The deployment is a the process as follows:
 - Download build artifacts from the most recent build action and scp them to the app server (e.g. `scp -i ~/azure_vms.pem build-artifact.zip azureuser@{IP ADDRESS}:~/build-artifact.zip`)

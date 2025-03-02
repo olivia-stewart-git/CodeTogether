@@ -5,11 +5,12 @@ using CodeTogether.Data.Models.Submission;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 namespace CodeTogether.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(IHostEnvironment hostEnvironment) : DbContext
 {
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -17,6 +18,7 @@ public class ApplicationDbContext : DbContext
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
 			.AddJsonFile("appsettings.json")
+			.AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true)
 			.AddEnvironmentVariables();
 		var configuration = builder.Build();
 		var connectionString = configuration.GetConnectionString("MainDb");
