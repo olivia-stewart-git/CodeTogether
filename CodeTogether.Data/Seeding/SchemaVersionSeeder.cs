@@ -52,6 +52,7 @@ namespace CodeTogether.Data.Seeding
 				Console.WriteLine("Database deleted");
 				dbContext.Database.EnsureCreated();
 				Console.WriteLine("Database recreated");
+				Seed(true);
 			}
 		}
 	}

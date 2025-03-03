@@ -23,7 +23,6 @@ public static class ServiceDependencyExtensions
 
 	public static IServiceCollection RegisterServices(this IServiceCollection services)
 	{
-		services.AddDbContext<ApplicationDbContext>();
 		services.AddTransient<SchemaVersionSeeder>();
 		services.AddTransient<ILobbyService, LobbyService>();
 		services.AddSingleton<IGameService, GameService>();

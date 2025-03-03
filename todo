@@ -7,6 +7,6 @@ dev
 fix bugs and polish
 deploy to cloudflare vps
     x buy domain
-    - flyio vps
+    x flyio vps
     - nginx
     - CD

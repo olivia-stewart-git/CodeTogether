@@ -10,10 +10,12 @@ using System.Reflection;
 
 namespace CodeTogether.Data;
 
-public class ApplicationDbContext(IHostEnvironment hostEnvironment) : DbContext
+public class ApplicationDbContext : DbContext
 {
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
+	}
+
+	public static string GetConnectionStringFromConfig(IHostEnvironment hostEnvironment){
 		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new IOException("Assembly directory not found, application startup failed");
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
@@ -21,8 +23,7 @@ public class ApplicationDbContext(IHostEnvironment hostEnvironment) : DbContext
 			.AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true)
 			.AddEnvironmentVariables();
 		var configuration = builder.Build();
-		var connectionString = configuration.GetConnectionString("MainDb");
-		optionsBuilder.UseNpgsql(connectionString);
+		return configuration.GetConnectionString("MainDb") ?? throw new ArgumentNullException("Could not get MainDb connection string");
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)

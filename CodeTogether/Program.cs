@@ -4,22 +4,26 @@ using CodeTogether.Data.Seeding;
 using CodeTogether.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeTogether;
 
 public class Program
 {
-	public static void Main(string[] args)
+	private static WebApplicationBuilder CreateHostBuilder(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
 		builder.Services.RegisterServices();
 		builder.Services.RegisterRunnerServices();
+		var connectionString = ApplicationDbContext.GetConnectionStringFromConfig(builder.Environment);
+		builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 		var baseUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? throw new ArgumentNullException(null);
 
 		builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
 
@@ -42,6 +46,12 @@ public class Program
 
 		builder.WebHost.UseStaticWebAssets();
 
+		return builder;
+	}
+
+	public static void Main(string[] args)
+	{
+		var builder = CreateHostBuilder(args);
 
 		var app = builder.Build();
 
