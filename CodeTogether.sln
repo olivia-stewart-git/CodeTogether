@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		deploy_commands.txt = deploy_commands.txt
-		README.md = README.md
-		Dockerfile = Dockerfile
 		docker-compose.yaml = docker-compose.yaml
+		Dockerfile = Dockerfile
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether", "CodeTogether\CodeTogether.csproj", "{BCFF53BE-BC94-41BF-9C59-2177547303BF}"
@@ -31,6 +31,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.Client.Integration", "CodeTogether.Client.Integration\CodeTogether.Client.Integration.csproj", "{629ABD1E-B656-4818-BAE8-D4814F0E85A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeTogether.TestFramework", "CodeTogether.TestFramework\CodeTogether.TestFramework.csproj", "{D953BB82-9254-4A2E-B942-D4820611CC8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTogether.Seeder", "CodeTogether.Seeder\CodeTogether.Seeder.csproj", "{EC33625C-273C-450B-A7C7-BFB971B216B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{D953BB82-9254-4A2E-B942-D4820611CC8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D953BB82-9254-4A2E-B942-D4820611CC8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D953BB82-9254-4A2E-B942-D4820611CC8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC33625C-273C-450B-A7C7-BFB971B216B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC33625C-273C-450B-A7C7-BFB971B216B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC33625C-273C-450B-A7C7-BFB971B216B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC33625C-273C-450B-A7C7-BFB971B216B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,13 +15,16 @@ public class ApplicationDbContext : DbContext
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 	}
 
-	public static string GetConnectionStringFromConfig(IHostEnvironment hostEnvironment){
+	public static string GetConnectionStringFromConfig(IHostEnvironment hostEnvironment = null){
 		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new IOException("Assembly directory not found, application startup failed");
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
 			.AddJsonFile("appsettings.json")
-			.AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true)
 			.AddEnvironmentVariables();
+		if (hostEnvironment != null)
+		{
+			builder.AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+		}
 		var configuration = builder.Build();
 		return configuration.GetConnectionString("MainDb") ?? throw new ArgumentNullException("Could not get MainDb connection string");
 	}

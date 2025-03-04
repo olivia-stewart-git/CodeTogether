@@ -2,17 +2,8 @@
 
 namespace CodeTogether.Data.Seeding;
 
-public class Seeder
+public class Seeder(ApplicationDbContext dbContext, Action<string> logging)
 {
-	readonly ApplicationDbContext dbContext;
-	readonly Action<string> logging;
-
-	public Seeder(ApplicationDbContext dbContext, Action<string> logging)
-	{
-		this.dbContext = dbContext;
-		this.logging = logging;
-	}
-
 	public void ExplicitSeed(params Type[] seederTypes)
 	{
 		var steps = seederTypes

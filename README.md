@@ -33,6 +33,7 @@ To add a new migrations do `dotnet ef migrations add {migration name}` in the Co
 ~~`docker build -t code-together-app -f .\Dockerfile .`~~
 
 `docker-compose up -d`
+`psql -d mydatabase -h localhost -p 5432 -U myuser -f create.sql`
 
 OR
 
