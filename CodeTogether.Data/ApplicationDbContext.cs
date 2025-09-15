@@ -15,7 +15,7 @@ public class ApplicationDbContext : DbContext
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 	}
 
-	public static string GetConnectionStringFromConfig(IHostEnvironment hostEnvironment = null){
+	public static string GetConnectionStringFromConfig(IHostEnvironment? hostEnvironment = null){
 		var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new IOException("Assembly directory not found, application startup failed");
 		var builder = new ConfigurationBuilder()
 			.SetBasePath(binPath)
